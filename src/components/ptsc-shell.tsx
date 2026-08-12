@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 const navItemsVi = [
-  { href: "/", label: "home" },
+  { href: "/", label: "Trang chủ" },
   { href: "/gioi-thieu", label: "Giới thiệu" },
   { href: "/dich-vu", label: "Dịch vụ" },
   { href: "/du-an", label: "Dự án" },
@@ -20,7 +20,7 @@ const navItemsVi = [
 ];
 
 const navItemsEn = [
-  { href: "/en-US", label: "home" },
+  { href: "/en-US", label: "Home" },
   { href: "/en-US/about-us", label: "About" },
   { href: "/en-US/services", label: "Services" },
   { href: "/en-US/projects", label: "Projects" },
