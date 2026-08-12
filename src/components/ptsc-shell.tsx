@@ -55,7 +55,7 @@ export function PtscShell({
       <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
           <Link href={homeHref} className="flex items-center gap-3">
-            <img src="/images/ptsc/logo-ptsc.png" alt="PTSC" className="h-10 w-auto" />
+            <img src="/images/ptsc/logo-ptsc.png" alt="PETROVIETNAM POWER-DHC" className="h-10 w-auto" />
           </Link>
           <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex">
             {navItems.map((item, index) => {
@@ -98,7 +98,7 @@ export function PtscShell({
           <section className="border-b border-slate-200 bg-slate-50/80">
             <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
               <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-                PTSC
+                PV POWER DHC
               </p>
               <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">
                 {title}
@@ -115,12 +115,10 @@ export function PtscShell({
       <footer id="contact" className="border-t border-slate-200 bg-slate-900 text-slate-300">
         <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 text-sm lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:px-8">
           <div>
-            <img src="/images/ptsc/logo-ptsc.png" alt="PTSC" className="h-10 w-auto" />
+            <img src="/images/ptsc/logo-ptsc.png" alt="PETROVIETNAM POWER-DHC" className="h-10 w-auto" />
             <p className="mt-4 max-w-md leading-7">
-              PetroVietnam Tower, Số 1 Lê Duẩn, Phường Sài Gòn, Thành phố Hồ Chí Minh, Việt Nam
+              Công ty cổ phần Thủy điện Đakđrinh (PV Power DHC)
             </p>
-            <p className="mt-2">T (+84) 28 3910 2828</p>
-            <p>F (+84) 28 3910 2929</p>
           </div>
           <div>
             <h3 className="text-base font-semibold text-white">Liên kết nhanh</h3>
