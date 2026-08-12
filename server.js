@@ -1,4 +1,3 @@
-cat > server.js << 'EOF'
 const { createServer } = require("http");
 const next = require("next");
 const port = parseInt(process.env.PORT || "3000", 10);
@@ -16,4 +15,3 @@ app.prepare().then(() => {
     console.log(`> Next.js running on ${hostname}:${port}`);
   });
 });
-EOF
