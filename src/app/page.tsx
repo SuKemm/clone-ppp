@@ -16,65 +16,6 @@ const heroSlides = [
   },
 ];
 
-const services = [
-  {
-    title: "Cơ khí dầu khí",
-    description:
-      "PTSC là đơn vị chủ lực của Tập đoàn công nghiệp - Năng lượng quốc gia Việt Nam trong lĩnh vực cung cấp dịch vụ cơ khí dầu khí, bao gồm thiết kế, mua sắm, chế tạo, thi công, vận chuyển, lắp đặt, đấu nối và chạy thử (EPC/EPCIC) cho các công trình ngoài khơi.",
-    image: "/images/ptsc/service-co-khi.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/co-khi-dau-khi",
-  },
-  {
-    title: "Kho nổi chứa, xử lý và xuất dầu thô (FSO/FPSO)",
-    description:
-      "Hiện tại, PTSC đang sở hữu và đồng sở hữu 6 FSO/FPSO, tổ chức cung cấp các dịch vụ quản lý, vận hành, khai thác, bảo dưỡng 8 FSO/FPSO trong và ngoài nước, là đơn vị đứng đầu trong nước làm chủ công nghệ đóng mới, hoán cải và quản lý, vận hành, bảo dưỡng FSO/FPSO.",
-    image: "/images/ptsc/service-fso.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/kho-noi-chua-xu-ly-va-xuat-dau-tho-fsofpso-1",
-  },
-  {
-    title: "Vận chuyển, Lắp đặt, vận hành và bảo dưỡng công trình biển",
-    description:
-      "Tham gia cung cấp dịch vụ vận chuyển, lắp đặt, đấu nối, chạy thử, vận hành và bảo dưỡng (O&M), sửa chữa, tháo dỡ các công trình dầu khí từ năm 2002.",
-    image: "/images/ptsc/service-bien.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/van-chuyen-lap-dat-van-hanh-va-bao-dung-cong-trinh-bien-1",
-  },
-  {
-    title: "Căn cứ cảng dịch vụ",
-    description:
-      "PTSC hiện đang quản lý và khai thác hệ thống căn cứ cảng, dịch vụ trải dài từ Bắc vào Nam với tổng diện tích hơn 320 ha, bao gồm nhiều cảng dịch vụ và khu sản xuất.",
-    image: "/images/ptsc/service-cang.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/can-cu-cang-dich-vu",
-  },
-  {
-    title: "Tàu dịch vụ dầu khí",
-    description:
-      "PTSC hiện đang sở hữu và khai thác đội tàu dịch vụ chuyên dụng phục vụ ngành dầu khí bao gồm tàu kéo xử lý neo, tàu dịch vụ, tàu định vị động lực và các phương tiện hỗ trợ chuyên dụng.",
-    image: "/images/ptsc/service-tau.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/tau-dich-vu-dau-khi",
-  },
-  {
-    title: "Khảo sát địa chất, khảo sát sửa chữa công trình ngầm",
-    description:
-      "PTSC hiện đang cung cấp dịch vụ khảo sát địa chấn, địa chất công trình và khảo sát sửa chữa công trình ngầm bằng ROV, đáp ứng các tiêu chuẩn quốc tế.",
-    image: "/images/ptsc/service-khao-sat.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/khao-sat-dia-chat-khao-sat-sua-chua-cong-trinh-ngam",
-  },
-  {
-    title: "Công trình công nghiệp",
-    description:
-      "Với thành công từ các dự án đầu tiên, PTSC đã mở rộng triển khai các dự án EPC cho các ngành công nghiệp khác nhau trên đất liền như nhà máy nhiệt điện, lọc hóa dầu và nhà máy sản xuất phân bón.",
-    image: "/images/ptsc/service-cong-nghiep.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/cong-trinh-cong-nghiep",
-  },
-  {
-    title: "Năng lượng tái tạo",
-    description:
-      "Để thích ứng với chương trình chuyển đổi năng lượng, PTSC đang tích cực tham gia vào lĩnh vực năng lượng tái tạo, đặc biệt là ngoài khơi, với vai trò nhà thầu cung cấp dịch vụ và nhà đầu tư, phát triển dự án.",
-    image: "/images/ptsc/service-nang-luong.jpg",
-    link: "https://www.ptsc.com.vn/dich-vu/tat-ca-dich-vu/nang-luong-tai-tao-3",
-  },
-];
-
 const projects = [
   {
     title: "Dự án Gallaf 1",
@@ -225,7 +166,7 @@ export default function Home() {
                   Khám phá dự án
                 </a>
                 <a
-                  href="#services"
+                  href="/dich-vu"
                   className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
                   Xem dịch vụ
@@ -301,42 +242,6 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
-
-        <section id="services" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-                DỊCH VỤ
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold text-slate-900">
-                Các dịch vụ kỹ thuật và công trình hàng đầu của PTSC
-              </h2>
-            </div>
-            <Link href="/dich-vu" className="text-sm font-semibold text-cyan-700 hover:text-cyan-800">
-              Xem thêm →
-            </Link>
-          </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {services.map((service) => (
-              <article
-                key={service.title}
-                className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm"
-              >
-                <img src={service.image} alt={service.title} className="h-40 w-full object-cover" />
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-slate-900">{service.title}</h3>
-                  <p className="mt-4 text-sm leading-7 text-slate-600">{service.description}</p>
-                  <a
-                    href={service.link}
-                    className="mt-5 inline-flex text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
-                  >
-                    Xem thêm →
-                  </a>
-                </div>
-              </article>
-            ))}
           </div>
         </section>
 

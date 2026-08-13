@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { VisitorStats } from "./VisitorStats";
 
 type NavItem = {
   href: string;
@@ -265,7 +266,7 @@ export function PtscShell({
       </main>
 
       <footer id="contact" className="border-t border-slate-200 bg-slate-900 text-slate-300">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 text-sm lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:px-8">
+        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 text-sm lg:grid-cols-[1.1fr_0.7fr_0.7fr_0.8fr] lg:px-8">
           <div>
             <img src="/images/ptsc/logo-ptsc.png" alt="PETROVIETNAM POWER-DHC" className="h-10 w-auto" />
             <p className="mt-4 max-w-md leading-7">
@@ -312,6 +313,7 @@ export function PtscShell({
               </li>
             </ul>
           </div>
+          <VisitorStats />
         </div>
       </footer>
     </div>
