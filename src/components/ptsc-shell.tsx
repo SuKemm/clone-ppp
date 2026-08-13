@@ -2,37 +2,102 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
-const navItemsVi = [
-  { href: "/", label: "Trang chủ" },
-  { href: "/gioi-thieu", label: "Giới thiệu" },
-  { href: "/dich-vu", label: "Dịch vụ" },
-  { href: "/du-an", label: "Dự án" },
-  { href: "/co-dong", label: "Cổ đông" },
-  { href: "/tin-tuc", label: "Tin tức" },
-  { href: "/don-vi", label: "Đơn vị" },
-  { href: "/tuyen-dung", label: "Tuyển dụng" },
-  { href: "/dau-thau", label: "Đấu thầu" },
+type NavItem = {
+  href: string;
+  label: string;
+  children?: { href: string; label: string }[];
+};
+
+// NOTE: to keep the total at 5 top-level items (per yêu cầu "thêm mục Liên hệ,
+// tổng 5 mục"), "Phòng truyền thống" from the reference screenshot was dropped
+// and "Liên hệ" takes its place as the 5th item. Adjust the hrefs below to
+// match your real routes/anchors if the guessed mapping isn't right.
+const navItemsVi: NavItem[] = [
+  {
+    href: "/gioi-thieu",
+    label: "Giới thiệu DHC",
+    children: [
+      { href: "/gioi-thieu", label: "Giới thiệu chung" },
+      { href: "/gioi-thieu#ban-lanh-dao", label: "Ban lãnh đạo" },
+      { href: "/du-an", label: "Dự án" },
+      { href: "/don-vi", label: "Thông tin doanh nghiệp" },
+    ],
+  },
+  // TODO xác nhận lại nội dung sub-menu này với anh Phước — chưa đọc rõ hết
+  // chữ viết tay ở cột "Quan hệ cổ đông", nên tạm để link thẳng, chưa thêm dropdown.
+  { href: "/co-dong", label: "Quan hệ cổ đông" },
+  {
+    href: "/tin-tuc",
+    label: "Tin tức – Sự kiện",
+    children: [
+      { href: "/tin-tuc#hoat-dong-pvpower", label: "Hoạt động PV Power" },
+      { href: "/tin-tuc#hoat-dong-dhc", label: "Hoạt động PV Power DHC" },
+      { href: "/tin-tuc#khac", label: "Tin tức khác" },
+    ],
+  },
+  {
+    href: "/dich-vu",
+    label: "Thư viện",
+    children: [
+      { href: "/dich-vu#thu-vien-anh", label: "Thư viện ảnh" },
+      { href: "/dich-vu#thu-vien-video", label: "Thư viện video" },
+    ],
+  },
   { href: "/lien-he", label: "Liên hệ" },
-  { href: "http://www.pvnindex.vn/index-overview/PVNASPRVND.html", label: "PVN", external: true },
-  { href: "http://www.pvnindex.vn/index-overview/PVNASPRVND.html", label: "Allshare", external: true },
 ];
 
-const navItemsEn = [
-  { href: "/en-US", label: "Home" },
-  { href: "/en-US/about-us", label: "About" },
-  { href: "/en-US/services", label: "Services" },
-  { href: "/en-US/projects", label: "Projects" },
-  { href: "/en-US/shareholders", label: "Shareholders" },
-  { href: "/en-US/news", label: "News" },
-  { href: "/en-US/units", label: "Units" },
-  { href: "/en-US/careers", label: "Careers" },
-  { href: "/en-US/tenders", label: "Tenders" },
+const navItemsEn: NavItem[] = [
+  {
+    href: "/en-US/about-us",
+    label: "Introduction",
+    children: [
+      { href: "/en-US/about-us", label: "Overview" },
+      { href: "/en-US/about-us#leadership", label: "Board of Directors" },
+      { href: "/en-US/projects", label: "Projects" },
+      { href: "/en-US/units", label: "Corporate Information" },
+    ],
+  },
+  { href: "/en-US/shareholders", label: "Investor Relations" },
+  {
+    href: "/en-US/news",
+    label: "News and Events",
+    children: [
+      { href: "/en-US/news#pvpower", label: "PV Power Activities" },
+      { href: "/en-US/news#dhc", label: "PV Power DHC Activities" },
+      { href: "/en-US/news#other", label: "Other News" },
+    ],
+  },
+  {
+    href: "/en-US/services",
+    label: "Gallery",
+    children: [
+      { href: "/en-US/services#photos", label: "Photo Gallery" },
+      { href: "/en-US/services#videos", label: "Video Gallery" },
+    ],
+  },
   { href: "/en-US/contact", label: "Contact" },
-  { href: "http://www.pvnindex.vn/index-overview/PVNASPRVND.html", label: "PVN", external: true },
-  { href: "http://www.pvnindex.vn/index-overview/PVNASPRVND.html", label: "Allshare", external: true },
 ];
+
+function ChevronDown({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M5 7.5L10 12.5L15 7.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function PtscShell({
   children,
@@ -47,49 +112,136 @@ export function PtscShell({
   const isEnglish = pathname?.startsWith("/en-US");
   const navItems = isEnglish ? navItemsEn : navItemsVi;
   const homeHref = isEnglish ? "/en-US" : "/";
-  const langHref = isEnglish ? "/" : "/en-US";
-  const langLabel = isEnglish ? "VI" : "EN";
+
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-          <Link href={homeHref} className="flex items-center gap-3">
-            <img src="/images/ptsc/logo-ptsc.png" alt="PETROVIETNAM POWER-DHC" className="h-10 w-auto" />
-          </Link>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex">
-            {navItems.map((item, index) => {
-              const key = `${item.href}-${item.label}-${index}`;
-
-              return item.external ? (
-                <a
-                  key={key}
-                  href={item.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="transition hover:text-cyan-700"
-                >
-                  {item.label}
-                </a>
-              ) : (
-                <Link
-                  key={key}
-                  href={item.href}
-                  className="transition hover:text-cyan-700"
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-          <div className="flex items-center gap-3">
-            <Link
-              href={langHref}
-              className="rounded-full border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-cyan-600 hover:text-cyan-700"
-            >
-              {langLabel}
-            </Link>
+      <header className="sticky top-0 z-30">
+        {/* Top utility bar */}
+        <div className="bg-[#0e1d3d]">
+          <div className="mx-auto flex max-w-7xl items-center justify-end px-6 py-1.5 lg:px-8">
+            <div className="flex shrink-0 items-center overflow-hidden rounded-sm text-xs font-semibold">
+              <Link
+                href="/"
+                className={`px-2.5 py-1 transition ${
+                  !isEnglish
+                    ? "bg-cyan-500 text-white"
+                    : "bg-[#16294f] text-slate-300 hover:text-white"
+                }`}
+              >
+                VI
+              </Link>
+              <Link
+                href="/en-US"
+                className={`px-2.5 py-1 transition ${
+                  isEnglish
+                    ? "bg-cyan-500 text-white"
+                    : "bg-[#16294f] text-slate-300 hover:text-white"
+                }`}
+              >
+                EN
+              </Link>
+            </div>
           </div>
+        </div>
+
+        {/* Main nav */}
+        <div className="border-b border-white/5 bg-[#0a1330]">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 lg:px-8">
+            <Link href={homeHref} className="flex items-center gap-3">
+              <img
+                src="/images/ptsc/logo-ptsc.png"
+                alt="PETROVIETNAM POWER-DHC"
+                className="h-14 w-auto"
+              />
+            </Link>
+
+            {/* Desktop nav */}
+            <nav className="hidden items-center gap-7 text-[13px] font-semibold tracking-wide text-slate-100 md:flex">
+              {navItems.map((item, index) => (
+                <div
+                  key={item.href}
+                  className="relative"
+                  onMouseEnter={() => item.children && setOpenIndex(index)}
+                  onMouseLeave={() => item.children && setOpenIndex(null)}
+                >
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-1 py-4 uppercase transition hover:text-cyan-300"
+                  >
+                    {item.label}
+                    {item.children ? (
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    ) : null}
+                  </Link>
+
+                  {item.children && openIndex === index ? (
+                    <div className="absolute left-0 top-full w-64 rounded-b-sm bg-white py-2 text-slate-700 shadow-xl">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className="block px-6 py-3 text-sm font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </nav>
+
+            {/* Mobile toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen((v) => !v)}
+              className="flex h-9 w-9 items-center justify-center rounded-sm text-white md:hidden"
+              aria-label="Toggle menu"
+            >
+              <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none">
+                <path
+                  d="M4 6h16M4 12h16M4 18h16"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Mobile nav */}
+          {mobileOpen ? (
+            <nav className="flex flex-col gap-1 border-t border-white/10 bg-[#0a1330] px-6 py-3 text-sm font-semibold text-slate-100 md:hidden">
+              {navItems.map((item) => (
+                <div key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="block py-2 uppercase"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                  {item.children ? (
+                    <div className="ml-3 flex flex-col gap-1 border-l border-white/10 pl-3">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className="py-1.5 text-xs font-normal normal-case text-slate-300"
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </nav>
+          ) : null}
         </div>
       </header>
 
