@@ -41,3 +41,5 @@ coverage/
 tmp/
 temp/"tsconfig.tsbuildinfo" 
 "tsconfig.tsbuildinfo" 
+tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo
