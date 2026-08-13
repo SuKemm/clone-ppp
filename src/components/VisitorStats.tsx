@@ -3,17 +3,20 @@
 // Khối "Thống kê truy cập" hiển thị ở footer (mọi trang, vì đây là số liệu
 // toàn site chứ không riêng gì trang chủ).
 //
-// LƯU Ý: hiện tại chưa có backend đếm lượt truy cập thật, nên component này
-// đang nhận số liệu qua props (giá trị mẫu). Khi có API/analytics thật
-// (ví dụ 1 API route tự viết ghi vào DB, hoặc lấy từ Google Analytics),
-// chỉ cần fetch dữ liệu rồi truyền vào props bên dưới là xong — không cần
-// sửa gì trong UI này.
+// Số liệu lấy real-time từ API /api/visitors/stats (xem
+// src/app/api/visitors/), dựa trên heartbeat thật của trình duyệt
+// (src/lib/useVisitorTracking.ts) — "Đang online" chỉ tính người có
+// heartbeat trong 60s gần nhất, không phải số ảo. `initial*` bên dưới chỉ
+// là giá trị hiển thị tạm trong lúc chờ lần gọi API đầu tiên hoàn tất, để
+// tránh UI nhấp nháy/hiện 0.
+
+import { useVisitorTracking } from "@/lib/useVisitorTracking";
 
 type VisitorStatsProps = {
-  online?: number;
-  today?: number;
-  thisWeek?: number;
-  total?: number;
+  initialOnline?: number;
+  initialToday?: number;
+  initialThisWeek?: number;
+  initialTotal?: number;
 };
 
 function UserIcon() {
@@ -33,11 +36,18 @@ function UsersIcon() {
 }
 
 export function VisitorStats({
-  online = 1,
-  today = 33,
-  thisWeek = 115,
-  total = 52411,
+  initialOnline = 0,
+  initialToday = 0,
+  initialThisWeek = 0,
+  initialTotal = 0,
 }: VisitorStatsProps) {
+  const { online, today, thisWeek, total } = useVisitorTracking({
+    online: initialOnline,
+    today: initialToday,
+    thisWeek: initialThisWeek,
+    total: initialTotal,
+  });
+
   const rows = [
     { icon: <UserIcon />, label: "Đang online", value: online },
     { icon: <UserIcon />, label: "Hôm nay", value: today },
