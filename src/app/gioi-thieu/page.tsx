@@ -42,6 +42,13 @@ const stats = [
   ["12", "Năm vận hành (từ 2014)"],
 ];
 
+const productionStatus = [
+  ["1.384,48", "Sản lượng", "Ngày 12/08"],
+  ["12.296,65", "Sản lượng", "Tháng 08"],
+  ["45.647,83", "Sản lượng", "Quý III"],
+  ["220.125,45", "Sản lượng", "Năm 2026"],
+];
+
 const operatingResults = [
   ["~7 tỷ kWh", "Sản lượng điện lũy kế lên lưới điện Quốc gia (29/5/2014 - hết tháng 5/2026), bình quân 564 triệu kWh/năm, cao hơn E0 540,29 triệu kWh/năm"],
   ["6.622 tỷ đồng", "Doanh thu trước thuế VAT lũy kế"],
@@ -115,6 +122,35 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 pb-14 lg:px-8">
+        <div className="mb-8">
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            Cập nhật
+          </span>
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Tình hình sản xuất năm 2026
+          </h2>
+        </div>
+
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {productionStatus.map(([value, label, period]) => (
+            <div
+              key={period}
+              className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="text-3xl font-bold text-cyan-700">{value}</div>
+              <div className="mx-auto mt-4 h-px w-8 bg-slate-300" />
+              <div className="mt-4 text-sm leading-6 text-slate-600">
+                {label}
+                <br />
+                {period}
+              </div>
+              <div className="mt-1 text-sm font-bold text-cyan-700">(MWh)</div>
+            </div>
+          ))}
         </div>
       </section>
 

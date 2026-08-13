@@ -151,12 +151,28 @@ export function PtscShell({
         {/* Main nav */}
         <div className="border-b border-white/5 bg-[#0a1330]">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 lg:px-8">
-            <Link href={homeHref} className="flex items-center gap-3">
+            <Link href={homeHref} className="flex items-center gap-4">
               <img
                 src="/images/ptsc/logo-ptsc.png"
                 alt="PETROVIETNAM POWER-DHC"
-                className="h-14 w-auto"
+                className="h-20 w-auto shrink-0"
               />
+              <span className="hidden flex-col leading-tight sm:flex">
+                {isEnglish ? (
+                  <span className="text-lg font-extrabold uppercase tracking-wide text-emerald-400">
+                    Dakdrinh Hydropower Joint Stock Company
+                  </span>
+                ) : (
+                  <>
+                    <span className="text-lg font-extrabold uppercase tracking-wide text-emerald-400">
+                      Công ty cổ phần Thủy điện Đakđrinh
+                    </span>
+                    <span className="text-lg font-extrabold uppercase tracking-wide text-emerald-400">
+                      Dakdrinh Hydropower
+                    </span>
+                  </>
+                )}
+              </span>
             </Link>
 
             {/* Desktop nav */}
@@ -265,15 +281,52 @@ export function PtscShell({
         {children}
       </main>
 
-      <footer id="contact" className="border-t border-slate-200 bg-slate-900 text-slate-300">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 text-sm lg:grid-cols-[1.1fr_0.7fr_0.7fr_0.8fr] lg:px-8">
-          <div>
-            <img src="/images/ptsc/logo-ptsc.png" alt="PETROVIETNAM POWER-DHC" className="h-10 w-auto" />
-            <p className="mt-4 max-w-md leading-7">
-              Công ty cổ phần Thủy điện Đakđrinh (PV Power DHC)
-            </p>
-          </div>
-          <div>
+      <footer id="contact" className="relative overflow-hidden border-t border-slate-200 bg-[#0a1330] text-slate-300">
+        {/* Decorative radiating lines, echoing the reference footer */}
+        <svg
+          className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 opacity-[0.07] sm:h-96 sm:w-96"
+          viewBox="0 0 200 200"
+          fill="none"
+          aria-hidden="true"
+        >
+          {Array.from({ length: 24 }).map((_, i) => (
+            <line
+              key={i}
+              x1="100"
+              y1="100"
+              x2={100 + 100 * Math.cos((i * Math.PI) / 12)}
+              y2={100 + 100 * Math.sin((i * Math.PI) / 12)}
+              stroke="white"
+              strokeWidth="1"
+            />
+          ))}
+        </svg>
+
+        {/* Centered brand block */}
+        <div className="relative mx-auto max-w-3xl px-6 pt-12 text-center lg:px-8">
+          <img
+            src="/images/ptsc/logo-ptsc.png"
+            alt="PETROVIETNAM POWER-DHC"
+            className="mx-auto h-16 w-auto"
+          />
+          <p className="mt-4 text-lg font-extrabold uppercase tracking-wide text-emerald-400 sm:text-xl">
+            Công ty cổ phần Thủy điện Đakđrinh · CTCP
+          </p>
+          <p className="mt-3 text-sm leading-6 text-slate-400">
+            Huyện Sơn Tây, tỉnh Quảng Ngãi · Huyện Kon Plông, tỉnh Kon Tum
+            <span className="mx-2 text-slate-600">|</span>
+            (+84) 28 3910 2828
+            <span className="mx-2 text-slate-600">|</span>
+            (+84) 28 3910 2929
+          </p>
+
+          {/* Gradient divider, echoing the reference footer's colored line */}
+          <div className="mx-auto mt-8 h-[3px] w-full max-w-2xl bg-gradient-to-r from-cyan-400 via-sky-500 to-amber-400" />
+        </div>
+
+        {/* Link / info / visitor columns */}
+        <div className="relative mx-auto grid max-w-7xl gap-8 px-6 py-10 text-sm sm:grid-cols-3 lg:px-8">
+          <div className="text-center sm:text-left">
             <h3 className="text-base font-semibold text-white">Liên kết nhanh</h3>
             <ul className="mt-4 space-y-2">
               <li>
@@ -293,7 +346,7 @@ export function PtscShell({
               </li>
             </ul>
           </div>
-          <div>
+          <div className="text-center sm:text-left">
             <h3 className="text-base font-semibold text-white">Thông tin web</h3>
             <ul className="mt-4 space-y-2">
               <li>
@@ -313,7 +366,13 @@ export function PtscShell({
               </li>
             </ul>
           </div>
-          <VisitorStats />
+          <div className="mx-auto w-full max-w-xs text-center sm:mx-0 sm:max-w-none sm:text-left">
+            <VisitorStats />
+          </div>
+        </div>
+
+        <div className="relative border-t border-white/5 py-4 text-center text-xs text-slate-500">
+          © {new Date().getFullYear()} PV Power DHC. All rights reserved.
         </div>
       </footer>
     </div>
