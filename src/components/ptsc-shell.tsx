@@ -312,12 +312,12 @@ export function PtscShell({
           <p className="mt-4 text-lg font-extrabold uppercase tracking-wide text-[#089F50] sm:text-xl">
             {isEnglish
               ? "Dakdrinh Hydropower Joint Stock Company"
-              : "Công ty cổ phần Thủy điện Đakđrinh · CTCP"}
+              : "Công ty cổ phần Thủy điện Đakđrinh"}
           </p>
           <p className="mt-3 text-sm leading-6 text-slate-400">
             {isEnglish
-              ? "Son Tay District, Quang Ngai Province · Kon Plong District, Kon Tum Province"
-              : "Huyện Sơn Tây, tỉnh Quảng Ngãi · Huyện Kon Plông, tỉnh Kon Tum"}
+              ? "Ra Nhua Village, Son Tay Commune, Quang Ngai Province"
+              : " Thôn Ra Nhua, xã Sơn Tây, tỉnh Quảng Ngãi"}
             <span className="mx-2 text-slate-600">|</span>
             (+84) 28 3910 2828
             <span className="mx-2 text-slate-600">|</span>
