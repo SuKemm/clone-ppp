@@ -309,7 +309,7 @@ export function PtscShell({
             alt="PETROVIETNAM POWER-DHC"
             className="mx-auto h-16 w-auto"
           />
-          <p className="mt-4 text-lg font-extrabold uppercase tracking-wide text-emerald-400 sm:text-xl">
+          <p className="mt-4 text-lg font-extrabold uppercase tracking-wide text-[#089F50] sm:text-xl">
             {isEnglish
               ? "Dakdrinh Hydropower Joint Stock Company"
               : "Công ty cổ phần Thủy điện Đakđrinh · CTCP"}
@@ -328,54 +328,10 @@ export function PtscShell({
           <div className="mx-auto mt-8 h-[3px] w-full max-w-2xl bg-gradient-to-r from-cyan-400 via-sky-500 to-amber-400" />
         </div>
 
-        {/* Link / info / visitor columns */}
-        <div className="relative mx-auto grid max-w-7xl gap-8 px-6 py-10 text-sm sm:grid-cols-3 lg:px-8">
-          <div className="text-center sm:text-left">
-            <h3 className="text-base font-semibold text-white">
-              {isEnglish ? "Quick Links" : "Liên kết nhanh"}
-            </h3>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <a href="https://www.ptsc.com.vn/Data/Sites/1/media/video/Vie_PTSC_2025_up7.8.mp4" className="transition hover:text-white">
-                  {isEnglish ? "Introduction video" : "Phim giới thiệu"}
-                </a>
-              </li>
-              <li>
-                <a href="https://www.ptsc.com.vn/Data/Sites/1/media/brochure/TV_PTSC_Brochure_072025.pdf" className="transition hover:text-white">
-                  Brochure
-                </a>
-              </li>
-              <li>
-                <a href="https://www.ptsc.com.vn/he-thong-quan-ly-noi-bo" className="transition hover:text-white">
-                  {isEnglish ? "Internal management system" : "Hệ thống quản lý nội bộ"}
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="text-center sm:text-left">
-            <h3 className="text-base font-semibold text-white">
-              {isEnglish ? "Website Information" : "Thông tin web"}
-            </h3>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <a href={isEnglish ? "/en-US/terms-of-use" : "/dieu-khoan-su-dung"} className="transition hover:text-white">
-                  {isEnglish ? "Terms of use" : "Điều khoản sử dụng"}
-                </a>
-              </li>
-              <li>
-                <a href={isEnglish ? "/en-US/privacy-policy" : "/chinh-sach-bao-mat"} className="transition hover:text-white">
-                  {isEnglish ? "Privacy policy" : "Chính sách bảo mật"}
-                </a>
-              </li>
-              <li>
-                <a href="/sitemap.aspx" className="transition hover:text-white">
-                  {isEnglish ? "Sitemap" : "Sơ đồ trang web"}
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div className="mx-auto w-full max-w-xs text-center sm:mx-0 sm:max-w-none sm:text-left">
-            <VisitorStats isEnglish={isEnglish} />
+        {/* Visitor stats bar — full-width, left to right, sitting right above the footer's bottom edge */}
+        <div className="relative border-t border-white/5">
+          <div className="mx-auto max-w-7xl px-6 py-5 lg:px-8">
+            <VisitorStats isEnglish={isEnglish} layout="horizontal" />
           </div>
         </div>
 

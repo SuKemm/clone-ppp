@@ -18,6 +18,8 @@ type VisitorStatsProps = {
   initialThisWeek?: number;
   initialTotal?: number;
   isEnglish?: boolean;
+  /** "vertical" = original stacked list; "horizontal" = single row, left to right (footer bar). */
+  layout?: "vertical" | "horizontal";
 };
 
 function UserIcon() {
@@ -42,6 +44,7 @@ export function VisitorStats({
   initialThisWeek = 0,
   initialTotal = 0,
   isEnglish = false,
+  layout = "vertical",
 }: VisitorStatsProps) {
   const { online, today, thisWeek, total } = useVisitorTracking({
     online: initialOnline,
@@ -56,6 +59,29 @@ export function VisitorStats({
     { icon: <UserIcon />, label: isEnglish ? "This week" : "Tuần này", value: thisWeek },
     { icon: <UsersIcon />, label: isEnglish ? "Total visits" : "Tổng truy cập", value: total },
   ];
+
+  if (layout === "horizontal") {
+    return (
+      <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+        <h3 className="shrink-0 text-base font-semibold text-white">
+          {isEnglish ? "Visitor Statistics" : "Thống kê truy cập"}
+        </h3>
+        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 sm:justify-end">
+          {rows.map((row) => (
+            <li key={row.label} className="flex items-center gap-2 text-slate-300">
+              <span className="flex items-center gap-2">
+                {row.icon}
+                {row.label}
+              </span>
+              <span className="font-semibold text-white">
+                {row.value.toLocaleString(isEnglish ? "en-US" : "vi-VN")}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 
   return (
     <div>
