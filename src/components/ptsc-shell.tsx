@@ -310,10 +310,14 @@ export function PtscShell({
             className="mx-auto h-16 w-auto"
           />
           <p className="mt-4 text-lg font-extrabold uppercase tracking-wide text-emerald-400 sm:text-xl">
-            Công ty cổ phần Thủy điện Đakđrinh · CTCP
+            {isEnglish
+              ? "Dakdrinh Hydropower Joint Stock Company"
+              : "Công ty cổ phần Thủy điện Đakđrinh · CTCP"}
           </p>
           <p className="mt-3 text-sm leading-6 text-slate-400">
-            Huyện Sơn Tây, tỉnh Quảng Ngãi · Huyện Kon Plông, tỉnh Kon Tum
+            {isEnglish
+              ? "Son Tay District, Quang Ngai Province · Kon Plong District, Kon Tum Province"
+              : "Huyện Sơn Tây, tỉnh Quảng Ngãi · Huyện Kon Plông, tỉnh Kon Tum"}
             <span className="mx-2 text-slate-600">|</span>
             (+84) 28 3910 2828
             <span className="mx-2 text-slate-600">|</span>
@@ -327,11 +331,13 @@ export function PtscShell({
         {/* Link / info / visitor columns */}
         <div className="relative mx-auto grid max-w-7xl gap-8 px-6 py-10 text-sm sm:grid-cols-3 lg:px-8">
           <div className="text-center sm:text-left">
-            <h3 className="text-base font-semibold text-white">Liên kết nhanh</h3>
+            <h3 className="text-base font-semibold text-white">
+              {isEnglish ? "Quick Links" : "Liên kết nhanh"}
+            </h3>
             <ul className="mt-4 space-y-2">
               <li>
                 <a href="https://www.ptsc.com.vn/Data/Sites/1/media/video/Vie_PTSC_2025_up7.8.mp4" className="transition hover:text-white">
-                  Phim giới thiệu
+                  {isEnglish ? "Introduction video" : "Phim giới thiệu"}
                 </a>
               </li>
               <li>
@@ -341,33 +347,35 @@ export function PtscShell({
               </li>
               <li>
                 <a href="https://www.ptsc.com.vn/he-thong-quan-ly-noi-bo" className="transition hover:text-white">
-                  Hệ thống quản lý nội bộ
+                  {isEnglish ? "Internal management system" : "Hệ thống quản lý nội bộ"}
                 </a>
               </li>
             </ul>
           </div>
           <div className="text-center sm:text-left">
-            <h3 className="text-base font-semibold text-white">Thông tin web</h3>
+            <h3 className="text-base font-semibold text-white">
+              {isEnglish ? "Website Information" : "Thông tin web"}
+            </h3>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href="/dieu-khoan-su-dung" className="transition hover:text-white">
-                  Điều khoản sử dụng
+                <a href={isEnglish ? "/en-US/terms-of-use" : "/dieu-khoan-su-dung"} className="transition hover:text-white">
+                  {isEnglish ? "Terms of use" : "Điều khoản sử dụng"}
                 </a>
               </li>
               <li>
-                <a href="/chinh-sach-bao-mat" className="transition hover:text-white">
-                  Chính sách bảo mật
+                <a href={isEnglish ? "/en-US/privacy-policy" : "/chinh-sach-bao-mat"} className="transition hover:text-white">
+                  {isEnglish ? "Privacy policy" : "Chính sách bảo mật"}
                 </a>
               </li>
               <li>
                 <a href="/sitemap.aspx" className="transition hover:text-white">
-                  Sơ đồ trang web
+                  {isEnglish ? "Sitemap" : "Sơ đồ trang web"}
                 </a>
               </li>
             </ul>
           </div>
           <div className="mx-auto w-full max-w-xs text-center sm:mx-0 sm:max-w-none sm:text-left">
-            <VisitorStats />
+            <VisitorStats isEnglish={isEnglish} />
           </div>
         </div>
 

@@ -17,6 +17,7 @@ type VisitorStatsProps = {
   initialToday?: number;
   initialThisWeek?: number;
   initialTotal?: number;
+  isEnglish?: boolean;
 };
 
 function UserIcon() {
@@ -40,6 +41,7 @@ export function VisitorStats({
   initialToday = 0,
   initialThisWeek = 0,
   initialTotal = 0,
+  isEnglish = false,
 }: VisitorStatsProps) {
   const { online, today, thisWeek, total } = useVisitorTracking({
     online: initialOnline,
@@ -49,15 +51,17 @@ export function VisitorStats({
   });
 
   const rows = [
-    { icon: <UserIcon />, label: "Đang online", value: online },
-    { icon: <UserIcon />, label: "Hôm nay", value: today },
-    { icon: <UserIcon />, label: "Tuần này", value: thisWeek },
-    { icon: <UsersIcon />, label: "Tổng truy cập", value: total },
+    { icon: <UserIcon />, label: isEnglish ? "Online now" : "Đang online", value: online },
+    { icon: <UserIcon />, label: isEnglish ? "Today" : "Hôm nay", value: today },
+    { icon: <UserIcon />, label: isEnglish ? "This week" : "Tuần này", value: thisWeek },
+    { icon: <UsersIcon />, label: isEnglish ? "Total visits" : "Tổng truy cập", value: total },
   ];
 
   return (
     <div>
-      <h3 className="text-base font-semibold text-white">Thống kê truy cập</h3>
+      <h3 className="text-base font-semibold text-white">
+        {isEnglish ? "Visitor Statistics" : "Thống kê truy cập"}
+      </h3>
       <ul className="mt-4 space-y-2">
         {rows.map((row) => (
           <li key={row.label} className="flex items-center justify-between gap-3 text-slate-300">
@@ -65,7 +69,9 @@ export function VisitorStats({
               {row.icon}
               {row.label}
             </span>
-            <span className="font-semibold text-white">{row.value.toLocaleString("vi-VN")}</span>
+            <span className="font-semibold text-white">
+              {row.value.toLocaleString(isEnglish ? "en-US" : "vi-VN")}
+            </span>
           </li>
         ))}
       </ul>
