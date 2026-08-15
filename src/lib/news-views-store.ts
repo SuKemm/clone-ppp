@@ -1,18 +1,22 @@
 import fs from "node:fs";
 import path from "node:path";
+import { getContentDataDir } from "@/lib/storage-paths";
 
 // Lưu số lượt xem từng bài viết (theo `id` của item trong collection "news")
 // thành 1 file JSON, cùng thư mục với dữ liệu CMS — xem ghi chú trong
-// `src/lib/cms/store.ts` để hiểu vì sao dùng file thay vì DB, và vì sao
-// thư mục này không đưa vào Git.
-const DATA_DIR = path.join(process.cwd(), "content", "data");
-const FILE_PATH = path.join(DATA_DIR, "news-views.json");
+// `src/lib/cms/store.ts` và `src/lib/storage-paths.ts` để hiểu vì sao dùng
+// file thay vì DB, vì sao thư mục này không đưa vào Git, và vì sao trên
+// Vercel thư mục thật sự dùng có thể là thư mục tạm.
 
 type ViewsMap = Record<string, number>;
 
+function filePath() {
+  return path.join(getContentDataDir(), "news-views.json");
+}
+
 function readAll(): ViewsMap {
   try {
-    const raw = fs.readFileSync(FILE_PATH, "utf-8");
+    const raw = fs.readFileSync(filePath(), "utf-8");
     return JSON.parse(raw) as ViewsMap;
   } catch {
     return {};
@@ -20,8 +24,8 @@ function readAll(): ViewsMap {
 }
 
 function writeAll(data: ViewsMap) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  fs.writeFileSync(FILE_PATH, JSON.stringify(data, null, 2), "utf-8");
+  fs.mkdirSync(getContentDataDir(), { recursive: true });
+  fs.writeFileSync(filePath(), JSON.stringify(data, null, 2), "utf-8");
 }
 
 /** Đọc số lượt xem hiện có của 1 bài viết (0 nếu chưa từng được xem). */

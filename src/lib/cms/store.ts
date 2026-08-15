@@ -2,20 +2,24 @@ import fs from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { getCollectionDef, type CollectionId } from "./schema";
+import { getContentDataDir } from "@/lib/storage-paths";
 
 // Toàn bộ nội dung do admin nhập được lưu thành file JSON tại thư mục này
 // (nằm ngoài `src/`, không build vào code, và được .gitignore — xem ghi chú
 // trong README-admin.md để hiểu vì sao không đưa file này vào Git).
-const DATA_DIR = path.join(process.cwd(), "content", "data");
+//
+// Trên nền tảng serverless (Vercel), `process.cwd()` là read-only nên
+// `getContentDataDir()` tự chuyển sang thư mục tạm — xem giải thích chi tiết
+// trong `src/lib/storage-paths.ts`.
 
 export type CmsItem = Record<string, string> & { id: string };
 
 function filePath(collection: CollectionId) {
-  return path.join(DATA_DIR, `${collection}.json`);
+  return path.join(getContentDataDir(), `${collection}.json`);
 }
 
 function ensureFile(collection: CollectionId): CmsItem[] {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.mkdirSync(getContentDataDir(), { recursive: true });
   const fp = filePath(collection);
   if (!fs.existsSync(fp)) {
     const def = getCollectionDef(collection);
@@ -35,7 +39,7 @@ function ensureFile(collection: CollectionId): CmsItem[] {
 }
 
 function writeAll(collection: CollectionId, items: CmsItem[]) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.mkdirSync(getContentDataDir(), { recursive: true });
   fs.writeFileSync(filePath(collection), JSON.stringify(items, null, 2), "utf-8");
 }
 

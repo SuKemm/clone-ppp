@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { getUploadsDir, isUploadsDirPublic } from "@/lib/storage-paths";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const MAX_BYTES = 8 * 1024 * 1024; // 8MB
 
@@ -21,11 +21,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Ảnh vượt quá 8MB" }, { status: 400 });
   }
 
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  const uploadDir = getUploadsDir();
+  fs.mkdirSync(uploadDir, { recursive: true });
   const ext = file.type.split("/")[1] === "jpeg" ? "jpg" : file.type.split("/")[1];
   const filename = `${Date.now()}-${randomUUID().slice(0, 8)}.${ext}`;
   const bytes = Buffer.from(await file.arrayBuffer());
-  fs.writeFileSync(path.join(UPLOAD_DIR, filename), bytes);
+  fs.writeFileSync(path.join(uploadDir, filename), bytes);
 
-  return NextResponse.json({ url: `/uploads/${filename}` });
+  // Trên VPS, public/uploads được Next serve tĩnh nên dùng /uploads/... như cũ.
+  // Trên Vercel (fallback ghi vào /tmp), /uploads/... không truy cập được vì
+  // /tmp nằm ngoài thư mục public — phải đi qua route /api/uploads/... để đọc
+  // và trả về đúng file (xem src/app/api/uploads/[filename]/route.ts).
+  const url = isUploadsDirPublic() ? `/uploads/${filename}` : `/api/uploads/${filename}`;
+  return NextResponse.json({ url });
 }
