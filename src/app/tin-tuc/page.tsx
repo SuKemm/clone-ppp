@@ -1,29 +1,13 @@
+import Link from "next/link";
 import { PtscShell } from "@/components/ptsc-shell";
+import { getCollection } from "@/lib/cms/store";
+import { ArticleViewCount } from "@/components/ArticleViewCount";
 
-const news = [
-  {
-    date: "24/06/2026",
-    title: "PTSC tổ chức thành công Lễ Đặt tên và Bàn giao FSO PTSC Lạc Đà Vàng, sẵn sàng cho mục tiêu First Oil của mỏ Lạc Đà Vàng",
-    category: "Sản xuất - Kinh doanh",
-  },
-  {
-    date: "20/06/2026",
-    title: "Chủ động quản trị rủi ro, giữ vững tiến độ Dự án Khí Lô B – Gói EPCI#1",
-    category: "Sản xuất - Kinh doanh",
-  },
-  {
-    date: "18/06/2026",
-    title: "ĐHĐCĐ PTSC 2026: PTSC khẳng định vị thế sau năm kinh doanh kỷ lục, hướng tới mục tiêu nâng cao năng lực cạnh tranh trong khu vực",
-    category: "Sản xuất - Kinh doanh",
-  },
-  {
-    date: "12/06/2026",
-    title: "PVFCCo - Phú Mỹ và PTSC ký kết Thỏa thuận Hợp tác, tăng cường liên kết trong hệ sinh thái Petrovietnam",
-    category: "Sản xuất - Kinh doanh",
-  },
-];
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 export default function NewsPage() {
+  const news = getCollection("news");
+
   return (
     <PtscShell
       title="Tin tức"
@@ -32,10 +16,26 @@ export default function NewsPage() {
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="space-y-6">
           {news.map((item) => (
-            <article key={item.title} className="rounded-[1.5rem] border border-slate-200 bg-white p-8 shadow-sm">
+            <article key={item.id} className="rounded-[1.5rem] border border-slate-200 bg-white p-8 shadow-sm">
+              {item.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={item.image} alt="" className="mb-6 h-56 w-full rounded-2xl object-cover" />
+              )}
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{item.category}</p>
-              <h2 className="mt-3 text-2xl font-semibold text-slate-900">{item.title}</h2>
-              <p className="mt-4 text-sm text-slate-500">{item.date}</p>
+              <Link href={`/tin-tuc/${item.id}`} className="mt-3 block text-2xl font-semibold text-slate-900 transition hover:text-cyan-700">
+                {item.title}
+              </Link>
+              {item.excerpt && <p className="mt-3 text-slate-600">{item.excerpt}</p>}
+              <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center gap-3 text-sm text-slate-500">
+                  <p>{item.date}</p>
+                  <span aria-hidden>·</span>
+                  <ArticleViewCount id={item.id} mode="display" />
+                </div>
+                <Link href={`/tin-tuc/${item.id}`} className="text-sm font-semibold text-cyan-700 hover:underline">
+                  Xem chi tiết →
+                </Link>
+              </div>
             </article>
           ))}
         </div>

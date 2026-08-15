@@ -1,0 +1,74 @@
+import fs from "node:fs";
+import path from "node:path";
+import { randomUUID } from "node:crypto";
+import { getCollectionDef, type CollectionId } from "./schema";
+
+// Toàn bộ nội dung do admin nhập được lưu thành file JSON tại thư mục này
+// (nằm ngoài `src/`, không build vào code, và được .gitignore — xem ghi chú
+// trong README-admin.md để hiểu vì sao không đưa file này vào Git).
+const DATA_DIR = path.join(process.cwd(), "content", "data");
+
+export type CmsItem = Record<string, string> & { id: string };
+
+function filePath(collection: CollectionId) {
+  return path.join(DATA_DIR, `${collection}.json`);
+}
+
+function ensureFile(collection: CollectionId): CmsItem[] {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  const fp = filePath(collection);
+  if (!fs.existsSync(fp)) {
+    const def = getCollectionDef(collection);
+    const seeded: CmsItem[] = (def?.seed ?? []).map((item) => ({
+      id: randomUUID(),
+      ...item,
+    }));
+    fs.writeFileSync(fp, JSON.stringify(seeded, null, 2), "utf-8");
+    return seeded;
+  }
+  try {
+    const raw = fs.readFileSync(fp, "utf-8");
+    return JSON.parse(raw) as CmsItem[];
+  } catch {
+    return [];
+  }
+}
+
+function writeAll(collection: CollectionId, items: CmsItem[]) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(filePath(collection), JSON.stringify(items, null, 2), "utf-8");
+}
+
+/** Đọc toàn bộ item của 1 collection — dùng ở các trang public (Server Component). */
+export function getCollection(collection: CollectionId): CmsItem[] {
+  return ensureFile(collection);
+}
+
+export function createItem(collection: CollectionId, data: Record<string, string>): CmsItem {
+  const items = ensureFile(collection);
+  const item: CmsItem = { id: randomUUID(), ...data };
+  items.unshift(item);
+  writeAll(collection, items);
+  return item;
+}
+
+export function updateItem(
+  collection: CollectionId,
+  id: string,
+  data: Record<string, string>
+): CmsItem | null {
+  const items = ensureFile(collection);
+  const idx = items.findIndex((it) => it.id === id);
+  if (idx === -1) return null;
+  items[idx] = { ...items[idx], ...data, id };
+  writeAll(collection, items);
+  return items[idx];
+}
+
+export function deleteItem(collection: CollectionId, id: string): boolean {
+  const items = ensureFile(collection);
+  const next = items.filter((it) => it.id !== id);
+  const changed = next.length !== items.length;
+  if (changed) writeAll(collection, next);
+  return changed;
+}

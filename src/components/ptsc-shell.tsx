@@ -21,14 +21,20 @@ const navItemsVi: NavItem[] = [
     label: "Giới thiệu DHC",
     children: [
       { href: "/gioi-thieu", label: "Giới thiệu chung" },
-      { href: "/gioi-thieu#ban-lanh-dao", label: "Ban lãnh đạo" },
+      { href: "/gioi-thieu/ban-lanh-dao", label: "Ban lãnh đạo" },
       { href: "/du-an", label: "Dự án" },
       { href: "/don-vi", label: "Thông tin doanh nghiệp" },
     ],
   },
-  // TODO xác nhận lại nội dung sub-menu này với anh Phước — chưa đọc rõ hết
-  // chữ viết tay ở cột "Quan hệ cổ đông", nên tạm để link thẳng, chưa thêm dropdown.
-  { href: "/co-dong", label: "Quan hệ cổ đông" },
+  {
+    href: "/co-dong",
+    label: "Quan hệ cổ đông",
+    children: [
+      { href: "/co-dong#thong-tin", label: "Thông tin / tài liệu cổ đông" },
+      { href: "/co-dong#dai-hoi", label: "Đại hội cổ đông" },
+      { href: "/co-dong#bao-cao", label: "Báo cáo tài chính/Báo cáo thường niên" },
+    ],
+  },
   {
     href: "/tin-tuc",
     label: "Tin tức – Sự kiện",
@@ -60,7 +66,15 @@ const navItemsEn: NavItem[] = [
       { href: "/en-US/units", label: "Corporate Information" },
     ],
   },
-  { href: "/en-US/shareholders", label: "Investor Relations" },
+  {
+    href: "/en-US/shareholders",
+    label: "Investor Relations",
+    children: [
+      { href: "/en-US/shareholders#info", label: "Shareholder Information" },
+      { href: "/en-US/shareholders#agm", label: "General Meeting of Shareholders" },
+      { href: "/en-US/shareholders#reports", label: "Financial / Annual Reports" },
+    ],
+  },
   {
     href: "/en-US/news",
     label: "News and Events",

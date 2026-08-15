@@ -1,29 +1,11 @@
 import { PtscShell } from "@/components/ptsc-shell";
+import { getCollection } from "@/lib/cms/store";
 
-const projects = [
-  {
-    title: "Dự án Gallaf 1",
-    category: "Dự án dầu khí",
-    description: "Thiết kế, mua sắm, thi công, vận hành và chạy thử 03 giàn đầu giếng và 01 cầu dẫn.",
-  },
-  {
-    title: "Tổ hợp Hóa dầu miền Nam",
-    category: "Dự án công nghiệp",
-    description: "Triển khai gói A1 nhà máy Olefins với quy mô kỹ thuật và năng lực thi công cao.",
-  },
-  {
-    title: "Kho cảng LNG Thị Vải",
-    category: "Dự án công nghiệp",
-    description: "Xây dựng trạm tiếp nhận và trữ khí LNG, đáp ứng nhu cầu vận hành an toàn, hiệu quả.",
-  },
-  {
-    title: "Dự án Biển Đông 01",
-    category: "Dự án dầu khí",
-    description: "Thiết kế, mua sắm, thi công, vận hành và chạy thử giàn xử lý trung tâm Hải Thạch và giàn đầu giếng HT1 & MT1.",
-  },
-];
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 export default function ProjectsPage() {
+  const projects = getCollection("projects");
+
   return (
     <PtscShell
       title="Dự án"
@@ -32,7 +14,11 @@ export default function ProjectsPage() {
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
           {projects.map((project) => (
-            <article key={project.title} className="rounded-[1.5rem] border border-slate-200 bg-white p-8 shadow-sm">
+            <article key={project.id} className="rounded-[1.5rem] border border-slate-200 bg-white p-8 shadow-sm">
+              {project.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={project.image} alt="" className="mb-6 h-48 w-full rounded-2xl object-cover" />
+              )}
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{project.category}</p>
               <h2 className="mt-4 text-2xl font-semibold text-slate-900">{project.title}</h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">{project.description}</p>

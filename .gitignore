@@ -39,7 +39,17 @@ coverage/
 
 # Temporary
 tmp/
-temp/"tsconfig.tsbuildinfo" 
+temp/
+
+# CMS: nội dung admin nhập trên server (KHÔNG commit — xem README-admin.md).
+# Seed dữ liệu ban đầu nằm trong src/lib/cms/schema.ts, file thật được tạo
+# tự động lần đầu server chạy. Nếu commit các file này, lần sau `git pull`
+# trên VPS sẽ ghi đè mất nội dung admin đã thêm.
+content/data/
+public/uploads/*
+!public/uploads/.gitkeep
+
+"tsconfig.tsbuildinfo" 
 "tsconfig.tsbuildinfo" 
 tsconfig.tsbuildinfo
 tsconfig.tsbuildinfo

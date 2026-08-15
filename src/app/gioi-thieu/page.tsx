@@ -227,6 +227,27 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
+          <div>
+            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+              Nhân sự chủ chốt
+            </span>
+            <h2 className="mt-2 text-2xl font-bold text-slate-900">Ban lãnh đạo</h2>
+            <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+              Hội đồng Quản trị, Ban Tổng Giám đốc và Ban Kiểm soát Công ty cổ
+              phần Thủy điện Đakđrinh (PV Power DHC).
+            </p>
+          </div>
+          <Link
+            href="/gioi-thieu/ban-lanh-dao"
+            className="shrink-0 rounded-xl bg-cyan-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-500"
+          >
+            Xem Ban lãnh đạo
+          </Link>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8">
           <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
             Dự án

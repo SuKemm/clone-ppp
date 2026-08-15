@@ -141,10 +141,10 @@ export default function Home() {
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-              TIN NỔI BẬT
+              TIN TỨC VÀ SỰ KIỆN
             </p>
             <h2 className="mt-2 text-3xl font-semibold text-slate-900">
-              Thông tin mới nhất từ PTSC
+              Tin tức và sự kiện
             </h2>
           </div>
           <a href="/tin-tuc" className="text-sm font-semibold text-cyan-700 hover:text-cyan-800">
