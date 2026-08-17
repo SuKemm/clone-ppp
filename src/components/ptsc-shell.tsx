@@ -200,23 +200,23 @@ export function PtscShell({
               {/* Company name */}
 <span className="hidden sm:flex min-w-0 flex-col justify-center leading-tight">
   {isEnglish ? (
-    <>
-      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+    <span className="w-max text-center">
+      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
         Dakdrinh Hydropower
       </span>
-      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
         Joint Stock Company
       </span>
-    </>
+    </span>
   ) : (
-    <>
-      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
-        Công ty cổ phần  
+    <span className="w-max text-center">
+      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+        Công ty cổ phần
       </span>
-      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
         Thủy điện ĐAKĐRINH
       </span>
-    </>
+    </span>
   )}
 </span>
             </Link>
