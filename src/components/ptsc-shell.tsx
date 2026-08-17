@@ -300,9 +300,6 @@ export function PtscShell({
         {title ? (
           <section className="border-b border-slate-200 bg-slate-50/80">
             <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-                PV POWER DHC
-              </p>
               <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">
                 {title}
               </h1>

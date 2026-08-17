@@ -175,48 +175,52 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-              TIN TỨC VÀ SỰ KIỆN
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold text-slate-900">
-              Tin tức và sự kiện
-            </h2>
-          </div>
-          <a href="/tin-tuc" className="text-sm font-semibold text-cyan-700 hover:text-cyan-800">
-            Xem thêm →
-          </a>
-        </div>
-        <div className="mt-8 grid gap-6 lg:grid-cols-3">
-          {news.map((item) => (
-            <a
-              key={item.title}
-              href={item.link}
-              className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
-                {item.category}
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-7 text-slate-900">{item.title}</h3>
-              <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-                <span>{item.date}</span>
-                <span className="text-cyan-700 transition group-hover:translate-x-1">→</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
+     {/* News */}
+<section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+  <div className="flex flex-col items-center text-center">
+    <h2 className="text-4xl font-bold uppercase tracking-tight text-slate-900 md:text-5xl">
+      TIN TỨC VÀ SỰ KIỆN
+    </h2>
 
-      <section id="about" className="bg-slate-50 py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-            CẬP NHẬT
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-900">
-            Tình hình sản xuất năm 2026
-          </h2>
+    <a
+      href="/tin-tuc"
+      className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
+    >
+      Xem thêm →
+    </a>
+  </div>
+
+  <div className="mt-10 grid gap-6 lg:grid-cols-3">
+    {news.map((item) => (
+      <a
+        key={item.title}
+        href={item.link}
+        className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+      >
+        {/* Đã bỏ CẬP NHẬT */}
+
+        <h3 className="text-lg font-semibold leading-7 text-slate-900">
+          {item.title}
+        </h3>
+
+        <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+          <span>{item.date}</span>
+          <span className="text-cyan-700 transition group-hover:translate-x-1">
+            →
+          </span>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>
+
+
+{/* Production */}
+<section id="about" className="bg-slate-50 py-16">
+  <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <h2 className="text-center text-4xl font-bold uppercase tracking-tight text-slate-900 md:text-5xl">
+      TÌNH HÌNH SẢN XUẤT NĂM 2026
+    </h2>
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {productionStatus.map(([value, label, period]) => (
               <div
