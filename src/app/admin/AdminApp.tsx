@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { COLLECTIONS, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
+import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
 
 export default function AdminApp() {
@@ -165,6 +165,34 @@ function ItemForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [translatingKey, setTranslatingKey] = useState<string | null>(null);
+
+  // Với mỗi field tiếng Việt có field "<key>_en" tương ứng (khai báo trong
+  // schema.ts), cho phép bấm nút để tự động điền bản dịch tiếng Anh bằng API
+  // đã cấu hình (ANTHROPIC_API_KEY hoặc DEEPL_API_KEY trong .env.local).
+  const pairs = translationPairs(def);
+  const targetKeyBySource = new Map(pairs.map((p) => [p.source.key, p.target.key]));
+
+  async function translateField(sourceKey: string, targetKey: string) {
+    const sourceText = values[sourceKey];
+    if (!sourceText || !sourceText.trim()) return;
+    setTranslatingKey(targetKey);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: sourceText }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? "Dịch thất bại");
+      setValues((v) => ({ ...v, [targetKey]: body.translated }));
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setTranslatingKey(null);
+    }
+  }
 
   async function uploadOne(file: File): Promise<string> {
     const fd = new FormData();
@@ -257,8 +285,23 @@ function ItemForm({
         <div className="mt-4 space-y-4">
           {def.fields.map((f) => (
             <label key={f.key} className="block text-sm font-medium text-slate-700">
-              {f.label}
-              {f.required && <span className="text-red-500"> *</span>}
+              <span className="flex items-center justify-between gap-2">
+                <span>
+                  {f.label}
+                  {f.required && <span className="text-red-500"> *</span>}
+                </span>
+                {targetKeyBySource.has(f.key) && (
+                  <button
+                    type="button"
+                    disabled={translatingKey === targetKeyBySource.get(f.key) || !values[f.key]?.trim()}
+                    onClick={() => translateField(f.key, targetKeyBySource.get(f.key)!)}
+                    className="shrink-0 rounded-md border border-cyan-200 bg-cyan-50 px-2 py-1 text-xs font-medium text-cyan-700 hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-40"
+                    title="Tự động điền bản dịch tiếng Anh vào ô bên dưới"
+                  >
+                    {translatingKey === targetKeyBySource.get(f.key) ? "Đang dịch..." : "Dịch tự động → EN"}
+                  </button>
+                )}
+              </span>
 
               {f.type === "textarea" ? (
                 <textarea

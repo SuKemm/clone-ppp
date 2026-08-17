@@ -61,7 +61,7 @@ const navItemsEn: NavItem[] = [
     label: "Introduction",
     children: [
       { href: "/en-US/about-us", label: "Overview" },
-      { href: "/en-US/about-us#leadership", label: "Board of Directors" },
+      { href: "/en-US/about-us/leadership", label: "Board of Directors" },
       { href: "/en-US/projects", label: "Projects" },
       { href: "/en-US/units", label: "Corporate Information" },
     ],

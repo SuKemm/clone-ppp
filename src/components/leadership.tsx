@@ -12,12 +12,14 @@
 export type LeadershipPerson = {
   name: string;
   title: string;
+  title_en?: string; // bản tiếng Anh của "title", dùng ở trang /en-US/about-us/leadership
   photo?: string; // "/images/leadership/ten-file.jpg" hoặc "" nếu chưa có ảnh
 };
 
 export type LeadershipGroup = {
   id: string;
   groupTitle: string;
+  groupTitle_en?: string; // bản tiếng Anh của "groupTitle"
   leader: LeadershipPerson;
   members: LeadershipPerson[];
 };
@@ -26,43 +28,49 @@ export const leadershipGroups: LeadershipGroup[] = [
   {
     id: "hdqt",
     groupTitle: "Hội đồng Quản trị",
+    groupTitle_en: "Board of Directors",
     leader: {
       name: "Nguyễn Văn A",
       title: "Chủ tịch Hội đồng Quản trị",
+      title_en: "Chairman of the Board of Directors",
       photo: "",
     },
     members: [
-      { name: "Nguyễn Văn B", title: "Thành viên HĐQT", photo: "" },
-      { name: "Nguyễn Văn C", title: "Thành viên HĐQT", photo: "" },
-      { name: "Nguyễn Thị D", title: "Thành viên HĐQT", photo: "" },
-      { name: "Nguyễn Văn E", title: "Thành viên độc lập HĐQT", photo: "" },
+      { name: "Nguyễn Văn B", title: "Thành viên HĐQT", title_en: "Board Member", photo: "" },
+      { name: "Nguyễn Văn C", title: "Thành viên HĐQT", title_en: "Board Member", photo: "" },
+      { name: "Nguyễn Thị D", title: "Thành viên HĐQT", title_en: "Board Member", photo: "" },
+      { name: "Nguyễn Văn E", title: "Thành viên độc lập HĐQT", title_en: "Independent Board Member", photo: "" },
     ],
   },
   {
     id: "btgd",
     groupTitle: "Ban Tổng Giám đốc",
+    groupTitle_en: "Board of Management",
     leader: {
       name: "Nguyễn Văn F",
       title: "Tổng Giám đốc",
+      title_en: "General Director",
       photo: "",
     },
     members: [
-      { name: "Nguyễn Văn G", title: "Phó Tổng Giám đốc", photo: "" },
-      { name: "Nguyễn Văn H", title: "Phó Tổng Giám đốc", photo: "" },
-      { name: "Nguyễn Văn I", title: "Phó Tổng Giám đốc", photo: "" },
+      { name: "Nguyễn Văn G", title: "Phó Tổng Giám đốc", title_en: "Deputy General Director", photo: "" },
+      { name: "Nguyễn Văn H", title: "Phó Tổng Giám đốc", title_en: "Deputy General Director", photo: "" },
+      { name: "Nguyễn Văn I", title: "Phó Tổng Giám đốc", title_en: "Deputy General Director", photo: "" },
     ],
   },
   {
     id: "bks",
     groupTitle: "Ban Kiểm soát",
+    groupTitle_en: "Supervisory Board",
     leader: {
       name: "Nguyễn Văn K",
       title: "Trưởng Ban kiểm soát",
+      title_en: "Head of the Supervisory Board",
       photo: "",
     },
     members: [
-      { name: "Nguyễn Thị L", title: "Kiểm soát viên", photo: "" },
-      { name: "Nguyễn Thị M", title: "Kiểm soát viên", photo: "" },
+      { name: "Nguyễn Thị L", title: "Kiểm soát viên", title_en: "Supervisor", photo: "" },
+      { name: "Nguyễn Thị M", title: "Kiểm soát viên", title_en: "Supervisor", photo: "" },
     ],
   },
 ];
@@ -108,17 +116,20 @@ export function PersonAvatar({
 export function PersonCard({
   person,
   size,
+  locale = "vi",
 }: {
   person: LeadershipPerson;
   size: "lg" | "md";
+  locale?: "vi" | "en";
 }) {
+  const title = locale === "en" ? person.title_en || person.title : person.title;
   return (
     <div className="flex flex-col items-center text-center">
       <PersonAvatar name={person.name} photo={person.photo} size={size} />
       <div className={`mt-4 font-bold text-slate-900 ${size === "lg" ? "text-xl" : "text-base"}`}>
         {person.name}
       </div>
-      <div className="mt-1 text-sm font-medium text-cyan-700">{person.title}</div>
+      <div className="mt-1 text-sm font-medium text-cyan-700">{title}</div>
     </div>
   );
 }

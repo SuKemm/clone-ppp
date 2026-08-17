@@ -1,38 +1,45 @@
+import Link from "next/link";
 import { PtscShell } from "@/components/ptsc-shell";
+import { getCollection } from "@/lib/cms/store";
+import { ArticleViewCount } from "@/components/ArticleViewCount";
 
-const news = [
-  {
-    date: "24/06/2026",
-    title: "PTSC successfully held the naming and handover ceremony for FSO PTSC Lac Da Vang, ready for First Oil at Lac Da Vang field.",
-    category: "Production & Business",
-  },
-  {
-    date: "20/06/2026",
-    title: "Proactively manage risks to maintain progress on the Lo B Gas Project – EPCI#1 package.",
-    category: "Production & Business",
-  },
-  {
-    date: "18/06/2026",
-    title: "PTSC confirms its position after a record year and aims to strengthen regional competitiveness.",
-    category: "Production & Business",
-  },
-];
+// Đọc cùng dữ liệu với trang tiếng Việt (/tin-tuc) để hai ngôn ngữ luôn đồng
+// bộ — không còn mảng viết cứng riêng cho tiếng Anh. Field "<key>_en" (nhập
+// ở /admin) được ưu tiên hiển thị; nếu bài viết chưa có bản dịch, tạm hiển
+// thị bản tiếng Việt để trang không bị trống.
+export const dynamic = "force-dynamic";
 
-export default function NewsPage() {
+export default function NewsPageEn() {
+  const news = getCollection("news");
+
   return (
-    <PtscShell
-      title="News"
-      description="Latest news and updates from PTSC."
-    >
+    <PtscShell title="News" description="Latest news and updates from PTSC.">
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-3">
-          {news.map((item) => (
-            <article key={item.title} className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{item.category}</p>
-              <h2 className="mt-3 text-lg font-semibold text-slate-900">{item.title}</h2>
-              <p className="mt-4 text-sm text-slate-500">{item.date}</p>
-            </article>
-          ))}
+          {news.map((item) => {
+            const title = item.title_en || item.title;
+            const category = item.category_en || item.category;
+            return (
+              <article key={item.id} className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
+                {item.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.image} alt="" className="mb-4 h-40 w-full rounded-2xl object-cover" />
+                )}
+                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{category}</p>
+                <Link
+                  href={`/en-US/news/${item.id}`}
+                  className="mt-3 block text-lg font-semibold text-slate-900 transition hover:text-cyan-700"
+                >
+                  {title}
+                </Link>
+                <div className="mt-4 flex items-center gap-3 text-sm text-slate-500">
+                  <p>{item.date}</p>
+                  <span aria-hidden>·</span>
+                  <ArticleViewCount id={item.id} mode="display" />
+                </div>
+              </article>
+            );
+          })}
         </div>
       </section>
     </PtscShell>
