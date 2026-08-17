@@ -190,3 +190,13 @@
 .animate-marquee {
   animation: marquee 22s linear infinite;
 }
+
+/* Dải logo cổ đông / nhà đầu tư ở footer — cùng kỹ thuật với dòng chữ chạy
+   nhưng chậm hơn (nội dung rộng hơn, có ảnh) và dừng khi rê chuột vào. */
+.animate-logo-marquee {
+  animation: marquee 35s linear infinite;
+}
+
+.animate-logo-marquee:hover {
+  animation-play-state: paused;
+}

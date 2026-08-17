@@ -176,7 +176,7 @@ export default function Home() {
 <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
   <div className="flex flex-col items-center text-center">
     <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
-      TÌNH HÌNH SẢN XUẤT NĂM 2026
+      Thông tin sản xuất
     </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
             {/* Bên trái: 4 thẻ sản lượng, xếp 2x2 */}
@@ -199,8 +199,8 @@ export default function Home() {
             </div>
 
             {/* Bên phải: Mực nước hiện tại */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-              <h3 className="text-center text-lg font-bold uppercase tracking-[0.15em] text-slate-900">
+            <div className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h3 className="text-center text-3xl font-bold text-cyan-700">
                 Mực nước hiện tại
               </h3>
               <div className="mt-6 space-y-5">
@@ -214,6 +214,11 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              {productionInfo?.ngay_cap_nhat && (
+                <p className="mt-8 text-right text-xs text-slate-400">
+                  Cập nhật ngày: {productionInfo.ngay_cap_nhat}
+                </p>
+              )}
             </div>
           </div>
         </div>

@@ -293,6 +293,7 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "muc_nuoc_ho", label: "Mực nước hồ hiện tại (m)", type: "text" },
       { key: "luu_luong_ve_ho", label: "Lưu lượng về hồ (m³/s)", type: "text" },
       { key: "luu_luong_phat_dien", label: "Lưu lượng phát điện trung bình ngày (m³/s)", type: "text" },
+      { key: "ngay_cap_nhat", label: "Ngày cập nhật số liệu", type: "date" },
     ],
     seed: [
       {
@@ -307,6 +308,7 @@ export const COLLECTIONS: CollectionDef[] = [
         muc_nuoc_ho: "410",
         luu_luong_ve_ho: "60",
         luu_luong_phat_dien: "50",
+        ngay_cap_nhat: "",
       },
     ],
   },

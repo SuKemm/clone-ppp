@@ -324,21 +324,23 @@ export function PtscShell({
         {children}
       </main>
 
-      {/* Shareholder / investor logos — nền trắng, đặt ngay trước footer */}
+      {/* Shareholder / investor logos — chạy ngang liên tục như dòng chữ chạy,
+          mỗi logo có khung viền trắng ôm sát logo (không quá rộng). */}
       <section className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-            {isEnglish ? "Shareholders & Investors" : "Cổ đông & Nhà đầu tư"}
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
-            {investorLogos.map((logo) => (
-              <img
-                key={logo.name}
-                src={logo.image}
-                alt={logo.name}
-                title={logo.name}
-                className="h-12 w-auto object-contain sm:h-14"
-              />
+        <div className="overflow-hidden py-8">
+          <div className="flex w-max items-center gap-6 animate-logo-marquee">
+            {[...investorLogos, ...investorLogos].map((logo, index) => (
+              <div
+                key={`${logo.name}-${index}`}
+                className="flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-4"
+              >
+                <img
+                  src={logo.image}
+                  alt={logo.name}
+                  title={logo.name}
+                  className="h-10 w-auto object-contain sm:h-12"
+                />
+              </div>
             ))}
           </div>
         </div>
