@@ -199,8 +199,8 @@ export default function Home() {
             </div>
 
             {/* Bên phải: Mực nước hiện tại */}
-            <div className="relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-              <h3 className="text-center text-3xl font-bold text-cyan-700">
+            <div className="relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h3 className="text-center text-3xl font-bold uppercase text-cyan-700">
                 Mực nước hiện tại
               </h3>
               <div className="mt-6 space-y-5">
@@ -215,7 +215,7 @@ export default function Home() {
                 ))}
               </div>
               {productionInfo?.ngay_cap_nhat && (
-                <p className="mt-8 text-right text-xs text-slate-400">
+                <p className="mt-auto pt-8 text-center text-sm font-semibold text-slate-600">
                   Cập nhật ngày: {productionInfo.ngay_cap_nhat}
                 </p>
               )}
