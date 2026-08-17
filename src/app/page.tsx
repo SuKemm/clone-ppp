@@ -102,6 +102,16 @@ const videoLibrary = [
 export default function Home() {
   const productionInfo = getCollection("production-info")[0];
 
+  // Ngày cập nhật hiển thị luôn là ngày hiện tại (giờ Việt Nam) — không cần
+  // vào admin sửa tay mỗi ngày. Nếu sau này muốn cho phép ghi đè bằng tay,
+  // có thể ưu tiên productionInfo?.ngay_cap_nhat khi trường đó có giá trị.
+  const ngayCapNhat = new Date().toLocaleDateString("vi-VN", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
   const productionStatus: [string, string, string][] = [
     [productionInfo?.san_luong_ngay ?? "", "Sản lượng", productionInfo?.san_luong_ngay_ky ?? ""],
     [productionInfo?.san_luong_thang ?? "", "Sản lượng", productionInfo?.san_luong_thang_ky ?? ""],
@@ -214,11 +224,9 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              {productionInfo?.ngay_cap_nhat && (
-                <p className="mt-auto pt-8 text-center text-sm font-semibold text-slate-600">
-                  Cập nhật ngày: {productionInfo.ngay_cap_nhat}
-                </p>
-              )}
+              <p className="mt-auto pt-8 text-center text-sm font-semibold text-slate-600">
+                Cập nhật ngày: {ngayCapNhat}
+              </p>
             </div>
           </div>
         </div>
