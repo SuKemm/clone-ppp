@@ -211,10 +211,10 @@ export function PtscShell({
   ) : (
     <>
       <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
-        Công ty cổ phần Thủy điện 
+        Công ty cổ phần  
       </span>
       <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
-        Dakdrinh
+        Thủy điện ĐAKĐRINH
       </span>
     </>
   )}
