@@ -20,7 +20,8 @@ export type CollectionId =
   | "jobs"
   | "photo-albums"
   | "video-albums"
-  | "site-marquee";
+  | "site-marquee"
+  | "production-info";
 
 export type CollectionDef = {
   id: CollectionId;
@@ -270,6 +271,42 @@ export const COLLECTIONS: CollectionDef[] = [
       {
         text: "Chào mừng Quý cổ đông, đối tác và khách hàng đến với Công ty Cổ phần Thủy điện Đakđrinh!",
         text_en: "Welcome shareholders, partners and customers to Dakdrinh Hydropower Joint Stock Company!",
+      },
+    ],
+  },
+  {
+    // CHỈ GIỮ 1 BẢN GHI DUY NHẤT: khối "Tình hình sản xuất" + "Mực nước
+    // hiện tại" ở trang chủ luôn lấy bản ghi ĐẦU TIÊN của collection này.
+    // Ở /admin, chỉ cần bấm "Sửa" trên mục có sẵn để cập nhật số liệu —
+    // không cần (và không nên) bấm "+ Thêm mới" thêm bản ghi khác.
+    id: "production-info",
+    label: "Tình hình sản xuất & Mực nước",
+    fields: [
+      { key: "san_luong_ngay", label: "Sản lượng theo ngày — giá trị (MWh)", type: "text", required: true },
+      { key: "san_luong_ngay_ky", label: "Sản lượng theo ngày — kỳ (vd: Ngày 12/08)", type: "text" },
+      { key: "san_luong_thang", label: "Sản lượng theo tháng — giá trị (MWh)", type: "text", required: true },
+      { key: "san_luong_thang_ky", label: "Sản lượng theo tháng — kỳ (vd: Tháng 08)", type: "text" },
+      { key: "san_luong_quy", label: "Sản lượng theo quý — giá trị (MWh)", type: "text", required: true },
+      { key: "san_luong_quy_ky", label: "Sản lượng theo quý — kỳ (vd: Quý III)", type: "text" },
+      { key: "san_luong_nam", label: "Sản lượng theo năm — giá trị (MWh)", type: "text", required: true },
+      { key: "san_luong_nam_ky", label: "Sản lượng theo năm — kỳ (vd: Năm 2026)", type: "text" },
+      { key: "muc_nuoc_ho", label: "Mực nước hồ hiện tại (m)", type: "text" },
+      { key: "luu_luong_ve_ho", label: "Lưu lượng về hồ (m³/s)", type: "text" },
+      { key: "luu_luong_phat_dien", label: "Lưu lượng phát điện trung bình ngày (m³/s)", type: "text" },
+    ],
+    seed: [
+      {
+        san_luong_ngay: "1.384,48",
+        san_luong_ngay_ky: "Ngày 12/08",
+        san_luong_thang: "12.296,65",
+        san_luong_thang_ky: "Tháng 08",
+        san_luong_quy: "45.647,83",
+        san_luong_quy_ky: "Quý III",
+        san_luong_nam: "220.125,45",
+        san_luong_nam_ky: "Năm 2026",
+        muc_nuoc_ho: "410",
+        luu_luong_ve_ho: "60",
+        luu_luong_phat_dien: "50",
       },
     ],
   },

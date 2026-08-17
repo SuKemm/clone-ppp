@@ -102,7 +102,6 @@ export default function EnglishHomePage() {
   return (
     <PtscShell>
       <section className="relative overflow-hidden bg-slate-950">
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,13,24,0.95)_0%,rgba(7,13,24,0.84)_44%,rgba(7,13,24,0.32)_100%)]" />
         <img
           src={heroSlides[0].image}
           alt={heroSlides[0].title}

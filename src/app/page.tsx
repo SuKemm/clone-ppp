@@ -2,6 +2,9 @@ import Link from "next/link";
 import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { MarqueeBar } from "@/components/MarqueeBar";
+import { getCollection } from "@/lib/cms/store";
+
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin (sản lượng, mực nước, dòng chữ chạy)
 
 const heroSlides = [
   {
@@ -48,12 +51,10 @@ const news = [
   },
 ];
 
-const productionStatus = [
-  ["1.384,48", "Sản lượng", "Ngày 12/08"],
-  ["12.296,65", "Sản lượng", "Tháng 08"],
-  ["45.647,83", "Sản lượng", "Quý III"],
-  ["220.125,45", "Sản lượng", "Năm 2026"],
-];
+// Sản lượng & mực nước hiện tại được lấy từ /admin -> "Tình hình sản xuất &
+// Mực nước" (xem src/lib/cms/schema.ts, id "production-info"), không còn
+// hardcode ở đây nữa — xem hàm Home() bên dưới.
+
 
 const shareholderRelations = [
   {
@@ -99,10 +100,28 @@ const videoLibrary = [
 ];
 
 export default function Home() {
+  const productionInfo = getCollection("production-info")[0];
+
+  const productionStatus: [string, string, string][] = [
+    [productionInfo?.san_luong_ngay ?? "", "Sản lượng", productionInfo?.san_luong_ngay_ky ?? ""],
+    [productionInfo?.san_luong_thang ?? "", "Sản lượng", productionInfo?.san_luong_thang_ky ?? ""],
+    [productionInfo?.san_luong_quy ?? "", "Sản lượng", productionInfo?.san_luong_quy_ky ?? ""],
+    [productionInfo?.san_luong_nam ?? "", "Sản lượng", productionInfo?.san_luong_nam_ky ?? ""],
+  ];
+
+  const waterLevels = [
+    { label: "Mực nước hồ hiện tại", value: productionInfo?.muc_nuoc_ho ?? "", unit: "m" },
+    { label: "Lưu lượng về hồ", value: productionInfo?.luu_luong_ve_ho ?? "", unit: "m³/s" },
+    {
+      label: "Lưu lượng phát điện trung bình ngày",
+      value: productionInfo?.luu_luong_phat_dien ?? "",
+      unit: "m³/s",
+    },
+  ];
+
   return (
     <PtscShell>
       <section className="relative overflow-hidden bg-slate-950">
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,13,24,0.95)_0%,rgba(7,13,24,0.84)_44%,rgba(7,13,24,0.32)_100%)]" />
         <img
           src={heroSlides[0].image}
           alt={heroSlides[0].title}
@@ -116,7 +135,7 @@ export default function Home() {
      {/* News */}
 <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
   <div className="flex flex-col items-center text-center">
-    <h2 className="text-4xl font-bold uppercase tracking-tight text-slate-900 md:text-5xl">
+    <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
       TIN TỨC VÀ SỰ KIỆN
     </h2>
 
@@ -154,27 +173,48 @@ export default function Home() {
 
 
 {/* Production */}
-<section id="about" className="bg-slate-50 py-16">
-  <div className="mx-auto max-w-7xl px-6 lg:px-8">
-    <h2 className="text-center text-4xl font-bold uppercase tracking-tight text-slate-900 md:text-5xl">
+<section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+  <div className="flex flex-col items-center text-center">
+    <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
       TÌNH HÌNH SẢN XUẤT NĂM 2026
     </h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {productionStatus.map(([value, label, period]) => (
-              <div
-                key={period}
-                className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <div className="text-3xl font-bold text-cyan-700">{value}</div>
-                <div className="mx-auto mt-4 h-px w-8 bg-slate-300" />
-                <div className="mt-4 text-sm leading-6 text-slate-600">
-                  {label}
-                  <br />
-                  {period}
+          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+            {/* Bên trái: 4 thẻ sản lượng, xếp 2x2 */}
+            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
+              {productionStatus.map(([value, label, period], index) => (
+                <div
+                  key={`${period}-${index}`}
+                  className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="text-3xl font-bold text-cyan-700">{value}</div>
+                  <div className="mx-auto mt-4 h-px w-8 bg-slate-300" />
+                  <div className="mt-4 text-sm leading-6 text-slate-600">
+                    {label}
+                    <br />
+                    {period}
+                  </div>
+                  <div className="mt-1 text-sm font-bold text-cyan-700">(MWh)</div>
                 </div>
-                <div className="mt-1 text-sm font-bold text-cyan-700">(MWh)</div>
+              ))}
+            </div>
+
+            {/* Bên phải: Mực nước hiện tại */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h3 className="text-center text-lg font-bold uppercase tracking-[0.15em] text-slate-900">
+                Mực nước hiện tại
+              </h3>
+              <div className="mt-6 space-y-5">
+                {waterLevels.map((row) => (
+                  <div key={row.label} className="flex items-end gap-2 text-sm text-slate-600">
+                    <span className="shrink-0">{row.label}</span>
+                    <span className="mb-1 flex-1 border-b border-dotted border-slate-300" />
+                    <span className="shrink-0 font-bold text-cyan-700">
+                      {row.value} {row.unit}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
