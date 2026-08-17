@@ -108,41 +108,6 @@ export default function Home() {
           alt={heroSlides[0].title}
           className="h-[620px] w-full object-cover"
         />
-        <div className="absolute inset-0 flex items-center">
-          <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-24 lg:px-8">
-            <p className="max-w-2xl text-sm font-semibold uppercase tracking-[0.35em] text-cyan-300">
-              Tổng công ty Cổ phần Dịch vụ Kỹ thuật Dầu khí Việt Nam
-            </p>
-            <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
-              {heroSlides[0].title}
-            </h1>
-            <p className="max-w-2xl text-lg leading-8 text-slate-200">
-              PTSC là đơn vị hàng đầu trong lĩnh vực cung cấp các dịch vụ kỹ thuật dầu khí, công nghiệp và năng lượng tái tạo tại Việt Nam.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <a
-                href="#projects"
-                className="rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
-              >
-                Khám phá dự án
-              </a>
-              <a
-                href="/dich-vu"
-                className="rounded-full border border-white/15 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                Xem dịch vụ
-              </a>
-            </div>
-            <div className="mt-2 flex gap-2">
-              {heroSlides.map((slide, index) => (
-                <span
-                  key={slide.title}
-                  className={`h-2.5 w-2.5 rounded-full ${index === 0 ? "bg-cyan-400" : "bg-white/40"}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
