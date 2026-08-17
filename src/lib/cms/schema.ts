@@ -19,7 +19,8 @@ export type CollectionId =
   | "projects"
   | "jobs"
   | "photo-albums"
-  | "video-albums";
+  | "video-albums"
+  | "site-marquee";
 
 export type CollectionDef = {
   id: CollectionId;
@@ -255,6 +256,20 @@ export const COLLECTIONS: CollectionDef[] = [
         title_en: "Production Activities Documentary",
         date: "02.06.2023",
         image: "/images/ptsc/service-bien.jpg",
+      },
+    ],
+  },
+  {
+    id: "site-marquee",
+    label: "Dòng chữ chạy (trang chủ)",
+    fields: [
+      { key: "text", label: "Nội dung dòng chữ chạy", type: "text", required: true },
+      { key: "text_en", label: "Nội dung dòng chữ chạy (EN)", type: "text" },
+    ],
+    seed: [
+      {
+        text: "Chào mừng Quý cổ đông, đối tác và khách hàng đến với Công ty Cổ phần Thủy điện Đakđrinh!",
+        text_en: "Welcome shareholders, partners and customers to Dakdrinh Hydropower Joint Stock Company!",
       },
     ],
   },

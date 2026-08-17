@@ -5,6 +5,18 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { VisitorStats } from "./VisitorStats";
 
+// Logo cổ đông / nhà đầu tư — trước đây nằm ngay dưới banner trang chủ, nay
+// chuyển xuống chân trang (dùng chung cho mọi trang vì Footer nằm trong
+// PtscShell). Vị trí cũ trên trang chủ đã thay bằng <MarqueeBar /> (dòng
+// chữ chạy, sửa được ở /admin).
+const investorLogos = [
+  { name: "BIDV", image: "/images/ptsc/shareholder-bidv.png" },
+  { name: "PetroVietnam Power", image: "/images/ptsc/shareholder-petrovietnam-power.png" },
+  { name: "PV Power DHC", image: "/images/ptsc/shareholder-pvpower-dhc.png" },
+  { name: "Cổ đông 3", image: "/images/ptsc/shareholder-03.png" },
+  { name: "LICOGI", image: "/images/ptsc/shareholder-licogi.png" },
+];
+
 type NavItem = {
   href: string;
   label: string;
@@ -355,6 +367,26 @@ export function PtscShell({
 
           {/* Gradient divider, echoing the reference footer's colored line */}
           <div className="mx-auto mt-8 h-[3px] w-full max-w-2xl bg-gradient-to-r from-cyan-400 via-sky-500 to-amber-400" />
+        </div>
+
+        {/* Shareholder / investor logos — moved here from below the homepage banner */}
+        <div className="relative border-t border-white/5 bg-white/[0.03]">
+          <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+              {isEnglish ? "Shareholders & Investors" : "Cổ đông & Nhà đầu tư"}
+            </p>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+              {investorLogos.map((logo) => (
+                <img
+                  key={logo.name}
+                  src={logo.image}
+                  alt={logo.name}
+                  title={logo.name}
+                  className="h-10 w-auto object-contain opacity-80 grayscale transition duration-300 hover:opacity-100 hover:grayscale-0 sm:h-12"
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Visitor stats bar — full-width, left to right, sitting right above the footer's bottom edge */}
