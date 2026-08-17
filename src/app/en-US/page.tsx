@@ -7,7 +7,8 @@ import { PtscShell } from "@/components/ptsc-shell";
 const heroSlides = [
   {
     title: "General Contractor for Offshore Oil & Gas and Renewable Energy Projects",
-    image: "/images/ptsc/service-fso.jpg",
+    // Same panorama file as the Vietnamese homepage.
+    image: "/images/ptsc/banner-panorama.jpg",
   },
   {
     title: "General Contractor for Offshore Oil & Gas and Renewable Energy Projects",
@@ -17,6 +18,15 @@ const heroSlides = [
     title: "General Contractor for Offshore Oil & Gas and Renewable Energy Projects",
     image: "/images/ptsc/service-bien.jpg",
   },
+];
+
+// Shareholder / investor logo strip — same files as the Vietnamese homepage.
+const investorLogos = [
+  { name: "BIDV", image: "/images/ptsc/shareholder-bidv.png" },
+  { name: "PetroVietnam Power", image: "/images/ptsc/shareholder-petrovietnam-power.png" },
+  { name: "PV Power DHC", image: "/images/ptsc/shareholder-pvpower-dhc.png" },
+  { name: "Shareholder 3", image: "/images/ptsc/shareholder-03.png" },
+  { name: "LICOGI", image: "/images/ptsc/shareholder-licogi.png" },
 ];
 
 const news = [
@@ -135,6 +145,26 @@ export default function EnglishHomePage() {
                 />
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== Shareholders / Investors ===== */}
+      <section className="border-b border-slate-200 bg-slate-50/80">
+        <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+            Shareholders &amp; Investors
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+            {investorLogos.map((logo) => (
+              <img
+                key={logo.name}
+                src={logo.image}
+                alt={logo.name}
+                title={logo.name}
+                className="h-12 w-auto object-contain grayscale transition duration-300 hover:grayscale-0 sm:h-14"
+              />
+            ))}
           </div>
         </div>
       </section>

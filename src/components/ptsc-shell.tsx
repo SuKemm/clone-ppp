@@ -50,6 +50,7 @@ const navItemsVi: NavItem[] = [
     children: [
       { href: "/dich-vu#thu-vien-anh", label: "Thư viện ảnh" },
       { href: "/dich-vu#thu-vien-video", label: "Thư viện video" },
+      { href: "/so-tay-van-hoa", label: "Sổ tay văn hóa" },
     ],
   },
   { href: "/lien-he", label: "Liên hệ" },
@@ -90,6 +91,7 @@ const navItemsEn: NavItem[] = [
     children: [
       { href: "/en-US/services#photos", label: "Photo Gallery" },
       { href: "/en-US/services#videos", label: "Video Gallery" },
+      { href: "/en-US/culture-handbook", label: "Culture Handbook" },
     ],
   },
   { href: "/en-US/contact", label: "Contact" },
@@ -134,33 +136,45 @@ export function PtscShell({
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <header className="sticky top-0 z-30">
-        {/* Top utility bar */}
-        <div className="bg-[#0e1d3d]">
-          <div className="mx-auto flex max-w-7xl items-center justify-end px-6 py-1.5 lg:px-8">
-            <div className="flex shrink-0 items-center overflow-hidden rounded-sm text-xs font-semibold">
-              <Link
-                href="/"
-                className={`px-2.5 py-1 transition ${
-                  !isEnglish
-                    ? "bg-cyan-500 text-white"
-                    : "bg-[#16294f] text-slate-300 hover:text-white"
-                }`}
-              >
-                VI
-              </Link>
-              <Link
-                href="/en-US"
-                className={`px-2.5 py-1 transition ${
-                  isEnglish
-                    ? "bg-cyan-500 text-white"
-                    : "bg-[#16294f] text-slate-300 hover:text-white"
-                }`}
-              >
-                EN
-              </Link>
-            </div>
-          </div>
-        </div>
+        {/* Top utility bar — same navy as the main nav so the header reads as one block,
+            plus the company slogan (bilingual) sitting level with the language switcher. */}
+        <div className="bg-[#075B9F] border-b border-[#063E70]">
+  <div className="relative mx-auto flex max-w-7xl items-center justify-center px-6 py-1.5 lg:px-8">
+
+    {/* Slogan chính giữa */}
+    <p className="text-center text-[12px] font-bold uppercase tracking-[0.04em] text-[#FF6B00] sm:text-sm">
+      {isEnglish
+        ? "Quality - Safety - Efficiency - Development"
+        : "Chất lượng - An toàn - Hiệu quả - Phát triển"}
+    </p>
+
+    {/* VI / EN bên phải */}
+    <div className="absolute right-6 flex shrink-0 items-center overflow-hidden rounded-sm text-xs font-semibold lg:right-8">
+      <Link
+        href="/"
+        className={`px-2.5 py-1 transition ${
+          !isEnglish
+            ? "bg-[#FF6B00] text-white"
+            : "bg-[#064B82] text-slate-200 hover:bg-[#0868AD] hover:text-white"
+        }`}
+      >
+        VI
+      </Link>
+
+      <Link
+        href="/en-US"
+        className={`px-2.5 py-1 transition ${
+          isEnglish
+            ? "bg-[#FF6B00] text-white"
+            : "bg-[#064B82] text-slate-200 hover:bg-[#0868AD] hover:text-white"
+        }`}
+      >
+        EN
+      </Link>
+    </div>
+
+  </div>
+</div>
 
         {/* Main nav */}
         <div className="border-b border-white/5 bg-[#0a1330]">
@@ -171,19 +185,28 @@ export function PtscShell({
                 alt="PETROVIETNAM POWER-DHC"
                 className="h-20 w-auto shrink-0"
               />
-              <span className="hidden flex-col leading-tight sm:flex">
-                {isEnglish ? (
-                  <span className="text-lg font-extrabold uppercase tracking-wide text-emerald-400">
-                    Dakdrinh Hydropower Joint Stock Company
-                  </span>
-                ) : (
-                  <>
-                    <span className="text-lg font-extrabold uppercase tracking-wide text-emerald-400">
-                      Công ty cổ phần Thủy điện Đakđrinh
-                    </span>
-                  </>
-                )}
-              </span>
+              {/* Company name */}
+<span className="hidden sm:flex min-w-0 flex-col justify-center leading-tight">
+  {isEnglish ? (
+    <>
+      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+        Dakdrinh Hydropower
+      </span>
+      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+        Joint Stock Company
+      </span>
+    </>
+  ) : (
+    <>
+      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+        Công ty cổ phần Thủy điện 
+      </span>
+      <span className="text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+        Dakdrinh
+      </span>
+    </>
+  )}
+</span>
             </Link>
 
             {/* Desktop nav */}
