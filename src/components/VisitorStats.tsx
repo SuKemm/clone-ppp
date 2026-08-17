@@ -62,23 +62,21 @@ export function VisitorStats({
 
   if (layout === "horizontal") {
     return (
-      <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
         <h3 className="shrink-0 text-base font-semibold text-white">
           {isEnglish ? "Visitor Statistics" : "Thống kê truy cập"}
         </h3>
-        <ul className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3 sm:justify-end">
-          {rows.map((row) => (
-            <li key={row.label} className="flex items-center gap-2 text-slate-300">
-              <span className="flex items-center gap-2">
-                {row.icon}
-                {row.label}
-              </span>
-              <span className="font-semibold text-white">
-                {row.value.toLocaleString(isEnglish ? "en-US" : "vi-VN")}
-              </span>
-            </li>
-          ))}
-        </ul>
+        {rows.map((row) => (
+          <div key={row.label} className="flex items-center gap-2 text-slate-300">
+            <span className="flex items-center gap-2">
+              {row.icon}
+              {row.label}
+            </span>
+            <span className="font-semibold text-white">
+              {row.value.toLocaleString(isEnglish ? "en-US" : "vi-VN")}
+            </span>
+          </div>
+        ))}
       </div>
     );
   }

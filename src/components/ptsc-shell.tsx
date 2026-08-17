@@ -181,9 +181,6 @@ export function PtscShell({
                     <span className="text-lg font-extrabold uppercase tracking-wide text-emerald-400">
                       Công ty cổ phần Thủy điện Đakđrinh
                     </span>
-                    <span className="text-lg font-extrabold uppercase tracking-wide text-emerald-400">
-                      Dakdrinh Hydropower
-                    </span>
                   </>
                 )}
               </span>
@@ -321,7 +318,7 @@ export function PtscShell({
           <img
             src="/images/ptsc/logo-ptsc.png"
             alt="PETROVIETNAM POWER-DHC"
-            className="mx-auto h-16 w-auto"
+            className="mx-auto h-24 w-auto sm:h-28"
           />
           <p className="mt-4 text-lg font-extrabold uppercase tracking-wide text-[#089F50] sm:text-xl">
             {isEnglish
@@ -333,9 +330,7 @@ export function PtscShell({
               ? "Ra Nhua Village, Son Tay Commune, Quang Ngai Province"
               : " Thôn Ra Nhua, xã Sơn Tây, tỉnh Quảng Ngãi"}
             <span className="mx-2 text-slate-600">|</span>
-            (+84) 28 3910 2828
-            <span className="mx-2 text-slate-600">|</span>
-            (+84) 28 3910 2929
+            (+84) 255 629 3777
           </p>
 
           {/* Gradient divider, echoing the reference footer's colored line */}
