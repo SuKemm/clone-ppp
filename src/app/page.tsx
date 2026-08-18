@@ -235,7 +235,11 @@ export default function Home() {
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
           <div className="flex items-center justify-center gap-3 bg-slate-400/80 py-5">
-            <BarChart3 className="h-6 w-6 text-white" />
+            <img
+              src="/images/ptsc/shareholder-pvpower-dhc.png"
+              alt="PTSC"
+              className="h-[3.75rem] w-auto object-contain"
+            />
             <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
               Quan hệ cổ đông
             </h2>
@@ -247,6 +251,11 @@ export default function Home() {
                 href={item.href}
                 className={`group flex flex-col items-center justify-center gap-5 px-6 py-14 text-center transition hover:brightness-110 ${item.tone}`}
               >
+                <img
+                  src="/images/ptsc/shareholder-pvpower-dhc.png"
+                  alt="PTSC"
+                  className="h-[3.75rem] w-auto object-contain"
+                />
                 <item.icon className="h-14 w-14 text-white/90" strokeWidth={1.25} />
                 <span className="text-base font-semibold uppercase tracking-wide text-white">
                   {item.label}
@@ -258,10 +267,12 @@ export default function Home() {
       </section>
 
       <section id="thu-vien" className="bg-slate-50 py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
-            <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Thư viện ảnh</h2>
+  <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
+      <div>
+        <h2 className="text-center text-2xl font-semibold text-slate-900">
+          Thư viện ảnh
+        </h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {photoGalleryTabs.map((tab) => (
                   <div key={tab.label} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -281,7 +292,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Video tư liệu</h2>
+              <h2 className="text-center text-2xl font-semibold text-slate-900">Video tư liệu</h2>
               <div className="mt-6 grid grid-cols-2 gap-4">
                 {videoLibrary.map((video) => (
                   <div

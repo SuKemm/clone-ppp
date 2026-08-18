@@ -177,7 +177,11 @@ export default function EnglishHomePage() {
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
           <div className="flex items-center justify-center gap-3 bg-slate-400/80 py-5">
-            <BarChart3 className="h-6 w-6 text-white" />
+            <img
+              src="/images/ptsc/shareholder-pvpower-dhc.png"
+              alt="PTSC"
+              className="h-[3.75rem] w-auto object-contain"
+            />
             <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
               Investor Relations
             </h2>
@@ -189,6 +193,11 @@ export default function EnglishHomePage() {
                 href={item.href}
                 className={`group flex flex-col items-center justify-center gap-5 px-6 py-14 text-center transition hover:brightness-110 ${item.tone}`}
               >
+                <img
+                  src="/images/ptsc/shareholder-pvpower-dhc.png"
+                  alt="PTSC"
+                  className="h-[3.75rem] w-auto object-contain"
+                />
                 <item.icon className="h-14 w-14 text-white/90" strokeWidth={1.25} />
                 <span className="text-base font-semibold uppercase tracking-wide text-white">
                   {item.label}
