@@ -235,11 +235,7 @@ export default function Home() {
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
           <div className="flex items-center justify-center gap-3 bg-slate-400/80 py-5">
-            <img
-              src="/images/ptsc/shareholder-pvpower-dhc.png"
-              alt="PTSC"
-              className="h-[3.75rem] w-auto object-contain"
-            />
+            <BarChart3 className="h-6 w-6 text-white" />
             <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
               Quan hệ cổ đông
             </h2>
