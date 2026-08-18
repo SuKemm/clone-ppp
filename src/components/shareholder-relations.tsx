@@ -1,9 +1,30 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ArticleViewCount } from "@/components/ArticleViewCount";
+
+const PAGE_SIZE = 5; // số bài / trang trong mỗi tab
+
+// Sinh danh sách số trang kiểu "1 2 3 ... 10", ẩn bớt số ở giữa khi có
+// nhiều trang để thanh phân trang không bị quá dài.
+function getPageNumbers(current: number, total: number): (number | "...")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages = new Set<number>([1, 2, total - 1, total, current - 1, current, current + 1]);
+  const sorted = Array.from(pages)
+    .filter((p) => p >= 1 && p <= total)
+    .sort((a, b) => a - b);
+  const result: (number | "...")[] = [];
+  sorted.forEach((p, i) => {
+    if (i > 0 && p - sorted[i - 1] > 1) result.push("...");
+    result.push(p);
+  });
+  return result;
+}
 
 export type SrArticle = {
+  id: string;
   image: string;
   category: string;
   date: string;
@@ -27,7 +48,16 @@ export function ShareholderRelations({
   sidebarItems: { image: string; title: string }[];
 }) {
   const [activeKey, setActiveKey] = useState(tabs[0]?.key);
+  const [page, setPage] = useState(1);
   const active = tabs.find((t) => t.key === activeKey) ?? tabs[0];
+
+  const totalPages = Math.max(1, Math.ceil((active?.articles.length ?? 0) / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pageArticles = active?.articles.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  ) ?? [];
+  const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   // Cho phép menu điều hướng liên kết thẳng tới 1 tab cụ thể qua URL hash,
   // ví dụ /co-dong#dai-hoi sẽ tự mở tab "Đại hội cổ đông" khi vào trang.
@@ -54,6 +84,7 @@ export function ShareholderRelations({
             type="button"
             onClick={() => {
               setActiveKey(tab.key);
+              setPage(1);
               window.history.replaceState(null, "", `#${tab.key}`);
             }}
             className={`relative pb-4 text-sm font-semibold uppercase tracking-wide transition ${
@@ -73,9 +104,9 @@ export function ShareholderRelations({
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
         {/* Article list */}
         <div className="space-y-8">
-          {active?.articles.map((article) => (
+          {pageArticles.map((article) => (
             <article
-              key={article.title}
+              key={article.id}
               className="grid gap-5 border-b border-slate-100 pb-8 last:border-0 sm:grid-cols-[220px_1fr]"
             >
               <div className="aspect-[4/3] w-full overflow-hidden rounded-lg bg-slate-100">
@@ -98,13 +129,79 @@ export function ShareholderRelations({
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   {article.excerpt}
                 </p>
+                <ArticleViewCount
+                  id={article.id}
+                  mode="display"
+                  className="mt-2 text-xs text-slate-400"
+                />
               </div>
             </article>
           ))}
+
+          {/* Phân trang */}
+          {totalPages > 1 && (
+            <nav
+              aria-label="Phân trang tài liệu"
+              className="flex flex-wrap items-center justify-center gap-2 pt-2"
+            >
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setPage(Math.max(1, currentPage - 1))}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm transition ${
+                  currentPage === 1
+                    ? "cursor-not-allowed border-slate-200 text-slate-300"
+                    : "border-slate-200 text-slate-500 hover:border-cyan-600 hover:text-cyan-700"
+                }`}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Trang trước</span>
+              </button>
+
+              {pageNumbers.map((p, i) =>
+                p === "..." ? (
+                  <span
+                    key={`ellipsis-${i}`}
+                    className="flex h-10 w-10 items-center justify-center text-sm text-slate-400"
+                  >
+                    &hellip;
+                  </span>
+                ) : (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setPage(p)}
+                    aria-current={p === currentPage ? "page" : undefined}
+                    className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition ${
+                      p === currentPage
+                        ? "border-cyan-700 bg-cyan-700 text-white"
+                        : "border-slate-200 text-slate-600 hover:border-cyan-600 hover:text-cyan-700"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+
+              <button
+                type="button"
+                disabled={currentPage === totalPages}
+                onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm transition ${
+                  currentPage === totalPages
+                    ? "cursor-not-allowed border-slate-200 text-slate-300"
+                    : "border-slate-200 text-slate-500 hover:border-cyan-600 hover:text-cyan-700"
+                }`}
+              >
+                <ChevronRight className="h-4 w-4" />
+                <span className="sr-only">Trang sau</span>
+              </button>
+            </nav>
+          )}
         </div>
 
         {/* Sidebar */}
-        <aside className="h-fit rounded-[1.5rem] border border-slate-200 bg-slate-50/70 p-6">
+        <aside className="h-fit rounded-[1.5rem] border border-slate-200 bg-slate-50/70 p-6 lg:sticky lg:top-24 lg:self-start">
           <h3 className="text-sm font-bold uppercase tracking-wide text-slate-900">
             {sidebarTitle}
           </h3>
