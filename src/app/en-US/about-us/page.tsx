@@ -308,6 +308,29 @@ export default function AboutUsPage() {
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8">
           <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            Development Journey
+          </span>
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            History of Formation and Development
+          </h2>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {timeline.map(([date, summary]) => (
+            <article
+              key={date}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <div className="text-xl font-bold text-cyan-700">{date}</div>
+              <p className="mt-3 text-sm leading-7 text-slate-600">{summary}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="mb-8">
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
             Recognition
           </span>
           <h2 className="mt-2 text-3xl font-bold text-slate-900">

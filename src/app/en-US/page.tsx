@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { MarqueeBar } from "@/components/MarqueeBar";
+import { getCollection } from "@/lib/cms/store";
 
 // Đồng bộ nội dung và cấu trúc với trang tiếng Việt (src/app/page.tsx).
 
@@ -48,13 +49,6 @@ const news = [
   },
 ];
 
-const productionStatus = [
-  ["1,384.48", "Output", "12 Aug"],
-  ["12,296.65", "Output", "August"],
-  ["45,647.83", "Output", "Q3"],
-  ["220,125.45", "Output", "Year 2026"],
-];
-
 const shareholderRelations = [
   {
     label: "Shareholder Information / Documents",
@@ -98,7 +92,39 @@ const videoLibrary = [
   { title: "SESAN 3A - Connect" },
 ];
 
+// Same data source as the Vietnamese homepage (src/app/page.tsx) — always
+// reads the latest values entered in /admin instead of hardcoded numbers.
+export const dynamic = "force-dynamic";
+
 export default function EnglishHomePage() {
+  const productionInfo = getCollection("production-info")[0];
+
+  // Update date always shows today's date (Vietnam time zone) — same
+  // approach as the Vietnamese page, so it never needs manual editing.
+  const ngayCapNhat = new Date().toLocaleDateString("en-GB", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  const productionStatus: [string, string, string][] = [
+    [productionInfo?.san_luong_ngay ?? "", "Output", productionInfo?.san_luong_ngay_ky ?? ""],
+    [productionInfo?.san_luong_thang ?? "", "Output", productionInfo?.san_luong_thang_ky ?? ""],
+    [productionInfo?.san_luong_quy ?? "", "Output", productionInfo?.san_luong_quy_ky ?? ""],
+    [productionInfo?.san_luong_nam ?? "", "Output", productionInfo?.san_luong_nam_ky ?? ""],
+  ];
+
+  const waterLevels = [
+    { label: "Current reservoir water level", value: productionInfo?.muc_nuoc_ho ?? "", unit: "m" },
+    { label: "Inflow to reservoir", value: productionInfo?.luu_luong_ve_ho ?? "", unit: "m³/s" },
+    {
+      label: "Average daily generation flow",
+      value: productionInfo?.luu_luong_phat_dien ?? "",
+      unit: "m³/s",
+    },
+  ];
+
   return (
     <PtscShell>
       <section className="relative overflow-hidden bg-slate-950">
@@ -113,20 +139,19 @@ export default function EnglishHomePage() {
       <MarqueeBar isEnglish={true} />
 
       <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-              NEWS AND EVENTS
-            </p>
-            <h2 className="mt-2 text-3xl font-semibold text-slate-900">
-              News and Events
-            </h2>
-          </div>
-          <a href="/en-US/news" className="text-sm font-semibold text-cyan-700 hover:text-cyan-800">
+        <div className="flex flex-col items-center text-center">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
+            News and Events
+          </h2>
+
+          <a
+            href="/en-US/news"
+            className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
+          >
             View more →
           </a>
         </div>
-        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {news.map((item) => (
             <a
               key={item.title}
@@ -146,30 +171,51 @@ export default function EnglishHomePage() {
         </div>
       </section>
 
-      <section id="about" className="bg-slate-50 py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-700">
-            UPDATE
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold text-slate-900">
-            2026 Production Status
+      <section id="production" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <div className="flex flex-col items-center text-center">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
+            Production Status
           </h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {productionStatus.map(([value, label, period]) => (
-              <div
-                key={period}
-                className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <div className="text-3xl font-bold text-cyan-700">{value}</div>
-                <div className="mx-auto mt-4 h-px w-8 bg-slate-300" />
-                <div className="mt-4 text-sm leading-6 text-slate-600">
-                  {label}
-                  <br />
-                  {period}
+          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+            {/* Left: 4 production cards, 2x2 */}
+            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
+              {productionStatus.map(([value, label, period], index) => (
+                <div
+                  key={`${period}-${index}`}
+                  className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                >
+                  <div className="text-3xl font-bold text-cyan-700">{value}</div>
+                  <div className="mx-auto mt-4 h-px w-8 bg-slate-300" />
+                  <div className="mt-4 text-sm leading-6 text-slate-600">
+                    {label}
+                    <br />
+                    {period}
+                  </div>
+                  <div className="mt-1 text-sm font-bold text-cyan-700">(MWh)</div>
                 </div>
-                <div className="mt-1 text-sm font-bold text-cyan-700">(MWh)</div>
+              ))}
+            </div>
+
+            {/* Right: Current Water Level */}
+            <div className="relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <h3 className="text-center text-3xl font-bold uppercase text-cyan-700">
+                Current Water Level
+              </h3>
+              <div className="mt-6 space-y-5">
+                {waterLevels.map((row) => (
+                  <div key={row.label} className="flex items-end gap-2 text-sm text-slate-600">
+                    <span className="shrink-0">{row.label}</span>
+                    <span className="mb-1 flex-1 border-b border-dotted border-slate-300" />
+                    <span className="shrink-0 font-bold text-cyan-700">
+                      {row.value} {row.unit}
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
+              <p className="mt-auto pt-8 text-center text-sm font-semibold text-slate-600">
+                Updated on: {ngayCapNhat}
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -208,7 +254,7 @@ export default function EnglishHomePage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Photo Gallery</h2>
+              <h2 className="text-center text-2xl font-semibold text-slate-900">Photo Gallery</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {photoGalleryTabs.map((tab) => (
                   <div key={tab.label} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -228,7 +274,7 @@ export default function EnglishHomePage() {
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900">Video Library</h2>
+              <h2 className="text-center text-2xl font-semibold text-slate-900">Video Library</h2>
               <div className="mt-6 grid grid-cols-2 gap-4">
                 {videoLibrary.map((video) => (
                   <div
