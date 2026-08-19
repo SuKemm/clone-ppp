@@ -10,6 +10,7 @@
 
 export type LeadershipPerson = {
   name: string;
+  name_en?: string;
   title: string;
   title_en?: string;
   photo?: string;
@@ -31,6 +32,7 @@ export const leadershipGroups: LeadershipGroup[] = [
 
   leader: {
     name: "Ông Nguyễn Ngọc Hải",
+    name_en: "Mr. Nguyễn Ngọc Hải",
     title: "Chủ tịch Hội đồng Quản trị",
     title_en: "Chairman of the Board of Directors",
     photo: "/images/leadership/hdqt-chu-tich-nguyen-ngoc-hai.png",
@@ -39,12 +41,14 @@ export const leadershipGroups: LeadershipGroup[] = [
   members: [
     {
       name: "Ông Đỗ Xuân Bình",
+      name_en: "Mr. Đỗ Xuân Bình",
       title: "Thành viên HĐQT",
       title_en: "Board Member",
       photo: "/images/leadership/hdqt-uv-do-xuan-binh.jpg",
     },
     {
       name: "Ông Lê Quang Hào",
+      name_en: "Mr. Lê Quang Hào",
       title: "Thành viên HĐQT",
       title_en: "Board Member",
       photo: "/images/leadership/hdqt-uv-le-quang-hao.jpg",
@@ -58,6 +62,7 @@ export const leadershipGroups: LeadershipGroup[] = [
     groupTitle_en: "Board of Management",
     leader: {
       name: "Ông Đỗ Xuân Bình",
+      name_en: "Mr. Đỗ Xuân Bình",
       title: "Giám đốc",
       title_en: "Director",
       photo: "/images/leadership/bgd-giam-doc-do-xuan-binh.jpg",
@@ -65,18 +70,21 @@ export const leadershipGroups: LeadershipGroup[] = [
     members: [
       {
         name: "Ông Lê Năng",
+        name_en: "Mr. Lê Năng",
         title: "Phó Giám đốc",
         title_en: "Deputy Director",
         photo: "/images/leadership/bgd-pgd-le-nang.jpg",
       },
       {
         name: "Ông Nguyễn Xuân Hải",
+        name_en: "Mr. Nguyễn Xuân Hải",
         title: "Phó Giám đốc",
         title_en: "Deputy Director",
         photo: "/images/leadership/bgd-pgd-nguyen-xuan-hai.png",
       },
       {
         name: "Ông Nguyễn Đình Tới",
+        name_en: "Mr. Nguyễn Đình Tới",
         title: "Kế toán trưởng",
         title_en: "Chief Accountant",
         photo: "/images/leadership/bgd-ktt-nguyen-dinh-toi.jpg",
@@ -90,6 +98,7 @@ export const leadershipGroups: LeadershipGroup[] = [
     groupTitle_en: "Supervisory Board",
     leader: {
       name: "Ông Nguyễn Thanh Khiết",
+      name_en: "Mr. Nguyễn Thanh Khiết",
       title: "Trưởng Ban kiểm soát",
       title_en: "Head of the Supervisory Board",
       photo: "/images/leadership/bks-truong-nguyen-thanh-khiet.jpg",
@@ -97,12 +106,14 @@ export const leadershipGroups: LeadershipGroup[] = [
     members: [
       {
         name: "Ông Nguyễn Trung Tuấn",
+        name_en: "Mr. Nguyễn Trung Tuấn",
         title: "Thành viên Ban Kiểm soát",
         title_en: "Supervisor",
         photo: "/images/leadership/bks-tv-nguyen-trung-tuan.jpg",
       },
       {
         name: "Bà Ngô Thị Hồng Hạnh",
+        name_en: "Mrs. Ngô Thị Hồng Hạnh",
         title: "Thành viên Ban Kiểm soát",
         title_en: "Supervisor",
         photo: "/images/leadership/bks-tv-ngo-thi-hong-hanh.png",
@@ -168,6 +179,11 @@ export function PersonCard({
       ? person.title_en || person.title
       : person.title;
 
+  const name =
+    locale === "en"
+      ? person.name_en || person.name
+      : person.name;
+
   return (
     <div
       className={[
@@ -181,7 +197,7 @@ export function PersonCard({
       />
 
       <div className="mt-2 w-full text-[13px] font-semibold leading-5 text-[#008bd2] sm:text-[16px] sm:leading-6 lg:text-[18px]">
-        {person.name}
+        {name}
       </div>
 
       <div className="mt-1 w-full text-[12px] font-normal leading-5 text-[#008bd2] sm:text-[13px] sm:leading-6 lg:text-[15px]">

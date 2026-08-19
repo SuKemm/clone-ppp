@@ -42,10 +42,12 @@ export function ShareholderRelations({
   tabs,
   sidebarTitle,
   sidebarItems,
+  isEnglish = false,
 }: {
   tabs: SrTab[];
   sidebarTitle: string;
   sidebarItems: { image: string; title: string }[];
+  isEnglish?: boolean;
 }) {
   const [activeKey, setActiveKey] = useState(tabs[0]?.key);
   const [page, setPage] = useState(1);
@@ -133,6 +135,7 @@ export function ShareholderRelations({
                   id={article.id}
                   mode="display"
                   className="mt-2 text-xs text-slate-400"
+                  isEnglish={isEnglish}
                 />
               </div>
             </article>
@@ -141,7 +144,7 @@ export function ShareholderRelations({
           {/* Phân trang */}
           {totalPages > 1 && (
             <nav
-              aria-label="Phân trang tài liệu"
+              aria-label={isEnglish ? "Document pagination" : "Phân trang tài liệu"}
               className="flex flex-wrap items-center justify-center gap-2 pt-2"
             >
               <button
@@ -155,7 +158,7 @@ export function ShareholderRelations({
                 }`}
               >
                 <ChevronLeft className="h-4 w-4" />
-                <span className="sr-only">Trang trước</span>
+                <span className="sr-only">{isEnglish ? "Previous page" : "Trang trước"}</span>
               </button>
 
               {pageNumbers.map((p, i) =>
@@ -194,7 +197,7 @@ export function ShareholderRelations({
                 }`}
               >
                 <ChevronRight className="h-4 w-4" />
-                <span className="sr-only">Trang sau</span>
+                <span className="sr-only">{isEnglish ? "Next page" : "Trang sau"}</span>
               </button>
             </nav>
           )}

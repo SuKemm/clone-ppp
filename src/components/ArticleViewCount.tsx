@@ -14,10 +14,12 @@ export function ArticleViewCount({
   id,
   mode,
   className,
+  isEnglish = false,
 }: {
   id: string;
   mode: "increment" | "display";
   className?: string;
+  isEnglish?: boolean;
 }) {
   const [views, setViews] = useState<number | null>(null);
 
@@ -53,7 +55,8 @@ export function ArticleViewCount({
 
   return (
     <span className={className}>
-      {views === null ? "—" : views.toLocaleString("vi-VN")} lượt xem
+      {views === null ? "—" : views.toLocaleString(isEnglish ? "en-US" : "vi-VN")}{" "}
+      {isEnglish ? "views" : "lượt xem"}
     </span>
   );
 }

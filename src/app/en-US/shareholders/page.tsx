@@ -202,6 +202,7 @@ export default function ShareholdersPage() {
         tabs={tabs}
         sidebarTitle="Most Viewed"
         sidebarItems={sidebarItems}
+        isEnglish
       />
     </PtscShell>
   );

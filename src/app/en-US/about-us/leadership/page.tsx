@@ -41,7 +41,7 @@ export default function LeadershipPageEn() {
 
       {/* =========================================================
           LEADERSHIP ORGANIZATION CHART
-          Layout giống trang tiếng Việt và hình mẫu
+          Same layout as the Vietnamese page and reference mockup
       ========================================================= */}
       <section className="bg-white px-2 py-6 sm:px-4">
         <LeadershipBoard

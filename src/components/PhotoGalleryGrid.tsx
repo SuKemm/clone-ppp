@@ -16,7 +16,7 @@ export type PhotoAlbum = {
  * (field "images"). Nếu album chưa nhập ảnh nào ở đó thì lightbox chỉ hiện
  * ảnh đại diện.
  */
-export function PhotoGalleryGrid({ albums }: { albums: PhotoAlbum[] }) {
+export function PhotoGalleryGrid({ albums, isEnglish = false }: { albums: PhotoAlbum[]; isEnglish?: boolean }) {
   const [openAlbum, setOpenAlbum] = useState<number | null>(null);
   const [photoIndex, setPhotoIndex] = useState(0);
 
@@ -86,7 +86,7 @@ export function PhotoGalleryGrid({ albums }: { albums: PhotoAlbum[] }) {
             type="button"
             onClick={close}
             className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xl text-white hover:bg-white/20"
-            aria-label="Đóng"
+            aria-label={isEnglish ? "Close" : "Đóng"}
           >
             ✕
           </button>
@@ -99,7 +99,7 @@ export function PhotoGalleryGrid({ albums }: { albums: PhotoAlbum[] }) {
                 prev();
               }}
               className="absolute left-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20 sm:left-4"
-              aria-label="Ảnh trước"
+              aria-label={isEnglish ? "Previous photo" : "Ảnh trước"}
             >
               ‹
             </button>
@@ -130,7 +130,7 @@ export function PhotoGalleryGrid({ albums }: { albums: PhotoAlbum[] }) {
                 next();
               }}
               className="absolute right-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-2xl text-white hover:bg-white/20 sm:right-4"
-              aria-label="Ảnh sau"
+              aria-label={isEnglish ? "Next photo" : "Ảnh sau"}
             >
               ›
             </button>

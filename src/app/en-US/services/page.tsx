@@ -70,7 +70,7 @@ export default function GalleryPageEn() {
           <div className="hidden h-[3px] flex-1 max-w-xs bg-gradient-to-r from-cyan-500/70 to-transparent sm:block" />
         </div>
 
-        <PhotoGalleryGrid albums={photoAlbums} />
+        <PhotoGalleryGrid albums={photoAlbums} isEnglish />
       </section>
 
       {/* ===== Video gallery ===== */}

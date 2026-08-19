@@ -147,7 +147,7 @@ export default async function NewsPageEn({
                 </p>
                 {featured.excerpt && <p className="mt-3 text-slate-600">{featured.excerpt}</p>}
                 <div className="mt-3">
-                  <ArticleViewCount id={featured.id} mode="display" className="text-xs text-slate-400" />
+                  <ArticleViewCount id={featured.id} mode="display" className="text-xs text-slate-400" isEnglish />
                 </div>
               </article>
             )}

@@ -13,7 +13,7 @@ const investorLogos = [
   { name: "PetroVietnam Power", image: "/images/ptsc/shareholder-petrovietnam-power.png" },
   { name: "BIDV", image: "/images/ptsc/shareholder-bidv.png" },
   { name: "PV Power DHC", image: "/images/ptsc/shareholder-pvpower-dhc.png" },
-  { name: "Cổ đông 3", image: "/images/ptsc/shareholder-03.png" },
+  { name: "Shareholder 3", image: "/images/ptsc/shareholder-03.png" },
   { name: "LICOGI", image: "/images/ptsc/shareholder-licogi.png" },
 ];
 

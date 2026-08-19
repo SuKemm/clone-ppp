@@ -31,7 +31,7 @@ export default async function NewsDetailPageEn({ params }: Params) {
           <Link href="/en-US/news" className="text-sm font-semibold text-cyan-700 hover:underline">
             ← Back to news
           </Link>
-          <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" />
+          <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" isEnglish />
         </div>
 
         <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{category}</p>
