@@ -30,32 +30,30 @@ export const leadershipGroups: LeadershipGroup[] = [
     groupTitle: "Hội đồng Quản trị",
     groupTitle_en: "Board of Directors",
     leader: {
-      name: "Nguyễn Văn A",
+      name: "Nguyễn Ngọc Hải",
       title: "Chủ tịch Hội đồng Quản trị",
       title_en: "Chairman of the Board of Directors",
-      photo: "",
+      photo: "/images/leadership/hdqt-chu-tich-nguyen-ngoc-hai.png",
     },
     members: [
-      { name: "Nguyễn Văn B", title: "Thành viên HĐQT", title_en: "Board Member", photo: "" },
-      { name: "Nguyễn Văn C", title: "Thành viên HĐQT", title_en: "Board Member", photo: "" },
-      { name: "Nguyễn Thị D", title: "Thành viên HĐQT", title_en: "Board Member", photo: "" },
-      { name: "Nguyễn Văn E", title: "Thành viên độc lập HĐQT", title_en: "Independent Board Member", photo: "" },
+      { name: "Đỗ Xuân Bình", title: "Thành viên HĐQT", title_en: "Board Member", photo: "/images/leadership/hdqt-uv-do-xuan-binh.jpg" },
+      { name: "Lê Quang Hào", title: "Thành viên HĐQT", title_en: "Board Member", photo: "/images/leadership/hdqt-uv-le-quang-hao.jpg" },
     ],
   },
   {
     id: "btgd",
-    groupTitle: "Ban Tổng Giám đốc",
+    groupTitle: "Ban Giám đốc",
     groupTitle_en: "Board of Management",
     leader: {
-      name: "Nguyễn Văn F",
-      title: "Tổng Giám đốc",
-      title_en: "General Director",
-      photo: "",
+      name: "Đỗ Xuân Bình",
+      title: "Giám đốc",
+      title_en: "Director",
+      photo: "/images/leadership/bgd-giam-doc-do-xuan-binh.jpg",
     },
     members: [
-      { name: "Nguyễn Văn G", title: "Phó Tổng Giám đốc", title_en: "Deputy General Director", photo: "" },
-      { name: "Nguyễn Văn H", title: "Phó Tổng Giám đốc", title_en: "Deputy General Director", photo: "" },
-      { name: "Nguyễn Văn I", title: "Phó Tổng Giám đốc", title_en: "Deputy General Director", photo: "" },
+      { name: "Lê Năng", title: "Phó Giám đốc", title_en: "Deputy Director", photo: "/images/leadership/bgd-pgd-le-nang.jpg" },
+      { name: "Nguyễn Xuân Hải", title: "Phó Giám đốc", title_en: "Deputy Director", photo: "/images/leadership/bgd-pgd-nguyen-xuan-hai.png" },
+      { name: "Nguyễn Đình Tới", title: "Kế toán trưởng", title_en: "Chief Accountant", photo: "/images/leadership/bgd-ktt-nguyen-dinh-toi.jpg" },
     ],
   },
   {
@@ -63,14 +61,14 @@ export const leadershipGroups: LeadershipGroup[] = [
     groupTitle: "Ban Kiểm soát",
     groupTitle_en: "Supervisory Board",
     leader: {
-      name: "Nguyễn Văn K",
+      name: "Nguyễn Thanh Khiết",
       title: "Trưởng Ban kiểm soát",
       title_en: "Head of the Supervisory Board",
-      photo: "",
+      photo: "/images/leadership/bks-truong-nguyen-thanh-khiet.jpg",
     },
     members: [
-      { name: "Nguyễn Thị L", title: "Kiểm soát viên", title_en: "Supervisor", photo: "" },
-      { name: "Nguyễn Thị M", title: "Kiểm soát viên", title_en: "Supervisor", photo: "" },
+      { name: "Nguyễn Trung Tuấn", title: "Thành viên Ban Kiểm soát", title_en: "Supervisor", photo: "/images/leadership/bks-tv-nguyen-trung-tuan.jpg" },
+      { name: "Ngô Thị Hồng Hạnh", title: "Thành viên Ban Kiểm soát", title_en: "Supervisor", photo: "/images/leadership/bks-tv-ngo-thi-hong-hanh.png" },
     ],
   },
 ];
@@ -84,7 +82,7 @@ export function PersonAvatar({
   photo?: string;
   size: "lg" | "md";
 }) {
-  const dimension = size === "lg" ? "h-36 w-36" : "h-28 w-28";
+  const dimension = size === "lg" ? "w-40 sm:w-44" : "w-full";
   const initials = name
     .split(" ")
     .filter(Boolean)
@@ -93,22 +91,18 @@ export function PersonAvatar({
     .join("")
     .toUpperCase();
 
-  if (photo) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={photo}
-        alt={name}
-        className={`${dimension} rounded-full border-4 border-white object-cover shadow-md`}
-      />
-    );
-  }
-
   return (
-    <div
-      className={`${dimension} flex items-center justify-center rounded-full border-4 border-white bg-slate-200 text-2xl font-bold text-slate-500 shadow-md`}
-    >
-      {initials || "?"}
+    <div className={`${dimension} overflow-hidden rounded-md border border-slate-200 bg-slate-50 shadow-sm`}>
+      <div className="aspect-[3/4] w-full">
+        {photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photo} alt={name} className="h-full w-full object-cover object-top" />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-slate-400">
+            {initials || "?"}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -126,10 +120,10 @@ export function PersonCard({
   return (
     <div className="flex flex-col items-center text-center">
       <PersonAvatar name={person.name} photo={person.photo} size={size} />
-      <div className={`mt-4 font-bold text-slate-900 ${size === "lg" ? "text-xl" : "text-base"}`}>
+      <div className={`mt-4 font-bold text-[#454A8A] ${size === "lg" ? "text-xl" : "text-base"}`}>
         {person.name}
       </div>
-      <div className="mt-1 text-sm font-medium text-cyan-700">{title}</div>
+      <div className="mt-1 text-sm font-medium text-slate-600">{title}</div>
     </div>
   );
 }

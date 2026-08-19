@@ -6,7 +6,7 @@ export default function BanLanhDaoPage() {
   return (
     <PtscShell
       title="Ban lãnh đạo"
-      description="Ban lãnh đạo Công ty cổ phần Thủy điện Đakđrinh (PV Power DHC): Hội đồng Quản trị, Ban Tổng Giám đốc, Ban Kiểm soát."
+      description="Ban lãnh đạo Công ty cổ phần Thủy điện Đakđrinh (PV Power DHC): Hội đồng Quản trị, Ban Giám đốc, Ban Kiểm soát."
     >
       <section className="border-b border-slate-200 bg-slate-50 py-6">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -24,31 +24,28 @@ export default function BanLanhDaoPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pt-14 lg:px-8">
-        <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-          Nhân sự chủ chốt
-        </span>
-        <h1 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">Ban lãnh đạo</h1>
+      <section className="mx-auto max-w-6xl px-6 pt-14 text-center lg:px-8">
+        <h1 className="mt-2 text-3xl font-bold text-[#454A8A] sm:text-4xl">Ban lãnh đạo</h1>
       </section>
 
-      {leadershipGroups.map((group, index) => (
-        <section
-          key={group.id}
-          className={`px-6 py-12 lg:px-8 ${index % 2 === 1 ? "bg-slate-50" : ""}`}
-        >
-          <div className="mx-auto max-w-7xl">
-            <h2 className="mb-8 text-center text-2xl font-bold text-slate-900">
-              {group.groupTitle}
-            </h2>
+      {leadershipGroups.map((group) => (
+        <section key={group.id} className="px-6 py-12 lg:px-8">
+          <div className="mx-auto max-w-6xl">
+            <div className="mb-10 flex flex-col items-center text-center">
+              <h2 className="text-2xl font-bold text-[#454A8A]">{group.groupTitle}</h2>
+              <div className="mt-3 h-[3px] w-14 rounded-full bg-[#454A8A]" />
+            </div>
 
             <div className="flex justify-center">
               <PersonCard person={group.leader} size="lg" />
             </div>
 
             {group.members.length > 0 && (
-              <div className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-4">
+              <div className="mx-auto mt-10 flex max-w-4xl flex-wrap justify-center gap-x-10 gap-y-10">
                 {group.members.map((member) => (
-                  <PersonCard key={member.name} person={member} size="md" />
+                  <div key={member.name} className="w-32 sm:w-36">
+                    <PersonCard person={member} size="md" />
+                  </div>
                 ))}
               </div>
             )}

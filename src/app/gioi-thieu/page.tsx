@@ -234,7 +234,7 @@ export default function AboutPage() {
             </span>
             <h2 className="mt-2 text-2xl font-bold text-slate-900">Ban lãnh đạo</h2>
             <p className="mt-3 max-w-2xl leading-7 text-slate-600">
-              Hội đồng Quản trị, Ban Tổng Giám đốc và Ban Kiểm soát Công ty cổ
+              Hội đồng Quản trị, Ban Giám đốc và Ban Kiểm soát Công ty cổ
               phần Thủy điện Đakđrinh (PV Power DHC).
             </p>
           </div>
