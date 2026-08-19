@@ -132,7 +132,7 @@ export function PersonAvatar({
     .toUpperCase();
 
   return (
-    <div className="mx-auto h-[120px] w-[95px] overflow-hidden">
+    <div className="mx-auto h-[90px] w-[72px] overflow-hidden sm:h-[105px] sm:w-[83px] lg:h-[120px] lg:w-[95px]">
       {photo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -172,7 +172,7 @@ export function PersonCard({
     <div
       className={[
         "flex min-w-0 flex-col items-center text-center",
-        leader ? "w-[260px]" : "w-[180px]",
+        leader ? "w-[150px] sm:w-[200px] lg:w-[260px]" : "w-[130px] sm:w-[150px] lg:w-[180px]",
       ].join(" ")}
     >
       <PersonAvatar
@@ -180,11 +180,11 @@ export function PersonCard({
         photo={person.photo}
       />
 
-      <div className="mt-2 w-full whitespace-nowrap text-[18px] font-semibold leading-6 text-[#008bd2]">
+      <div className="mt-2 w-full text-[13px] font-semibold leading-5 text-[#008bd2] sm:text-[16px] sm:leading-6 lg:text-[18px]">
         {person.name}
       </div>
 
-      <div className="mt-1 w-full whitespace-nowrap text-[15px] font-normal leading-6 text-[#008bd2]">
+      <div className="mt-1 w-full text-[12px] font-normal leading-5 text-[#008bd2] sm:text-[13px] sm:leading-6 lg:text-[15px]">
         {title}
       </div>
     </div>
@@ -212,18 +212,18 @@ function LeadershipSection({
 
  if (group.id === "hdqt") {
   gridClass =
-    "grid grid-cols-2 gap-x-32 gap-y-10";
+    "grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-16 lg:gap-x-32";
 } else if (group.id === "btgd") {
     gridClass =
-      "grid grid-cols-3 gap-x-20 gap-y-10";
+      "grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 sm:gap-x-10 lg:gap-x-20";
   } else {
     gridClass =
-      "grid grid-cols-2 gap-x-32 gap-y-10";
+      "grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-16 lg:gap-x-32";
   }
 
   return (
-    <fieldset className="rounded-[8px] border border-[#00a3ff] px-5 pb-6 pt-3">
-      <legend className="mx-auto px-3 text-[20px] font-bold text-[#008bd2]">
+    <fieldset className="rounded-[8px] border border-[#00a3ff] px-3 pb-6 pt-3 sm:px-5">
+      <legend className="mx-auto px-3 text-[15px] font-bold text-[#008bd2] sm:text-[18px] lg:text-[20px]">
         {title}
       </legend>
 
@@ -238,7 +238,7 @@ function LeadershipSection({
 
       {/* Thành viên */}
       {group.members.length > 0 && (
-        <div className={`mx-auto mt-10 w-full max-w-[900px] ${gridClass}`}>
+        <div className={`mx-auto mt-6 w-full max-w-[900px] sm:mt-10 ${gridClass}`}>
           {group.members.map((member) => (
             <div
               key={`${group.id}-${member.name}`}

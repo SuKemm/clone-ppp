@@ -135,7 +135,7 @@ export default function Home() {
         <img
           src={heroSlides[0].image}
           alt={heroSlides[0].title}
-          className="h-[620px] w-full object-cover"
+          className="h-[260px] w-full object-cover sm:h-[380px] md:h-[480px] lg:h-[620px]"
         />
       </section>
 

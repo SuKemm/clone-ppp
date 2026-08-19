@@ -191,29 +191,29 @@ export function PtscShell({
         {/* Main nav */}
         <div className="border-b border-white/5 bg-[#0a1330]">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 lg:px-8">
-            <Link href={homeHref} className="flex items-center gap-4">
+            <Link href={homeHref} className="flex min-w-0 items-center gap-2 sm:gap-4">
               <img
                 src="/images/ptsc/logo-ptsc.png"
                 alt="PETROVIETNAM POWER-DHC"
-                className="h-20 w-auto shrink-0"
+                className="h-12 w-auto shrink-0 sm:h-16 lg:h-20"
               />
               {/* Company name */}
-<span className="hidden sm:flex min-w-0 flex-col justify-center leading-tight">
+<span className="flex min-w-0 flex-col justify-center leading-tight">
   {isEnglish ? (
-    <span className="w-max text-center">
-      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+    <span className="w-max text-left sm:text-center">
+      <span className="block text-[11px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-xs sm:text-base lg:text-lg">
         Dakdrinh Hydropower
       </span>
-      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+      <span className="block text-[11px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-xs sm:text-base lg:text-lg">
         Joint Stock Company
       </span>
     </span>
   ) : (
-    <span className="w-max text-center">
-      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+    <span className="w-max text-left sm:text-center">
+      <span className="block text-[11px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-xs sm:text-base lg:text-lg">
         Công ty cổ phần
       </span>
-      <span className="block text-lg font-extrabold uppercase tracking-wide text-[#089F50]">
+      <span className="block text-[11px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-xs sm:text-base lg:text-lg">
         Thủy điện ĐAKĐRINH
       </span>
     </span>
