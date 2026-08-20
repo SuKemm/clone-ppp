@@ -5,17 +5,24 @@
 // Khi thêm 1 loại nội dung mới cần quản lý qua /admin, chỉ cần thêm 1 entry
 // vào COLLECTIONS bên dưới rồi dùng `getCollection(id)` ở trang hiển thị.
 
-export type FieldType = "text" | "textarea" | "richtext" | "date" | "image" | "gallery";
+export type FieldType = "text" | "textarea" | "richtext" | "date" | "image" | "gallery" | "select";
 
 export type FieldDef = {
   key: string;
   label: string;
   type: FieldType;
   required?: boolean;
+  // Dùng cho field type "select":
+  // - options: danh sách cố định, khai báo thẳng trong schema.
+  // - optionsFrom: lấy danh sách động từ 1 collection khác (vd: "news-categories"),
+  //   dùng field "name" của mỗi item trong collection đó làm nhãn hiển thị + giá trị lưu.
+  options?: string[];
+  optionsFrom?: CollectionId;
 };
 
 export type CollectionId =
   | "news"
+  | "news-categories"
   | "projects"
   | "jobs"
   | "photo-albums"
@@ -47,12 +54,26 @@ export function translationPairs(def: CollectionDef): { source: FieldDef; target
 
 export const COLLECTIONS: CollectionDef[] = [
   {
+    id: "news-categories",
+    label: "Danh mục Tin tức",
+    fields: [
+      { key: "name", label: "Tên danh mục", type: "text", required: true },
+      { key: "name_en", label: "Tên danh mục (EN)", type: "text" },
+    ],
+    seed: [
+      { name: "Hoạt động Cộng đồng", name_en: "Community Activities" },
+      { name: "Hoạt động của ngành điện", name_en: "Power Industry News" },
+      { name: "Sản xuất - Kinh doanh", name_en: "Production & Business" },
+      { name: "Tin tức khác", name_en: "Other News" },
+    ],
+  },
+  {
     id: "news",
     label: "Tin tức",
     fields: [
       { key: "title", label: "Tiêu đề", type: "text", required: true },
       { key: "title_en", label: "Tiêu đề (EN)", type: "text" },
-      { key: "category", label: "Chuyên mục", type: "text" },
+      { key: "category", label: "Chuyên mục", type: "select", optionsFrom: "news-categories" },
       { key: "category_en", label: "Chuyên mục (EN)", type: "text" },
       { key: "date", label: "Ngày đăng", type: "date" },
       { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea" },
@@ -317,3 +338,4 @@ export const COLLECTIONS: CollectionDef[] = [
 export function getCollectionDef(id: string): CollectionDef | undefined {
   return COLLECTIONS.find((c) => c.id === id);
 }
+

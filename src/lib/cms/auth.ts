@@ -18,36 +18,36 @@ function sign(payload: string) {
   return createHmac("sha256", secret()).update(payload).digest("hex");
 }
 
-/** Tạo token phiên đăng nhập: "<expiresAt>.<chữ ký HMAC>" */
-export function createSessionToken(): string {
+/** Tạo token phiên đăng nhập: "<expiresAt>|<username>.<chữ ký HMAC>" */
+export function createSessionToken(username: string): string {
   const expiresAt = Date.now() + SESSION_MAX_AGE_MS;
-  const payload = String(expiresAt);
+  const payload = `${expiresAt}|${username}`;
   return `${payload}.${sign(payload)}`;
 }
 
-export function verifySessionToken(token: string | undefined | null): boolean {
-  if (!token) return false;
-  const [payload, sig] = token.split(".");
-  if (!payload || !sig) return false;
+/**
+ * Kiểm tra token phiên đăng nhập. Trả về username nếu hợp lệ + còn hạn,
+ * ngược lại trả về null. Lưu ý: middleware.ts chỉ cần `if (!valid)` nên vẫn
+ * hoạt động đúng với kiểu trả về mới này (chuỗi rỗng/null đều là falsy).
+ */
+export function verifySessionToken(token: string | undefined | null): string | null {
+  if (!token) return null;
+  const dotIdx = token.lastIndexOf(".");
+  if (dotIdx === -1) return null;
+  const payload = token.slice(0, dotIdx);
+  const sig = token.slice(dotIdx + 1);
+  if (!payload || !sig) return null;
 
   const expected = sign(payload);
   const a = Buffer.from(sig);
   const b = Buffer.from(expected);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) return false;
+  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
 
-  const expiresAt = Number(payload);
-  if (!Number.isFinite(expiresAt) || Date.now() > expiresAt) return false;
+  const sepIdx = payload.indexOf("|");
+  if (sepIdx === -1) return null;
+  const expiresAt = Number(payload.slice(0, sepIdx));
+  const username = payload.slice(sepIdx + 1);
+  if (!Number.isFinite(expiresAt) || Date.now() > expiresAt || !username) return null;
 
-  return true;
-}
-
-export function checkPassword(input: string): boolean {
-  const real = process.env.ADMIN_PASSWORD;
-  if (!real) {
-    throw new Error("Thiếu biến môi trường ADMIN_PASSWORD — xem hướng dẫn trong README-admin.md");
-  }
-  const a = Buffer.from(input);
-  const b = Buffer.from(real);
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
+  return username;
 }
