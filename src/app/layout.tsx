@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PTSC | Website Clone",
-  description: "A homepage clone of PTSC built with Next.js and Tailwind CSS.",
+  title: "Công ty cổ phần thủy điện ĐakĐrinh",
+  description: "Trang thông tin chính thức của Công ty cổ phần thủy điện Dakdrinh.",
 };
 
 export default function RootLayout({
