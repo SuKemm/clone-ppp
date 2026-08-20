@@ -1,55 +1,108 @@
 import Link from "next/link";
-import { Newspaper, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Newspaper,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection, type CmsItem } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 
-// Đọc cùng dữ liệu với trang tiếng Việt (/tin-tuc) để hai ngôn ngữ luôn đồng
-// bộ — không dùng mảng viết cứng riêng cho tiếng Anh. Field "<key>_en" (nhập
-// ở /admin) được ưu tiên hiển thị; nếu bài viết chưa có bản dịch, tạm hiển
-// thị bản tiếng Việt để trang không bị trống.
+// Đọc cùng dữ liệu với trang tiếng Việt (/tin-tuc)
 export const dynamic = "force-dynamic";
 
-const PAGE_SIZE = 9; // articles per page (page 1: 1 featured + 8 grid)
+const PAGE_SIZE = 9;
 
-function ImagePlaceholder({ className = "" }: { className?: string }) {
+// Ảnh placeholder khi bài viết chưa có ảnh
+function ImagePlaceholder({
+  className = "",
+}: {
+  className?: string;
+}) {
   return (
     <div
       className={`flex items-center justify-center bg-gradient-to-br from-cyan-600 via-sky-700 to-slate-900 ${className}`}
     >
-      <Newspaper className="h-8 w-8 text-white/70" strokeWidth={1.25} />
+      <Newspaper
+        className="h-8 w-8 text-white/70"
+        strokeWidth={1.25}
+      />
     </div>
   );
 }
 
-function getPageNumbers(current: number, total: number): (number | "...")[] {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  const pages = new Set<number>([1, 2, total - 1, total, current - 1, current, current + 1]);
+// Sinh danh sách số trang
+function getPageNumbers(
+  current: number,
+  total: number
+): (number | "...")[] {
+  if (total <= 7) {
+    return Array.from(
+      { length: total },
+      (_, i) => i + 1
+    );
+  }
+
+  const pages = new Set<number>([
+    1,
+    2,
+    total - 1,
+    total,
+    current - 1,
+    current,
+    current + 1,
+  ]);
+
   const sorted = Array.from(pages)
     .filter((p) => p >= 1 && p <= total)
     .sort((a, b) => a - b);
+
   const result: (number | "...")[] = [];
+
   sorted.forEach((p, i) => {
-    if (i > 0 && p - sorted[i - 1] > 1) result.push("...");
+    if (i > 0 && p - sorted[i - 1] > 1) {
+      result.push("...");
+    }
+
     result.push(p);
   });
+
   return result;
 }
 
+// Tạo URL theo category và trang
 function buildHref(category: string, page: number) {
   const params = new URLSearchParams();
-  if (category !== "All") params.set("category", category);
-  if (page > 1) params.set("page", String(page));
+
+  if (category !== "All") {
+    params.set("category", category);
+  }
+
+  if (page > 1) {
+    params.set("page", String(page));
+  }
+
   const qs = params.toString();
-  return qs ? `/en-US/news?${qs}` : "/en-US/news";
+
+  return qs
+    ? `/en-US/news?${qs}`
+    : "/en-US/news";
 }
 
 export default async function NewsPageEn({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; page?: string }>;
+  searchParams: Promise<{
+    category?: string;
+    page?: string;
+  }>;
 }) {
-  const { category, page: pageParam } = await searchParams;
+  // Chỉ khai báo 1 lần
+  const { category, page: pageParam } =
+    await searchParams;
+
+  // Lấy dữ liệu từ Admin và ưu tiên nội dung tiếng Anh
   const news = getCollection("news").map(
     (item): CmsItem => ({
       ...item,
@@ -59,34 +112,69 @@ export default async function NewsPageEn({
     })
   );
 
-  // Category tabs — derived from the (translated) article data itself, in
-  // first-seen order, same approach as the Vietnamese page.
-  // Fixed category list (always shown even with no articles yet), matching
-  // the canonical order on the Vietnamese page. Any extra category an admin
-  // adds is appended automatically at the end.
+  // Lấy danh mục trực tiếp từ dữ liệu bài viết do Admin tạo
+  const categories = Array.from(
+    new Set(
+      news
+        .map((item) => item.category)
+        .filter(Boolean)
+    )
+  );
 
-  const dataCategories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
-  const extraCategories = dataCategories.filter((c) => !CANONICAL_CATEGORIES.includes(c));
-  const categories = [...CANONICAL_CATEGORIES, ...extraCategories];
+  // Tab All + các danh mục từ Admin
   const tabs = ["All", ...categories];
-  const activeTab = category && categories.includes(category) ? category : "All";
 
-  const filtered = activeTab === "All" ? news : news.filter((item) => item.category === activeTab);
+  // Xác định tab hiện tại
+  const activeTab =
+    category && categories.includes(category)
+      ? category
+      : "All";
+
+  // Lọc bài viết theo danh mục
+  const filtered =
+    activeTab === "All"
+      ? news
+      : news.filter(
+          (item) => item.category === activeTab
+        );
 
   // Pagination
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const requestedPage = Number(pageParam) || 1;
-  const page = Math.min(Math.max(1, requestedPage), totalPages);
-  const startIdx = (page - 1) * PAGE_SIZE;
-  const pageItems = filtered.slice(startIdx, startIdx + PAGE_SIZE);
-  const featured = page === 1 ? pageItems[0] : undefined;
-  const rest = page === 1 ? pageItems.slice(1) : pageItems;
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filtered.length / PAGE_SIZE)
+  );
 
-  // Sidebar "Featured news" — 5 most recent articles across the whole
-  // collection (not filtered by tab/page) so there's always somewhere to go.
+  const requestedPage =
+    Number(pageParam) || 1;
+
+  const page = Math.min(
+    Math.max(1, requestedPage),
+    totalPages
+  );
+
+  const startIdx =
+    (page - 1) * PAGE_SIZE;
+
+  const pageItems = filtered.slice(
+    startIdx,
+    startIdx + PAGE_SIZE
+  );
+
+  const featured =
+    page === 1
+      ? pageItems[0]
+      : undefined;
+
+  const rest =
+    page === 1
+      ? pageItems.slice(1)
+      : pageItems;
+
+  // Sidebar Featured news
   const sidebarItems = news.slice(0, 5);
 
-  const pageNumbers = getPageNumbers(page, totalPages);
+  const pageNumbers =
+    getPageNumbers(page, totalPages);
 
   return (
     <PtscShell>
@@ -98,8 +186,12 @@ export default async function NewsPageEn({
         {/* Category tabs */}
         <div className="mt-6 flex gap-8 overflow-x-auto border-b border-slate-200">
           {tabs.map((tab) => {
-            const isActive = tab === activeTab;
-            const href = buildHref(tab, 1);
+            const isActive =
+              tab === activeTab;
+
+            const href =
+              buildHref(tab, 1);
+
             return (
               <Link
                 key={tab}
@@ -117,7 +209,9 @@ export default async function NewsPageEn({
         </div>
 
         {filtered.length === 0 && (
-          <p className="mt-10 text-center text-slate-500">No articles in this category yet.</p>
+          <p className="mt-10 text-center text-slate-500">
+            No articles in this category yet.
+          </p>
         )}
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_320px]">
@@ -125,7 +219,9 @@ export default async function NewsPageEn({
           <div>
             {featured && (
               <article className="group">
-                <Link href={`/en-US/news/${featured.id}`}>
+                <Link
+                  href={`/en-US/news/${featured.id}`}
+                >
                   <div className="aspect-[16/9] w-full overflow-hidden rounded-2xl">
                     {featured.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -138,22 +234,41 @@ export default async function NewsPageEn({
                       <ImagePlaceholder className="h-full w-full" />
                     )}
                   </div>
+
                   <h2 className="mt-5 text-2xl font-bold leading-snug text-slate-900 transition group-hover:text-cyan-700">
                     {featured.title}
                   </h2>
                 </Link>
+
                 <p className="mt-2 text-sm">
                   <Link
-                    href={buildHref(featured.category, 1)}
+                    href={buildHref(
+                      featured.category,
+                      1
+                    )}
                     className="font-semibold text-cyan-700 hover:underline"
                   >
                     {featured.category}
                   </Link>{" "}
-                  <span className="italic text-slate-500">({featured.date})</span>
+
+                  <span className="italic text-slate-500">
+                    ({featured.date})
+                  </span>
                 </p>
-                {featured.excerpt && <p className="mt-3 text-slate-600">{featured.excerpt}</p>}
+
+                {featured.excerpt && (
+                  <p className="mt-3 text-slate-600">
+                    {featured.excerpt}
+                  </p>
+                )}
+
                 <div className="mt-3">
-                  <ArticleViewCount id={featured.id} mode="display" className="text-xs text-slate-400" isEnglish />
+                  <ArticleViewCount
+                    id={featured.id}
+                    mode="display"
+                    className="text-xs text-slate-400"
+                    isEnglish
+                  />
                 </div>
               </article>
             )}
@@ -161,11 +276,20 @@ export default async function NewsPageEn({
             {/* Remaining articles grid */}
             {rest.length > 0 && (
               <div
-                className={`grid gap-x-8 gap-y-10 sm:grid-cols-2 ${featured ? "mt-10" : ""}`}
+                className={`grid gap-x-8 gap-y-10 sm:grid-cols-2 ${
+                  featured
+                    ? "mt-10"
+                    : ""
+                }`}
               >
                 {rest.map((item) => (
-                  <article key={item.id} className="group">
-                    <Link href={`/en-US/news/${item.id}`}>
+                  <article
+                    key={item.id}
+                    className="group"
+                  >
+                    <Link
+                      href={`/en-US/news/${item.id}`}
+                    >
                       <div className="aspect-[16/10] w-full overflow-hidden rounded-2xl">
                         {item.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -178,21 +302,32 @@ export default async function NewsPageEn({
                           <ImagePlaceholder className="h-full w-full" />
                         )}
                       </div>
+
                       <h3 className="mt-4 text-lg font-semibold leading-snug text-slate-900 transition group-hover:text-cyan-700">
                         {item.title}
                       </h3>
                     </Link>
+
                     <p className="mt-1.5 text-sm">
                       <Link
-                        href={buildHref(item.category, 1)}
+                        href={buildHref(
+                          item.category,
+                          1
+                        )}
                         className="font-semibold text-cyan-700 hover:underline"
                       >
                         {item.category}
                       </Link>{" "}
-                      <span className="italic text-slate-500">({item.date})</span>
+
+                      <span className="italic text-slate-500">
+                        ({item.date})
+                      </span>
                     </p>
+
                     {item.excerpt && (
-                      <p className="mt-2 line-clamp-2 text-sm text-slate-600">{item.excerpt}</p>
+                      <p className="mt-2 line-clamp-2 text-sm text-slate-600">
+                        {item.excerpt}
+                      </p>
                     )}
                   </article>
                 ))}
@@ -205,8 +340,12 @@ export default async function NewsPageEn({
                 aria-label="News pagination"
                 className="mt-14 flex flex-wrap items-center justify-center gap-2"
               >
+                {/* Previous */}
                 <Link
-                  href={buildHref(activeTab, Math.max(1, page - 1))}
+                  href={buildHref(
+                    activeTab,
+                    Math.max(1, page - 1)
+                  )}
                   aria-disabled={page === 1}
                   className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm transition ${
                     page === 1
@@ -215,7 +354,10 @@ export default async function NewsPageEn({
                   }`}
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  <span className="sr-only">Previous page</span>
+
+                  <span className="sr-only">
+                    Previous page
+                  </span>
                 </Link>
 
                 {pageNumbers.map((p, i) =>
@@ -229,8 +371,15 @@ export default async function NewsPageEn({
                   ) : (
                     <Link
                       key={p}
-                      href={buildHref(activeTab, p)}
-                      aria-current={p === page ? "page" : undefined}
+                      href={buildHref(
+                        activeTab,
+                        p
+                      )}
+                      aria-current={
+                        p === page
+                          ? "page"
+                          : undefined
+                      }
                       className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition ${
                         p === page
                           ? "border-cyan-700 bg-cyan-700 text-white"
@@ -242,9 +391,18 @@ export default async function NewsPageEn({
                   )
                 )}
 
+                {/* Next */}
                 <Link
-                  href={buildHref(activeTab, Math.min(totalPages, page + 1))}
-                  aria-disabled={page === totalPages}
+                  href={buildHref(
+                    activeTab,
+                    Math.min(
+                      totalPages,
+                      page + 1
+                    )
+                  )}
+                  aria-disabled={
+                    page === totalPages
+                  }
                   className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm transition ${
                     page === totalPages
                       ? "pointer-events-none border-slate-200 text-slate-300"
@@ -252,7 +410,10 @@ export default async function NewsPageEn({
                   }`}
                 >
                   <ChevronRight className="h-4 w-4" />
-                  <span className="sr-only">Next page</span>
+
+                  <span className="sr-only">
+                    Next page
+                  </span>
                 </Link>
               </nav>
             )}
@@ -263,12 +424,20 @@ export default async function NewsPageEn({
             <h2 className="border-b border-slate-200 pb-3 text-base font-bold uppercase tracking-wide text-slate-900">
               Featured news
             </h2>
+
             <div className="mt-5 space-y-5">
               {sidebarItems.length === 0 && (
-                <p className="text-sm text-slate-500">No articles yet.</p>
+                <p className="text-sm text-slate-500">
+                  No articles yet.
+                </p>
               )}
+
               {sidebarItems.map((item) => (
-                <Link key={item.id} href={`/en-US/news/${item.id}`} className="group flex gap-3">
+                <Link
+                  key={item.id}
+                  href={`/en-US/news/${item.id}`}
+                  className="group flex gap-3"
+                >
                   <div className="h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg">
                     {item.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -281,11 +450,15 @@ export default async function NewsPageEn({
                       <ImagePlaceholder className="h-full w-full" />
                     )}
                   </div>
+
                   <div className="min-w-0">
                     <p className="line-clamp-3 text-sm font-semibold leading-snug text-slate-800 transition group-hover:text-cyan-700">
                       {item.title}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{item.date}</p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      {item.date}
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -296,6 +469,7 @@ export default async function NewsPageEn({
               className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-700 hover:underline"
             >
               View all news
+
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </aside>
