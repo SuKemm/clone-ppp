@@ -20,9 +20,12 @@ import {
 } from "lucide-react";
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
+import type { AdminRole } from "@/lib/cms/users";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { SelectField, type SelectOption } from "@/components/admin/SelectField";
 import { UsersPanel } from "@/components/admin/UsersPanel";
+
+type CurrentUser = { id: string; username: string; role: AdminRole; permissions: CollectionId[] };
 
 // Icon riêng cho từng collection để sidebar dễ quét mắt hơn là chỉ có chữ.
 const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: string }>> = {
@@ -46,16 +49,31 @@ type View =
 
 export default function AdminApp() {
   const router = useRouter();
-  const [view, setView] = useState<View>({ kind: "list", id: COLLECTIONS[0].id });
-  const [currentUsername, setCurrentUsername] = useState<string | null>(null);
-  const active = view.kind !== "users" ? COLLECTIONS.find((c) => c.id === view.id)! : null;
+  const [view, setView] = useState<View | null>(null);
+  const [me, setMe] = useState<CurrentUser | null>(null);
+  const active = view && view.kind !== "users" ? COLLECTIONS.find((c) => c.id === view.id)! : null;
+
+  // "user con" (role editor) chỉ thấy các collection nằm trong permissions
+  // của họ — admin luôn thấy toàn bộ COLLECTIONS.
+  const visibleCollections =
+    !me || me.role === "admin"
+      ? COLLECTIONS
+      : COLLECTIONS.filter((c) => me.permissions.includes(c.id));
 
   useEffect(() => {
     fetch("/api/admin/me")
       .then((res) => (res.ok ? res.json() : null))
-      .then((body) => setCurrentUsername(body?.username ?? null))
-      .catch(() => setCurrentUsername(null));
+      .then((body: CurrentUser | null) => {
+        setMe(body);
+        const first = body && body.role !== "admin"
+          ? COLLECTIONS.find((c) => body.permissions.includes(c.id))
+          : COLLECTIONS[0];
+        setView({ kind: "list", id: (first ?? COLLECTIONS[0]).id });
+      })
+      .catch(() => setView({ kind: "list", id: COLLECTIONS[0].id }));
   }, []);
+
+  if (!view) return null;
 
   return (
     <div className="flex min-h-screen bg-slate-100">
@@ -72,7 +90,7 @@ export default function AdminApp() {
         </div>
 
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
-          {COLLECTIONS.map((c) => {
+          {visibleCollections.map((c) => {
             const Icon = COLLECTION_ICONS[c.id] ?? LayoutGrid;
             const isActive = view.kind !== "users" && c.id === view.id;
             return (
@@ -91,25 +109,35 @@ export default function AdminApp() {
             );
           })}
 
-          <div className="my-3 border-t border-white/10" />
-
-          <button
-            onClick={() => setView({ kind: "users" })}
-            className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-              view.kind === "users"
-                ? "bg-cyan-600 text-white shadow-sm shadow-cyan-900/40"
-                : "text-slate-300 hover:bg-white/5 hover:text-white"
-            }`}
-          >
-            <Users className={`h-4 w-4 shrink-0 ${view.kind === "users" ? "text-white" : "text-slate-400"}`} />
-            <span className="truncate">Người dùng</span>
-          </button>
+          {/* Mục "Người dùng" — chỉ Admin mới thấy; user con (editor) không
+              được phân quyền cho người khác. */}
+          {me?.role === "admin" && (
+            <>
+              <div className="my-3 border-t border-white/10" />
+              <button
+                onClick={() => setView({ kind: "users" })}
+                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
+                  view.kind === "users"
+                    ? "bg-cyan-600 text-white shadow-sm shadow-cyan-900/40"
+                    : "text-slate-300 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                <Users
+                  className={`h-4 w-4 shrink-0 ${view.kind === "users" ? "text-white" : "text-slate-400"}`}
+                />
+                <span className="truncate">Người dùng</span>
+              </button>
+            </>
+          )}
         </nav>
 
         <div className="border-t border-white/10 p-3">
-          {currentUsername && (
+          {me && (
             <p className="truncate px-3 pb-2 text-xs text-slate-500">
-              Đăng nhập: <span className="text-slate-300">{currentUsername}</span>
+              Đăng nhập: <span className="text-slate-300">{me.username}</span>
+              <span className="ml-1.5 rounded-full bg-white/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-400">
+                {me.role === "admin" ? "Admin" : "User con"}
+              </span>
             </p>
           )}
           <button
@@ -130,7 +158,9 @@ export default function AdminApp() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-slate-200 bg-white px-8 py-4 text-sm text-slate-500">
           <button
-            onClick={() => setView({ kind: "list", id: COLLECTIONS[0].id })}
+            onClick={() =>
+              visibleCollections[0] && setView({ kind: "list", id: visibleCollections[0].id })
+            }
             className="hover:text-cyan-700"
           >
             Trang chủ

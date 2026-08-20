@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCollectionDef, type CollectionId } from "@/lib/cms/schema";
 import { createItem, getCollection } from "@/lib/cms/store";
+import { canAccessCollection, canReadCollection, getSessionUser } from "@/lib/cms/permissions";
 
 type Params = { params: Promise<{ collection: string }> };
 
@@ -10,10 +11,13 @@ function resolveCollection(collection: string) {
   return def;
 }
 
-export async function GET(_req: NextRequest, { params }: Params) {
+export async function GET(req: NextRequest, { params }: Params) {
   const { collection } = await params;
   const def = resolveCollection(collection);
   if (!def) return NextResponse.json({ error: "unknown collection" }, { status: 404 });
+  if (!canReadCollection(getSessionUser(req), def.id)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
 
   return NextResponse.json({
     def,
@@ -25,6 +29,9 @@ export async function POST(req: NextRequest, { params }: Params) {
   const { collection } = await params;
   const def = resolveCollection(collection);
   if (!def) return NextResponse.json({ error: "unknown collection" }, { status: 404 });
+  if (!canAccessCollection(getSessionUser(req), def.id)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
 
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") {

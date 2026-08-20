@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCollectionDef, type CollectionId } from "@/lib/cms/schema";
 import { deleteItem, updateItem } from "@/lib/cms/store";
+import { canAccessCollection, getSessionUser } from "@/lib/cms/permissions";
 
 type Params = { params: Promise<{ collection: string; id: string }> };
 
@@ -8,6 +9,9 @@ export async function PUT(req: NextRequest, { params }: Params) {
   const { collection, id } = await params;
   const def = getCollectionDef(collection);
   if (!def) return NextResponse.json({ error: "unknown collection" }, { status: 404 });
+  if (!canAccessCollection(getSessionUser(req), def.id)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
 
   const body = await req.json().catch(() => null);
   if (!body || typeof body !== "object") {
@@ -28,10 +32,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
   return NextResponse.json({ item });
 }
 
-export async function DELETE(_req: NextRequest, { params }: Params) {
+export async function DELETE(req: NextRequest, { params }: Params) {
   const { collection, id } = await params;
   const def = getCollectionDef(collection);
   if (!def) return NextResponse.json({ error: "unknown collection" }, { status: 404 });
+  if (!canAccessCollection(getSessionUser(req), def.id)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
 
   const ok = deleteItem(collection as CollectionId, id);
   if (!ok) return NextResponse.json({ error: "not found" }, { status: 404 });
