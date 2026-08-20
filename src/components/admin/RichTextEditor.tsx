@@ -43,9 +43,30 @@ export function RichTextEditor({
           height: rows * 28,
           menubar: false,
           statusbar: false,
-          plugins: ["link", "lists", "image", "table", "autolink"],
+          plugins: [
+            "link",
+            "lists",
+            "image",
+            "table",
+            "autolink",
+            "code", // xem/sửa Mã HTML
+            "charmap", // chèn ký tự đặc biệt
+            "preview", // xem trước nội dung
+            "searchreplace", // tìm & thay thế
+            "visualblocks", // hiện khung các khối (đoạn văn, div...)
+            "fullscreen", // phóng to toàn màn hình
+            "media", // chèn video/media
+            "insertdatetime",
+            "wordcount",
+            "help",
+          ],
           toolbar:
-            "undo redo | blocks | bold italic underline | bullist numlist | link image table | removeformat",
+            "undo redo | blocks | bold italic underline strikethrough | " +
+            "forecolor backcolor | " +
+            "alignleft aligncenter alignright alignjustify | " + // căn lề hai bên và căn giữa đầy đủ
+            "bullist numlist outdent indent | " +
+            "link image media table charmap | " +
+            "removeformat code | searchreplace fullscreen preview | help",
           content_style:
             "body { font-family: system-ui, sans-serif; font-size: 14px; }",
           branding: false,
