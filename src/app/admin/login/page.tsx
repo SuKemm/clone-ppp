@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LayoutGrid, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -49,8 +49,13 @@ export default function AdminLoginPage() {
         />
 
         <div className="relative flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-600">
-            <LayoutGrid className="h-5 w-5 text-white" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white p-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/ptsc/logo-ptsc.png"
+              alt="Logo công ty"
+              className="h-full w-full object-contain"
+            />
           </div>
           <span className="text-sm font-semibold text-white">Trang quản trị</span>
         </div>
@@ -78,8 +83,13 @@ export default function AdminLoginPage() {
         >
           {/* Logo hiện trên mobile, thay cho cột thương hiệu bị ẩn */}
           <div className="mb-6 flex items-center gap-2.5 lg:hidden">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-600">
-              <LayoutGrid className="h-5 w-5 text-white" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white p-1">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/ptsc/logo-ptsc.png"
+                alt="Logo công ty"
+                className="h-full w-full object-contain"
+              />
             </div>
             <span className="text-sm font-semibold text-slate-900">Trang quản trị</span>
           </div>

@@ -34,7 +34,9 @@ export type CollectionId =
   | "video-albums"
   | "site-marquee"
   | "production-info"
-  | "contacts";
+  | "contacts"
+  | "shareholder-categories"
+  | "shareholder-relations";
 
 export type CollectionDef = {
   id: CollectionId;
@@ -123,6 +125,162 @@ export const COLLECTIONS: CollectionDef[] = [
           "PVFCCo - Phu My and PTSC Sign Cooperation Agreement to Strengthen Ties Within the Petrovietnam Ecosystem",
         category: "Sản xuất - Kinh doanh",
         category_en: "Production & Business",
+      },
+    ],
+  },
+  {
+    id: "shareholder-categories",
+    label: "Danh mục Quan hệ cổ đông",
+    fields: [
+      { key: "name", label: "Tên danh mục", type: "text", required: true },
+      { key: "name_en", label: "Tên danh mục (EN)", type: "text" },
+    ],
+    seed: [
+      { name: "Thông tin / tài liệu cổ đông", name_en: "Shareholder information / documents" },
+      { name: "Đại hội cổ đông", name_en: "General meeting of shareholders" },
+      { name: "Báo cáo tài chính / Báo cáo thường niên", name_en: "Financial statements / Annual report" },
+    ],
+  },
+  {
+    id: "shareholder-relations",
+    label: "Danh sách Quan hệ cổ đông",
+    fields: [
+      { key: "category", label: "Danh mục", type: "select", optionsFrom: "shareholder-categories", width: "half" },
+      { key: "date", label: "Ngày cập nhật", type: "text", width: "half" },
+      { key: "title", label: "Tiêu đề", type: "text", required: true, width: "half" },
+      { key: "title_en", label: "Tiêu đề (EN)", type: "text", width: "half" },
+      { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea", width: "half" },
+      { key: "excerpt_en", label: "Tóm tắt (EN)", type: "textarea", width: "half" },
+      { key: "image", label: "Ảnh đại diện", type: "image" },
+      { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết)", type: "richtext" },
+      { key: "content_en", label: "Nội dung đầy đủ (EN)", type: "richtext" },
+    ],
+    seed: [
+      {
+        category: "Thông tin / tài liệu cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Thông báo chốt danh sách cổ đông",
+        excerpt: "Thông báo về ngày đăng ký cuối cùng để thực hiện quyền của cổ đông hiện hữu.",
+        image: "/images/ptsc/project-hd-mien-nam.jpg",
+      },
+      {
+        category: "Thông tin / tài liệu cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Điều lệ và quy chế quản trị công ty",
+        excerpt: "Bản cập nhật Điều lệ tổ chức và hoạt động, Quy chế quản trị nội bộ của công ty.",
+        image: "/images/ptsc/service-fso.jpg",
+      },
+      {
+        category: "Thông tin / tài liệu cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Công bố thông tin định kỳ",
+        excerpt: "Các tài liệu công bố thông tin định kỳ theo quy định dành cho công ty đại chúng.",
+        image: "/images/ptsc/project-lng.jpg",
+      },
+      {
+        category: "Thông tin / tài liệu cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Danh sách người có liên quan sở hữu cổ phiếu",
+        excerpt: "Danh sách công bố định kỳ về người nội bộ và người có liên quan.",
+        image: "/images/ptsc/service-cong-nghiep.jpg",
+      },
+      {
+        category: "Thông tin / tài liệu cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Nghị quyết Hội đồng quản trị",
+        excerpt: "Các nghị quyết, quyết định của Hội đồng quản trị công bố tới cổ đông.",
+        image: "/images/ptsc/project-bien-dong.jpg",
+      },
+      {
+        category: "Thông tin / tài liệu cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Thông báo giao dịch cổ phiếu của cổ đông nội bộ",
+        excerpt: "Thông báo về việc mua/bán cổ phiếu của cổ đông nội bộ và người liên quan.",
+        image: "/images/ptsc/service-fso.jpg",
+      },
+      {
+        category: "Đại hội cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Thông báo mời họp Đại hội đồng cổ đông thường niên",
+        excerpt: "Thư mời và tài liệu họp gửi tới quý cổ đông trước thềm Đại hội đồng cổ đông thường niên.",
+        image: "/images/ptsc/service-cong-nghiep.jpg",
+      },
+      {
+        category: "Đại hội cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Biên bản và Nghị quyết Đại hội đồng cổ đông thường niên",
+        excerpt: "Tổng hợp các nội dung đã được thông qua tại Đại hội đồng cổ đông thường niên.",
+        image: "/images/ptsc/project-bien-dong.jpg",
+      },
+      {
+        category: "Đại hội cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Tài liệu Đại hội đồng cổ đông bất thường",
+        excerpt: "Tài liệu liên quan tới các nội dung trình Đại hội đồng cổ đông bất thường (nếu có).",
+        image: "/images/ptsc/project-hd-mien-nam.jpg",
+      },
+      {
+        category: "Đại hội cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Quy chế tổ chức Đại hội đồng cổ đông",
+        excerpt: "Quy chế làm việc và biểu quyết áp dụng tại Đại hội đồng cổ đông.",
+        image: "/images/ptsc/service-fso.jpg",
+      },
+      {
+        category: "Đại hội cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Tài liệu ứng cử, đề cử thành viên HĐQT/BKS",
+        excerpt: "Hồ sơ ứng cử, đề cử nhân sự trình Đại hội đồng cổ đông thông qua.",
+        image: "/images/ptsc/project-lng.jpg",
+      },
+      {
+        category: "Đại hội cổ đông",
+        date: "cập nhật gần nhất",
+        title: "Video/hình ảnh Đại hội đồng cổ đông thường niên",
+        excerpt: "Tổng hợp hình ảnh và video ghi nhận tại Đại hội đồng cổ đông thường niên.",
+        image: "/images/ptsc/project-bien-dong.jpg",
+      },
+      {
+        category: "Báo cáo tài chính / Báo cáo thường niên",
+        date: "cập nhật gần nhất",
+        title: "Báo cáo tài chính đã kiểm toán",
+        excerpt: "Báo cáo tài chính năm đã được kiểm toán bởi đơn vị kiểm toán độc lập.",
+        image: "/images/ptsc/service-fso.jpg",
+      },
+      {
+        category: "Báo cáo tài chính / Báo cáo thường niên",
+        date: "cập nhật gần nhất",
+        title: "Báo cáo thường niên",
+        excerpt: "Tổng quan kết quả hoạt động sản xuất kinh doanh và định hướng phát triển của công ty.",
+        image: "/images/ptsc/project-lng.jpg",
+      },
+      {
+        category: "Báo cáo tài chính / Báo cáo thường niên",
+        date: "cập nhật gần nhất",
+        title: "Báo cáo tài chính các quý trong năm",
+        excerpt: "Báo cáo tài chính theo từng quý gửi tới cổ đông và nhà đầu tư.",
+        image: "/images/ptsc/service-cong-nghiep.jpg",
+      },
+      {
+        category: "Báo cáo tài chính / Báo cáo thường niên",
+        date: "cập nhật gần nhất",
+        title: "Báo cáo phát triển bền vững",
+        excerpt: "Báo cáo về các hoạt động phát triển bền vững, môi trường và xã hội.",
+        image: "/images/ptsc/project-bien-dong.jpg",
+      },
+      {
+        category: "Báo cáo tài chính / Báo cáo thường niên",
+        date: "cập nhật gần nhất",
+        title: "Giải trình biến động kết quả kinh doanh",
+        excerpt: "Giải trình chênh lệch lợi nhuận sau thuế theo quy định công bố thông tin.",
+        image: "/images/ptsc/project-hd-mien-nam.jpg",
+      },
+      {
+        category: "Báo cáo tài chính / Báo cáo thường niên",
+        date: "cập nhật gần nhất",
+        title: "Báo cáo tài chính hợp nhất",
+        excerpt: "Báo cáo tài chính hợp nhất toàn Tổng công ty đã được kiểm toán.",
+        image: "/images/ptsc/service-fso.jpg",
       },
     ],
   },

@@ -20,6 +20,9 @@ import {
   ExternalLink,
   MessageSquare,
   Eye,
+  Landmark,
+  ScrollText,
+  ChevronDown,
 } from "lucide-react";
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
@@ -41,7 +44,23 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   "site-marquee": Megaphone,
   "production-info": Activity,
   contacts: MessageSquare,
+  "shareholder-categories": Landmark,
+  "shareholder-relations": ScrollText,
 };
+
+// Nhóm các collection vào đúng thư mục chính, khớp với cấu trúc menu chính
+// của website (Giới thiệu DHC / Quan hệ cổ đông / Tin tức – Sự kiện / Thư
+// viện / Liên hệ) — xem `navItemsVi` trong `src/components/ptsc-shell.tsx`.
+// Collection nào không thuộc mục nào trên menu chính (chỉ hiện ở trang chủ
+// hoặc là trang độc lập) thì gom vào nhóm "Khác" ở cuối.
+const SIDEBAR_GROUPS: { label: string; ids: CollectionId[] }[] = [
+  { label: "Giới thiệu DHC", ids: ["projects"] },
+  { label: "Quan hệ cổ đông", ids: ["shareholder-categories", "shareholder-relations"] },
+  { label: "Tin tức – Sự kiện", ids: ["news-categories", "news"] },
+  { label: "Thư viện", ids: ["photo-albums", "video-albums"] },
+  { label: "Liên hệ", ids: ["contacts"] },
+  { label: "Khác", ids: ["jobs", "site-marquee", "production-info"] },
+];
 
 // "list": danh sách các mục của 1 collection.
 // "edit": trang Thêm mới / Sửa (trang riêng, không phải modal) — `item: null`
@@ -56,6 +75,12 @@ export default function AdminApp() {
   const [view, setView] = useState<View | null>(null);
   const [me, setMe] = useState<CurrentUser | null>(null);
   const active = view && view.kind !== "users" ? COLLECTIONS.find((c) => c.id === view.id)! : null;
+
+  // Nhóm nào đang đóng/mở trong sidebar — mặc định đóng hết cho gọn, chỉ
+  // nhóm chứa mục đang xem thì tự mở (xem effect bên dưới).
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const toggleGroup = (label: string) =>
+    setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
 
   // "user con" (role editor) chỉ thấy các collection nằm trong permissions
   // của họ — admin luôn thấy toàn bộ COLLECTIONS.
@@ -72,7 +97,11 @@ export default function AdminApp() {
         const first = body && body.role !== "admin"
           ? COLLECTIONS.find((c) => body.permissions.includes(c.id))
           : COLLECTIONS[0];
-        setView({ kind: "list", id: (first ?? COLLECTIONS[0]).id });
+        const firstId = (first ?? COLLECTIONS[0]).id;
+        setView({ kind: "list", id: firstId });
+        // Mở sẵn nhóm chứa mục đầu tiên được chọn để không mở ra thấy trống trơn.
+        const firstGroup = SIDEBAR_GROUPS.find((g) => g.ids.includes(firstId));
+        if (firstGroup) setOpenGroups({ [firstGroup.label]: true });
       })
       .catch(() => setView({ kind: "list", id: COLLECTIONS[0].id }));
   }, []);
@@ -84,8 +113,13 @@ export default function AdminApp() {
       {/* Sidebar tối màu — cố định, tách biệt khỏi vùng nội dung sáng màu */}
       <aside className="flex w-64 shrink-0 flex-col bg-slate-900">
         <div className="flex items-center gap-2.5 border-b border-white/10 px-5 py-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-600">
-            <LayoutGrid className="h-5 w-5 text-white" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white p-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/ptsc/logo-ptsc.png"
+              alt="Logo công ty"
+              className="h-full w-full object-contain"
+            />
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-white">Trang quản trị</p>
@@ -93,23 +127,54 @@ export default function AdminApp() {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
-          {visibleCollections.map((c) => {
-            const Icon = COLLECTION_ICONS[c.id] ?? LayoutGrid;
-            const isActive = view.kind !== "users" && c.id === view.id;
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          {SIDEBAR_GROUPS.map((group) => {
+            // Chỉ hiện các collection trong nhóm mà user hiện tại được thấy
+            // (đã lọc theo quyền ở `visibleCollections`); nhóm nào không còn
+            // collection nào (vd: editor không có quyền) thì ẩn cả nhóm.
+            const groupCollections = group.ids
+              .map((id) => visibleCollections.find((c) => c.id === id))
+              .filter((c): c is CollectionDef => Boolean(c));
+            if (groupCollections.length === 0) return null;
+            const isOpen = Boolean(openGroups[group.label]);
+
             return (
-              <button
-                key={c.id}
-                onClick={() => setView({ kind: "list", id: c.id })}
-                className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
-                  isActive
-                    ? "bg-cyan-600 text-white shadow-sm shadow-cyan-900/40"
-                    : "text-slate-300 hover:bg-white/5 hover:text-white"
-                }`}
-              >
-                <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
-                <span className="truncate">{c.label}</span>
-              </button>
+              <div key={group.label} className="pb-1">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.label)}
+                  className="flex w-full items-center justify-between px-3 pb-1 pt-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 transition hover:text-slate-300"
+                >
+                  <span>{group.label}</span>
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 shrink-0 transition-transform ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {isOpen && (
+                  <div className="space-y-0.5">
+                    {groupCollections.map((c) => {
+                      const Icon = COLLECTION_ICONS[c.id] ?? LayoutGrid;
+                      const isActive = view.kind !== "users" && c.id === view.id;
+                      return (
+                        <button
+                          key={c.id}
+                          onClick={() => setView({ kind: "list", id: c.id })}
+                          className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
+                            isActive
+                              ? "bg-cyan-600 text-white shadow-sm shadow-cyan-900/40"
+                              : "text-slate-300 hover:bg-white/5 hover:text-white"
+                          }`}
+                        >
+                          <Icon className={`h-4 w-4 shrink-0 ${isActive ? "text-white" : "text-slate-400"}`} />
+                          <span className="truncate">{c.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             );
           })}
 
