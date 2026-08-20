@@ -17,6 +17,7 @@ import {
   Plus,
   Pencil,
   Trash2,
+  ExternalLink,
 } from "lucide-react";
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
@@ -156,34 +157,49 @@ export default function AdminApp() {
 
       {/* Vùng nội dung */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-2 border-b border-slate-200 bg-white px-8 py-4 text-sm text-slate-500">
-          <button
-            onClick={() =>
-              visibleCollections[0] && setView({ kind: "list", id: visibleCollections[0].id })
-            }
-            className="hover:text-cyan-700"
+        <header className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-8 py-4 text-sm text-slate-500">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() =>
+                visibleCollections[0] && setView({ kind: "list", id: visibleCollections[0].id })
+              }
+              className="hover:text-cyan-700"
+            >
+              Trang chủ
+            </button>
+            <span className="text-slate-300">/</span>
+            {view.kind === "users" ? (
+              <span className="font-medium text-slate-900">Người dùng</span>
+            ) : view.kind === "list" ? (
+              <span className="font-medium text-slate-900">{active!.label}</span>
+            ) : (
+              <>
+                <button
+                  onClick={() => setView({ kind: "list", id: view.id })}
+                  className="hover:text-cyan-700"
+                >
+                  {active!.label}
+                </button>
+                <span className="text-slate-300">/</span>
+                <span className="font-medium text-slate-900">
+                  {view.item ? "Sửa" : "Thêm mới"}
+                </span>
+              </>
+            )}
+          </div>
+
+          {/* Nút "Xem website" luôn hiện ở mọi trang trong khu vực admin —
+              bấm vào mở trang chủ website ở tab mới, tiện xem lại ngay sau
+              khi vừa thêm/sửa xong một nội dung nào đó. */}
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-xs font-medium text-cyan-700 transition hover:bg-cyan-100"
           >
-            Trang chủ
-          </button>
-          <span className="text-slate-300">/</span>
-          {view.kind === "users" ? (
-            <span className="font-medium text-slate-900">Người dùng</span>
-          ) : view.kind === "list" ? (
-            <span className="font-medium text-slate-900">{active!.label}</span>
-          ) : (
-            <>
-              <button
-                onClick={() => setView({ kind: "list", id: view.id })}
-                className="hover:text-cyan-700"
-              >
-                {active!.label}
-              </button>
-              <span className="text-slate-300">/</span>
-              <span className="font-medium text-slate-900">
-                {view.item ? "Sửa" : "Thêm mới"}
-              </span>
-            </>
-          )}
+            <ExternalLink className="h-3.5 w-3.5" />
+            Xem website
+          </a>
         </header>
 
         <main className="flex-1 px-8 py-7">
@@ -658,6 +674,17 @@ function ItemFormPage({
       <div className="sticky top-0 z-10 -mx-8 mb-6 flex items-center justify-between border-b border-slate-200 bg-white/95 px-8 py-4 backdrop-blur">
         <h2 className="text-lg font-semibold text-slate-900">Thông tin chi tiết</h2>
         <div className="flex items-center gap-2">
+          {/* Mở trang chủ website ở tab mới — dùng sau khi bấm Lưu để xem
+              ngay nội dung vừa đăng, không cần rời khỏi trang admin đang làm. */}
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 transition hover:bg-cyan-100"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Xem website
+          </a>
           <button
             type="button"
             onClick={onClose}
