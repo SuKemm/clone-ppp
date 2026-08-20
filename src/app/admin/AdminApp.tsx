@@ -36,13 +36,19 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   "production-info": Activity,
 };
 
-type View = { kind: "collection"; id: CollectionId } | { kind: "users" };
+// "list": danh sách các mục của 1 collection.
+// "edit": trang Thêm mới / Sửa (trang riêng, không phải modal) — `item: null`
+//   nghĩa là đang thêm mới, có giá trị nghĩa là đang sửa mục đó.
+type View =
+  | { kind: "list"; id: CollectionId }
+  | { kind: "edit"; id: CollectionId; item: CmsItem | null }
+  | { kind: "users" };
 
 export default function AdminApp() {
   const router = useRouter();
-  const [view, setView] = useState<View>({ kind: "collection", id: COLLECTIONS[0].id });
+  const [view, setView] = useState<View>({ kind: "list", id: COLLECTIONS[0].id });
   const [currentUsername, setCurrentUsername] = useState<string | null>(null);
-  const active = view.kind === "collection" ? COLLECTIONS.find((c) => c.id === view.id)! : null;
+  const active = view.kind !== "users" ? COLLECTIONS.find((c) => c.id === view.id)! : null;
 
   useEffect(() => {
     fetch("/api/admin/me")
@@ -68,11 +74,11 @@ export default function AdminApp() {
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-4">
           {COLLECTIONS.map((c) => {
             const Icon = COLLECTION_ICONS[c.id] ?? LayoutGrid;
-            const isActive = view.kind === "collection" && c.id === view.id;
+            const isActive = view.kind !== "users" && c.id === view.id;
             return (
               <button
                 key={c.id}
-                onClick={() => setView({ kind: "collection", id: c.id })}
+                onClick={() => setView({ kind: "list", id: c.id })}
                 className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
                   isActive
                     ? "bg-cyan-600 text-white shadow-sm shadow-cyan-900/40"
@@ -123,18 +129,51 @@ export default function AdminApp() {
       {/* Vùng nội dung */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center gap-2 border-b border-slate-200 bg-white px-8 py-4 text-sm text-slate-500">
-          <span>{view.kind === "users" ? "Quản trị" : "Nội dung"}</span>
+          <button
+            onClick={() => setView({ kind: "list", id: COLLECTIONS[0].id })}
+            className="hover:text-cyan-700"
+          >
+            Trang chủ
+          </button>
           <span className="text-slate-300">/</span>
-          <span className="font-medium text-slate-900">
-            {view.kind === "users" ? "Người dùng" : active!.label}
-          </span>
+          {view.kind === "users" ? (
+            <span className="font-medium text-slate-900">Người dùng</span>
+          ) : view.kind === "list" ? (
+            <span className="font-medium text-slate-900">{active!.label}</span>
+          ) : (
+            <>
+              <button
+                onClick={() => setView({ kind: "list", id: view.id })}
+                className="hover:text-cyan-700"
+              >
+                {active!.label}
+              </button>
+              <span className="text-slate-300">/</span>
+              <span className="font-medium text-slate-900">
+                {view.item ? "Sửa" : "Thêm mới"}
+              </span>
+            </>
+          )}
         </header>
 
         <main className="flex-1 px-8 py-7">
           {view.kind === "users" ? (
             <UsersPanel />
+          ) : view.kind === "list" ? (
+            <CollectionListPanel
+              key={active!.id}
+              def={active!}
+              onAdd={() => setView({ kind: "edit", id: active!.id, item: null })}
+              onEdit={(item) => setView({ kind: "edit", id: active!.id, item })}
+            />
           ) : (
-            <CollectionPanel key={active!.id} def={active!} />
+            <ItemFormPage
+              key={`${view.id}-${view.item?.id ?? "new"}`}
+              def={active!}
+              item={view.item}
+              onClose={() => setView({ kind: "list", id: view.id })}
+              onSaved={() => setView({ kind: "list", id: view.id })}
+            />
           )}
         </main>
       </div>
@@ -143,9 +182,16 @@ export default function AdminApp() {
 }
 
 
-function CollectionPanel({ def }: { def: CollectionDef }) {
+function CollectionListPanel({
+  def,
+  onAdd,
+  onEdit,
+}: {
+  def: CollectionDef;
+  onAdd: () => void;
+  onEdit: (item: CmsItem) => void;
+}) {
   const [items, setItems] = useState<CmsItem[] | null>(null);
-  const [editing, setEditing] = useState<CmsItem | "new" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function load() {
@@ -186,7 +232,7 @@ function CollectionPanel({ def }: { def: CollectionDef }) {
           )}
         </div>
         <button
-          onClick={() => setEditing("new")}
+          onClick={onAdd}
           className="flex items-center gap-1.5 rounded-lg bg-cyan-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-cyan-900/10 transition hover:bg-cyan-700"
         >
           <Plus className="h-4 w-4" />
@@ -247,7 +293,7 @@ function CollectionPanel({ def }: { def: CollectionDef }) {
 
             <div className="flex shrink-0 gap-2">
               <button
-                onClick={() => setEditing(item)}
+                onClick={() => onEdit(item)}
                 className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 transition hover:border-slate-400 hover:bg-slate-50"
               >
                 <Pencil className="h-3.5 w-3.5" />
@@ -264,22 +310,31 @@ function CollectionPanel({ def }: { def: CollectionDef }) {
           </div>
         ))}
       </div>
-
-      {editing && (
-        <ItemForm
-          def={def}
-          item={editing === "new" ? null : editing}
-          onClose={() => setEditing(null)}
-          onSaved={() => {
-            setEditing(null);
-            load();
-          }}
-        />
-      )}
     </div>
   );
 }
-function ItemForm({
+
+// Gom các field liền kề có width:"half" thành từng cặp 1 hàng (lưới 2 cột) —
+// giống layout trang quản trị dakdrinh.com.vn. Field không khai báo width
+// (hoặc "full") luôn chiếm trọn 1 hàng riêng.
+function buildFieldRows(fields: CollectionDef["fields"]) {
+  const rows: (typeof fields)[] = [];
+  let i = 0;
+  while (i < fields.length) {
+    const f = fields[i];
+    const next = fields[i + 1];
+    if (f.width === "half" && next?.width === "half") {
+      rows.push([f, next]);
+      i += 2;
+    } else {
+      rows.push([f]);
+      i += 1;
+    }
+  }
+  return rows;
+}
+
+function ItemFormPage({
   def,
   item,
   onClose,
@@ -423,170 +478,188 @@ function ItemForm({
   }
 
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <form
-        onSubmit={handleSubmit}
-        className="flex max-h-[90vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
-      >
-        {/* Banner màu ở đầu form — cùng tông với nút "Thêm mới" để có mạch nhất quán */}
-        <div className="flex shrink-0 items-center justify-between bg-cyan-700 px-6 py-4">
-          <h3 className="text-base font-semibold text-white">
-            {item ? "Sửa" : "Thêm mới"} — {def.label}
-          </h3>
-        </div>
+  // Render 1 field — dùng chung cho cả field đứng 1 mình (full width) lẫn
+  // field ghép cặp 2 cột trong buildFieldRows().
+  function renderField(f: CollectionDef["fields"][number]) {
+    return (
+      <label key={f.key} className="block text-sm font-medium text-slate-700">
+        <span className="flex items-center justify-between gap-2">
+          <span>
+            {f.label}
+            {f.required && <span className="text-red-500"> *</span>}
+          </span>
+          {targetKeyBySource.has(f.key) && (
+            <button
+              type="button"
+              disabled={translatingKey === targetKeyBySource.get(f.key) || !values[f.key]?.trim()}
+              onClick={() => translateField(f.key, targetKeyBySource.get(f.key)!)}
+              className="shrink-0 rounded-md border border-cyan-200 bg-cyan-50 px-2 py-1 text-xs font-medium text-cyan-700 hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-40"
+              title="Tự động điền bản dịch tiếng Anh vào ô bên dưới"
+            >
+              {translatingKey === targetKeyBySource.get(f.key) ? "Đang dịch..." : "Dịch tự động → EN"}
+            </button>
+          )}
+        </span>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
-          <div className="space-y-4">
-            {def.fields.map((f) => (
-              <label key={f.key} className="block text-sm font-medium text-slate-700">
-                <span className="flex items-center justify-between gap-2">
-                  <span>
-                    {f.label}
-                    {f.required && <span className="text-red-500"> *</span>}
-                  </span>
-                  {targetKeyBySource.has(f.key) && (
+        {f.type === "richtext" ? (
+          <RichTextEditor
+            value={values[f.key]}
+            onChange={(html) => setValues((v) => ({ ...v, [f.key]: html }))}
+          />
+        ) : f.type === "textarea" ? (
+          <textarea
+            rows={f.key === "content" ? 12 : 4}
+            value={values[f.key]}
+            onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+          />
+        ) : f.type === "image" ? (
+          <div className="mt-1 space-y-2">
+            {values[f.key] && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={values[f.key]}
+                alt=""
+                className="h-24 w-auto rounded-lg border border-slate-200 object-cover"
+              />
+            )}
+            <label className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-600 transition hover:border-cyan-400 hover:bg-cyan-50">
+              <span className="truncate">
+                {values[f.key] ? "Đổi ảnh khác" : "Chọn hình ảnh"}
+              </span>
+              <span className="shrink-0 rounded-md bg-cyan-600 px-2.5 py-1 text-xs font-semibold text-white">
+                Tải lên
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUpload(f.key, file);
+                }}
+                className="hidden"
+              />
+            </label>
+            {uploadingKey === f.key && (
+              <p className="text-xs text-slate-400">Đang tải ảnh lên...</p>
+            )}
+          </div>
+        ) : f.type === "gallery" ? (
+          <div className="mt-1 space-y-2">
+            {parseGallery(values[f.key]).length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {parseGallery(values[f.key]).map((url, idx) => (
+                  <div key={`${url}-${idx}`} className="relative">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt=""
+                      className="h-20 w-20 rounded-lg border border-slate-200 object-cover"
+                    />
                     <button
                       type="button"
-                      disabled={translatingKey === targetKeyBySource.get(f.key) || !values[f.key]?.trim()}
-                      onClick={() => translateField(f.key, targetKeyBySource.get(f.key)!)}
-                      className="shrink-0 rounded-md border border-cyan-200 bg-cyan-50 px-2 py-1 text-xs font-medium text-cyan-700 hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-40"
-                      title="Tự động điền bản dịch tiếng Anh vào ô bên dưới"
+                      onClick={() => handleGalleryRemove(f.key, idx)}
+                      className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white hover:bg-red-700"
+                      aria-label="Xoá ảnh"
                     >
-                      {translatingKey === targetKeyBySource.get(f.key) ? "Đang dịch..." : "Dịch tự động → EN"}
+                      ✕
                     </button>
-                  )}
-                </span>
-
-                {f.type === "richtext" ? (
-                  <RichTextEditor
-                    value={values[f.key]}
-                    onChange={(html) => setValues((v) => ({ ...v, [f.key]: html }))}
-                  />
-                ) : f.type === "textarea" ? (
-                  <textarea
-                    rows={f.key === "content" ? 12 : 4}
-                    value={values[f.key]}
-                    onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
-                  />
-                ) : f.type === "image" ? (
-                  <div className="mt-1 space-y-2">
-                    {values[f.key] && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={values[f.key]}
-                        alt=""
-                        className="h-24 w-auto rounded-lg border border-slate-200 object-cover"
-                      />
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) handleUpload(f.key, file);
-                      }}
-                      className="block w-full text-sm text-slate-600"
-                    />
-                    {uploadingKey === f.key && (
-                      <p className="text-xs text-slate-400">Đang tải ảnh lên...</p>
-                    )}
                   </div>
-                ) : f.type === "gallery" ? (
-                  <div className="mt-1 space-y-2">
-                    {parseGallery(values[f.key]).length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {parseGallery(values[f.key]).map((url, idx) => (
-                          <div key={`${url}-${idx}`} className="relative">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={url}
-                              alt=""
-                              className="h-20 w-20 rounded-lg border border-slate-200 object-cover"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleGalleryRemove(f.key, idx)}
-                              className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs text-white hover:bg-red-700"
-                              aria-label="Xoá ảnh"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={(e) => {
-                        const files = e.target.files;
-                        if (files && files.length > 0) handleGalleryUpload(f.key, files);
-                        e.target.value = "";
-                      }}
-                      className="block w-full text-sm text-slate-600"
-                    />
-                    {uploadingKey === f.key && (
-                      <p className="text-xs text-slate-400">Đang tải ảnh lên...</p>
-                    )}
-                    <p className="text-xs text-slate-400">
-                      Có thể chọn nhiều ảnh cùng lúc. Ảnh sẽ được thêm vào cuối danh sách, bấm ✕ để xoá bớt.
-                    </p>
-                  </div>
-                ) : f.type === "date" ? (
-                  <input
-                    type="text"
-                    placeholder="vd: 15/08/2026"
-                    value={values[f.key]}
-                    onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
-                  />
-                ) : f.type === "select" ? (
-                  <SelectField
-                    value={values[f.key]}
-                    onChange={(val) => setValues((v) => ({ ...v, [f.key]: val }))}
-                    options={
-                      f.optionsFrom
-                        ? (optionsData[f.optionsFrom] ?? []).map(
-                            (option): SelectOption => ({ value: option.name, label: option.name })
-                          )
-                        : (f.options ?? []).map((o): SelectOption => ({ value: o, label: o }))
-                    }
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    value={values[f.key]}
-                    onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
-                  />
-                )}
-              </label>
-            ))}
+                ))}
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => {
+                const files = e.target.files;
+                if (files && files.length > 0) handleGalleryUpload(f.key, files);
+                e.target.value = "";
+              }}
+              className="block w-full text-sm text-slate-600"
+            />
+            {uploadingKey === f.key && (
+              <p className="text-xs text-slate-400">Đang tải ảnh lên...</p>
+            )}
+            <p className="text-xs text-slate-400">
+              Có thể chọn nhiều ảnh cùng lúc. Ảnh sẽ được thêm vào cuối danh sách, bấm ✕ để xoá bớt.
+            </p>
           </div>
+        ) : f.type === "date" ? (
+          <input
+            type="text"
+            placeholder="vd: 15/08/2026"
+            value={values[f.key]}
+            onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+          />
+        ) : f.type === "select" ? (
+          <SelectField
+            value={values[f.key]}
+            onChange={(val) => setValues((v) => ({ ...v, [f.key]: val }))}
+            options={
+              f.optionsFrom
+                ? (optionsData[f.optionsFrom] ?? []).map(
+                    (option): SelectOption => ({ value: option.name, label: option.name })
+                  )
+                : (f.options ?? []).map((o): SelectOption => ({ value: o, label: o }))
+            }
+          />
+        ) : (
+          <input
+            type="text"
+            value={values[f.key]}
+            onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+          />
+        )}
+      </label>
+    );
+  }
 
-          {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
-        </div>
+  const rows = buildFieldRows(def.fields);
 
-        <div className="flex shrink-0 justify-end gap-2 border-t border-slate-100 bg-slate-50 px-6 py-4">
+  return (
+    <form onSubmit={handleSubmit}>
+      {/* Thanh tiêu đề + nút hành động — cùng cấu trúc với trang
+          "Thông tin chi tiết" của dakdrinh.com.vn/admin (tiêu đề bên trái,
+          Lưu/Thoát bên phải, luôn nổi trên đầu khi cuộn trang dài). */}
+      <div className="sticky top-0 z-10 -mx-8 mb-6 flex items-center justify-between border-b border-slate-200 bg-white/95 px-8 py-4 backdrop-blur">
+        <h2 className="text-lg font-semibold text-slate-900">Thông tin chi tiết</h2>
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={onClose}
             className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm text-slate-600 transition hover:bg-slate-100"
           >
-            Huỷ
+            Thoát
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="rounded-lg bg-cyan-700 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-cyan-900/10 transition hover:bg-cyan-800 disabled:opacity-50"
+            className="rounded-lg bg-cyan-700 px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-cyan-900/10 transition hover:bg-cyan-800 disabled:opacity-50"
           >
             {saving ? "Đang lưu..." : "Lưu"}
           </button>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <div className="max-w-5xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="space-y-5">
+          {rows.map((row, idx) =>
+            row.length === 2 ? (
+              <div key={idx} className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {row.map((f) => renderField(f))}
+              </div>
+            ) : (
+              <div key={idx}>{renderField(row[0])}</div>
+            )
+          )}
+        </div>
+
+        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      </div>
+    </form>
   );
 }

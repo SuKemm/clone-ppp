@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
@@ -7,6 +8,23 @@ import { ArticleViewCount } from "@/components/ArticleViewCount";
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 type Params = { params: Promise<{ id: string }> };
+
+// Ưu tiên các trường SEO riêng (Tiêu đề SEO / Mô tả SEO / Từ khoá) nhập ở
+// /admin — giống cơ chế Title SEO / Description SEO / Keyword của
+// dakdrinh.com.vn/admin; nếu admin chưa điền thì lấy tạm Tiêu đề / Tóm tắt.
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { id } = await params;
+  const item = getCollection("news").find((n) => n.id === id);
+  if (!item) return {};
+
+  const title = item.seoTitle?.trim() || item.title;
+  const description = item.seoDescription?.trim() || item.excerpt || undefined;
+  const keywords = item.keyword?.trim()
+    ? item.keyword.split(",").map((k) => k.trim()).filter(Boolean)
+    : undefined;
+
+  return { title, description, keywords };
+}
 
 export default async function NewsDetailPage({ params }: Params) {
   const { id } = await params;

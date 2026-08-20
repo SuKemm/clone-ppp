@@ -18,6 +18,11 @@ export type FieldDef = {
   //   dùng field "name" của mỗi item trong collection đó làm nhãn hiển thị + giá trị lưu.
   options?: string[];
   optionsFrom?: CollectionId;
+  // "half": field này xếp chung 1 hàng với field "half" liền sau nó (2 cột,
+  // giống layout trang quản trị dakdrinh.com.vn). Mặc định ("full" / không
+  // khai báo) chiếm trọn 1 hàng. Chỉ ghép được 2 field "half" liên tiếp nhau
+  // trong mảng `fields` — xem `buildFieldRows()` ở AdminApp.tsx.
+  width?: "half" | "full";
 };
 
 export type CollectionId =
@@ -71,16 +76,19 @@ export const COLLECTIONS: CollectionDef[] = [
     id: "news",
     label: "Tin tức",
     fields: [
-      { key: "title", label: "Tiêu đề", type: "text", required: true },
-      { key: "title_en", label: "Tiêu đề (EN)", type: "text" },
       { key: "category", label: "Chuyên mục", type: "select", optionsFrom: "news-categories" },
+      { key: "title", label: "Tiêu đề", type: "text", required: true, width: "half" },
+      { key: "seoTitle", label: "Tiêu đề SEO (Title SEO)", type: "text", width: "half" },
+      { key: "title_en", label: "Tiêu đề (EN)", type: "text", width: "half" },
+      { key: "keyword", label: "Từ khoá SEO (Keyword)", type: "text", width: "half" },
+      { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea", width: "half" },
+      { key: "seoDescription", label: "Mô tả SEO (Description SEO)", type: "textarea", width: "half" },
+      { key: "excerpt_en", label: "Tóm tắt (EN)", type: "textarea", width: "half" },
+      { key: "date", label: "Ngày đăng", type: "date", width: "half" },
       { key: "category_en", label: "Chuyên mục (EN)", type: "text" },
-      { key: "date", label: "Ngày đăng", type: "date" },
-      { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea" },
-      { key: "excerpt_en", label: "Tóm tắt (EN)", type: "textarea" },
+      { key: "image", label: "Ảnh đại diện", type: "image" },
       { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết bài)", type: "richtext" },
       { key: "content_en", label: "Nội dung đầy đủ (EN)", type: "richtext" },
-      { key: "image", label: "Ảnh minh hoạ", type: "image" },
     ],
     seed: [
       {
