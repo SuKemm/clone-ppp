@@ -59,8 +59,6 @@ export default async function NewsPage({
   // khác ngoài danh sách này, nó sẽ được nối thêm vào cuối tự động.
   const CANONICAL_CATEGORIES = [
     "Hoạt động PV Power",
-    "Báo chí với PV Power",
-    "Hoạt động PVN",
     "Tin tức khác",
   ];
   const dataCategories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
