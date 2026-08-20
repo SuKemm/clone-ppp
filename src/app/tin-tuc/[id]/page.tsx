@@ -9,21 +9,12 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 
 type Params = { params: Promise<{ id: string }> };
 
-// Ưu tiên các trường SEO riêng (Tiêu đề SEO / Mô tả SEO / Từ khoá) nhập ở
-// /admin — giống cơ chế Title SEO / Description SEO / Keyword của
-// dakdrinh.com.vn/admin; nếu admin chưa điền thì lấy tạm Tiêu đề / Tóm tắt.
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
   const item = getCollection("news").find((n) => n.id === id);
   if (!item) return {};
 
-  const title = item.seoTitle?.trim() || item.title;
-  const description = item.seoDescription?.trim() || item.excerpt || undefined;
-  const keywords = item.keyword?.trim()
-    ? item.keyword.split(",").map((k) => k.trim()).filter(Boolean)
-    : undefined;
-
-  return { title, description, keywords };
+  return { title: item.title, description: item.excerpt || undefined };
 }
 
 export default async function NewsDetailPage({ params }: Params) {
