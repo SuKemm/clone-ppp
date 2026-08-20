@@ -58,7 +58,7 @@ export const leadershipGroups: LeadershipGroup[] = [
 
   {
     id: "btgd",
-    groupTitle: "Ban Tổng Giám đốc",
+    groupTitle: "Ban Giám đốc",
     groupTitle_en: "Board of Management",
     leader: {
       name: "Ông Đỗ Xuân Bình",
@@ -188,7 +188,7 @@ export function PersonCard({
     <div
       className={[
         "flex min-w-0 flex-col items-center text-center",
-        leader ? "w-[150px] sm:w-[200px] lg:w-[260px]" : "w-[130px] sm:w-[150px] lg:w-[180px]",
+        leader ? "w-[150px] sm:w-[200px] lg:w-[260px]" : "w-[145px] sm:w-[165px] lg:w-[200px]",
       ].join(" ")}
     >
       <PersonAvatar
@@ -196,7 +196,7 @@ export function PersonCard({
         photo={person.photo}
       />
 
-      <div className="mt-2 w-full text-[13px] font-semibold leading-5 text-[#008bd2] sm:text-[16px] sm:leading-6 lg:text-[18px]">
+      <div className="mt-2 w-full text-[11px] font-semibold leading-5 text-[#008bd2] sm:text-[14px] sm:leading-6 lg:text-[16px]">
         {name}
       </div>
 

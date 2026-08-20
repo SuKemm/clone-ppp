@@ -61,7 +61,18 @@ export default async function NewsPageEn({
 
   // Category tabs — derived from the (translated) article data itself, in
   // first-seen order, same approach as the Vietnamese page.
-  const categories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
+  // Fixed category list (always shown even with no articles yet), matching
+  // the canonical order on the Vietnamese page. Any extra category an admin
+  // adds is appended automatically at the end.
+  const CANONICAL_CATEGORIES = [
+    "PV Power Activities",
+    "Press on PV Power",
+    "PVN Activities",
+    "Other News",
+  ];
+  const dataCategories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
+  const extraCategories = dataCategories.filter((c) => !CANONICAL_CATEGORIES.includes(c));
+  const categories = [...CANONICAL_CATEGORIES, ...extraCategories];
   const tabs = ["All", ...categories];
   const activeTab = category && categories.includes(category) ? category : "All";
 
@@ -83,7 +94,7 @@ export default async function NewsPageEn({
   const pageNumbers = getPageNumbers(page, totalPages);
 
   return (
-    <PtscShell title="News" description="Latest news and updates from PTSC.">
+    <PtscShell>
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
         <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
           News &amp; Events

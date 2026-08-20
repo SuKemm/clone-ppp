@@ -54,7 +54,18 @@ export default async function NewsPage({
 
   // Danh sách chuyên mục (tab) — lấy từ chính dữ liệu bài viết, giữ đúng thứ
   // tự xuất hiện lần đầu, không cần khai báo cứng ở đâu khác.
-  const categories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
+  // Danh mục cố định (hiển thị luôn dù chưa có bài trong danh mục đó), theo
+  // đúng thứ tự chuẩn của trang PV Power DHC gốc. Nếu admin thêm chuyên mục
+  // khác ngoài danh sách này, nó sẽ được nối thêm vào cuối tự động.
+  const CANONICAL_CATEGORIES = [
+    "Hoạt động PV Power",
+    "Báo chí với PV Power",
+    "Hoạt động PVN",
+    "Tin tức khác",
+  ];
+  const dataCategories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
+  const extraCategories = dataCategories.filter((c) => !CANONICAL_CATEGORIES.includes(c));
+  const categories = [...CANONICAL_CATEGORIES, ...extraCategories];
   const tabs = ["Tất cả", ...categories];
   const activeTab = category && categories.includes(category) ? category : "Tất cả";
 
@@ -76,10 +87,7 @@ export default async function NewsPage({
   const pageNumbers = getPageNumbers(page, totalPages);
 
   return (
-    <PtscShell
-      title="Tin tức"
-      description="Cập nhật các hoạt động, dự án mới và thông tin phát triển bền vững của PTSC."
-    >
+    <PtscShell>
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
         <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
           Tin tức &ndash; Sự kiện

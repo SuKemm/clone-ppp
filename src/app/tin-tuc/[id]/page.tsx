@@ -14,12 +14,10 @@ export default async function NewsDetailPage({ params }: Params) {
 
   if (!item) notFound();
 
-  // Nội dung đầy đủ nhập ở /admin dạng văn bản thường — mỗi dòng trống
-  // cách nhau được hiểu là 1 đoạn văn mới khi hiển thị.
-  const paragraphs = (item.content || item.excerpt || "")
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+  // Nội dung đầy đủ nhập ở /admin qua trình soạn thảo TinyMCE, lưu sẵn dạng
+  // HTML (in đậm, danh sách, link...) — hiển thị thẳng ra trang, không tách
+  // đoạn thủ công như trước nữa.
+  const contentHtml = item.content || "";
 
   return (
     <PtscShell title={item.title} description={item.excerpt || ""}>
@@ -47,12 +45,10 @@ export default async function NewsDetailPage({ params }: Params) {
         )}
 
         <div className="prose prose-slate mt-8 max-w-none">
-          {paragraphs.length > 0 ? (
-            paragraphs.map((p, i) => (
-              <p key={i} className="mt-4 whitespace-pre-line text-lg leading-8 text-slate-700 first:mt-0">
-                {p}
-              </p>
-            ))
+          {contentHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+          ) : item.excerpt ? (
+            <p className="text-lg leading-8 text-slate-700">{item.excerpt}</p>
           ) : (
             <p className="text-slate-500">Bài viết chưa có nội dung chi tiết.</p>
           )}

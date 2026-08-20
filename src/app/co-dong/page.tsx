@@ -190,10 +190,7 @@ const sidebarItems = [
 
 export default function ShareholdersPage() {
   return (
-    <PtscShell
-      title="Quan hệ cổ đông"
-      description="Thông tin minh bạch và cập nhật dành cho cổ đông: tài liệu cổ đông, Đại hội đồng cổ đông và các báo cáo tài chính, báo cáo thường niên."
-    >
+    <PtscShell>
       <ShareholderRelations
         tabs={tabs}
         sidebarTitle="Xem nhiều nhất"

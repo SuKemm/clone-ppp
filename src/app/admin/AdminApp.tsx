@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 
 export default function AdminApp() {
   const router = useRouter();
@@ -303,7 +304,12 @@ function ItemForm({
                 )}
               </span>
 
-              {f.type === "textarea" ? (
+              {f.type === "richtext" ? (
+                <RichTextEditor
+                  value={values[f.key]}
+                  onChange={(html) => setValues((v) => ({ ...v, [f.key]: html }))}
+                />
+              ) : f.type === "textarea" ? (
                 <textarea
                   rows={f.key === "content" ? 12 : 4}
                   value={values[f.key]}

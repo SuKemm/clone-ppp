@@ -5,7 +5,7 @@
 // Khi thêm 1 loại nội dung mới cần quản lý qua /admin, chỉ cần thêm 1 entry
 // vào COLLECTIONS bên dưới rồi dùng `getCollection(id)` ở trang hiển thị.
 
-export type FieldType = "text" | "textarea" | "date" | "image" | "gallery";
+export type FieldType = "text" | "textarea" | "richtext" | "date" | "image" | "gallery";
 
 export type FieldDef = {
   key: string;
@@ -57,8 +57,8 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "date", label: "Ngày đăng", type: "date" },
       { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea" },
       { key: "excerpt_en", label: "Tóm tắt (EN)", type: "textarea" },
-      { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết bài)", type: "textarea" },
-      { key: "content_en", label: "Nội dung đầy đủ (EN)", type: "textarea" },
+      { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết bài)", type: "richtext" },
+      { key: "content_en", label: "Nội dung đầy đủ (EN)", type: "richtext" },
       { key: "image", label: "Ảnh minh hoạ", type: "image" },
     ],
     seed: [

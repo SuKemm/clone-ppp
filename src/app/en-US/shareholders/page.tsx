@@ -194,10 +194,7 @@ const sidebarItems = [
 
 export default function ShareholdersPage() {
   return (
-    <PtscShell
-      title="Investor Relations"
-      description="Transparent, up-to-date information for shareholders: shareholder documents, the General Meeting of Shareholders, and financial / annual reports."
-    >
+    <PtscShell>
       <ShareholderRelations
         tabs={tabs}
         sidebarTitle="Most Viewed"

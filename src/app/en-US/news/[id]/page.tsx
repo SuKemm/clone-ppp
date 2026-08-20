@@ -17,12 +17,9 @@ export default async function NewsDetailPageEn({ params }: Params) {
   const title = item.title_en || item.title;
   const category = item.category_en || item.category;
   const excerpt = item.excerpt_en || item.excerpt || "";
-  const bodyText = item.content_en || item.content || item.excerpt_en || item.excerpt || "";
-
-  const paragraphs = bodyText
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
+  // Nội dung lưu sẵn dạng HTML từ TinyMCE — ưu tiên bản dịch EN, rơi về bản
+  // VI (hoặc tóm tắt) nếu bài chưa có nội dung tiếng Anh.
+  const contentHtml = item.content_en || item.content || "";
 
   return (
     <PtscShell title={title} description={excerpt}>
@@ -48,12 +45,10 @@ export default async function NewsDetailPageEn({ params }: Params) {
         )}
 
         <div className="prose prose-slate mt-8 max-w-none">
-          {paragraphs.length > 0 ? (
-            paragraphs.map((p, i) => (
-              <p key={i} className="mt-4 whitespace-pre-line text-lg leading-8 text-slate-700 first:mt-0">
-                {p}
-              </p>
-            ))
+          {contentHtml ? (
+            <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+          ) : excerpt ? (
+            <p className="text-lg leading-8 text-slate-700">{excerpt}</p>
           ) : (
             <p className="text-slate-500">No content available for this article yet.</p>
           )}

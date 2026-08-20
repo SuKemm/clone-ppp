@@ -71,7 +71,29 @@ sẽ **không đụng tới** nội dung bạn đã đăng. Ảnh upload qua `/a
 nhân, hoặc script backup tự động) — nếu VPS gặp sự cố mà không có bản sao lưu
 thì nội dung đã đăng sẽ mất.
 
-## 4. Giới hạn hiện tại (nên biết trước)
+## 4. Soạn nội dung bài viết (TinyMCE)
+
+Ô **"Nội dung đầy đủ"** của mục Tin tức (`content` / `content_en`) dùng trình
+soạn thảo TinyMCE — có thể in đậm/in nghiêng, gạch đầu dòng, chèn link, chèn
+bảng, chèn ảnh trực tiếp trong bài, giống soạn thảo Word.
+
+Để hết cảnh báo "Evaluation mode" nhỏ ở dưới ô soạn thảo (không bắt buộc,
+editor vẫn dùng được bình thường nếu bỏ qua):
+
+1. Đăng ký tài khoản miễn phí tại https://www.tiny.cloud/auth/signup/
+   (không cần thẻ tín dụng).
+2. Vào **My Account → Approved Domains**, thêm domain của bạn (vd:
+   `dakdrinh.vn`, thêm cả `www.dakdrinh.vn` nếu dùng).
+3. Copy **API Key** hiển thị trong tài khoản.
+4. Thêm vào `.env` trên server:
+   ```
+   NEXT_PUBLIC_TINYMCE_API_KEY=dán-key-vào-đây
+   ```
+5. Chạy lại `npm run build && pm2 restart ptsc-site` (build lại là bắt buộc
+   vì biến này bắt đầu bằng `NEXT_PUBLIC_` — được nhúng vào mã chạy ở trình
+   duyệt tại lúc build, không phải đọc lúc chạy như các biến khác).
+
+## 5. Giới hạn hiện tại (nên biết trước)
 
 - Chỉ có **1 tài khoản quản trị dùng chung 1 mật khẩu** — chưa có phân quyền
   nhiều người dùng riêng biệt. Nếu cần nhiều tài khoản có quyền khác nhau,
