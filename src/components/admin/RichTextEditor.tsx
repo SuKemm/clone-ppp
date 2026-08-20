@@ -11,6 +11,17 @@
 
 import { Editor } from "@tinymce/tinymce-react";
 
+// Upload 1 file ảnh lên API sẵn có của trang quản trị (dùng chung với ô ảnh
+// đại diện) — trả về URL đã lưu trên server.
+async function uploadImageFile(file: File | Blob): Promise<string> {
+  const fd = new FormData();
+  fd.append("file", file, file instanceof File ? file.name : "image.png");
+  const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+  const body = await res.json();
+  if (!res.ok) throw new Error(body.error ?? "Tải ảnh lên thất bại");
+  return body.url as string;
+}
+
 export function RichTextEditor({
   value,
   onChange,
@@ -38,6 +49,34 @@ export function RichTextEditor({
           content_style:
             "body { font-family: system-ui, sans-serif; font-size: 14px; }",
           branding: false,
+
+          // Kéo-thả ảnh hoặc dán ảnh (Ctrl+V) vào bài viết sẽ tự upload lên
+          // server rồi chèn URL — không cần thao tác thủ công.
+          automatic_uploads: true,
+          images_upload_handler: async (blobInfo: { blob: () => Blob }) => {
+            return uploadImageFile(blobInfo.blob());
+          },
+
+          // Thêm nút chọn file (icon thư mục) ngay trong ô "Source" của hộp
+          // thoại Insert/Edit Image — bấm vào là mở hộp thoại chọn file trên
+          // máy tính, chọn xong tự upload và điền URL vào ô Source.
+          file_picker_types: "image",
+          file_picker_callback: (callback: (url: string, meta?: { alt?: string }) => void) => {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+            input.onchange = async () => {
+              const file = input.files?.[0];
+              if (!file) return;
+              try {
+                const url = await uploadImageFile(file);
+                callback(url, { alt: file.name });
+              } catch (e) {
+                alert((e as Error).message);
+              }
+            };
+            input.click();
+          },
         }}
       />
     </div>
