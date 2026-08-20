@@ -26,28 +26,18 @@ const heroSlides = [
 // src/components/ptsc-shell.tsx. The old spot below the banner is now
 // <MarqueeBar /> (running text, editable at /admin -> "Dòng chữ chạy").
 
-const news = [
-  {
-    date: "24/06/2026",
-    title:
-      "PTSC Successfully Holds Naming and Handover Ceremony for FSO PTSC Lac Da Vang, Ready for the Lac Da Vang Field's First Oil Target",
-    category: "Production & Business",
-    link: "/en-US/news",
-  },
-  {
-    date: "20/06/2026",
-    title: "Proactive Risk Management Keeps the Block B Gas Project – EPCI#1 Package on Schedule",
-    category: "Production & Business",
-    link: "/en-US/news",
-  },
-  {
-    date: "18/06/2026",
-    title:
-      "PTSC's 2026 Annual General Meeting: PTSC Affirms Its Position After a Record Business Year, Aiming to Strengthen Regional Competitiveness",
-    category: "Production & Business",
-    link: "/en-US/news",
-  },
-];
+// "News & Events" block pulls straight from the "news" collection (Admin ->
+// Nội dung -> Tin tức), same data as the Vietnamese homepage — no more
+// hardcoded 3 articles. Falls back to the Vietnamese fields when a bài
+// hasn't been translated yet (same pattern as src/app/en-US/news/[id]).
+function parseVnDate(value: string | undefined): number {
+  if (!value) return -Infinity;
+  const m = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return -Infinity;
+  const [, d, mo, y] = m;
+  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
+}
 
 const shareholderRelations = [
   {
@@ -98,6 +88,12 @@ export const dynamic = "force-dynamic";
 
 export default function EnglishHomePage() {
   const productionInfo = getCollection("production-info")[0];
+
+  // 3 most recent articles for the "News & Events" block — ranked by the
+  // "Ngày đăng" field (not creation/edit order), same rule as the VN page.
+  const latestNews = [...getCollection("news")]
+    .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
+    .slice(0, 3);
 
   // Update date always shows today's date (Vietnam time zone) — same
   // approach as the Vietnamese page, so it never needs manual editing.
@@ -152,19 +148,27 @@ export default function EnglishHomePage() {
           </a>
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
-          {news.map((item) => (
+          {latestNews.map((item) => (
             <a
-              key={item.title}
-              href={item.link}
-              className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              key={item.id}
+              href={`/en-US/news/${item.id}`}
+              className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
             >
-              <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
-                {item.category}
-              </p>
-              <h3 className="mt-3 text-lg font-semibold leading-7 text-slate-900">{item.title}</h3>
-              <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-                <span>{item.date}</span>
-                <span className="text-cyan-700 transition group-hover:translate-x-1">→</span>
+              {item.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={item.image} alt="" className="h-44 w-full object-cover" />
+              )}
+              <div className="flex flex-1 flex-col p-6">
+                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
+                  {item.category_en || item.category}
+                </p>
+                <h3 className="mt-3 text-lg font-semibold leading-7 text-slate-900">
+                  {item.title_en || item.title}
+                </h3>
+                <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+                  <span>{item.date}</span>
+                  <span className="text-cyan-700 transition group-hover:translate-x-1">→</span>
+                </div>
               </div>
             </a>
           ))}

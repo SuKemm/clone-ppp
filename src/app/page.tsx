@@ -28,28 +28,22 @@ const heroSlides = [
 // src/components/ptsc-shell.tsx. Vị trí cũ ngay dưới banner giờ là
 // <MarqueeBar /> (dòng chữ chạy, sửa được ở /admin -> "Dòng chữ chạy").
 
-const news = [
-  {
-    date: "24/06/2026",
-    title:
-      "PTSC tổ chức thành công Lễ Đặt tên và Bàn giao FSO PTSC Lạc Đà Vàng, sẵn sàng cho mục tiêu First Oil của mỏ Lạc Đà Vàng",
-    category: "Sản xuất - Kinh doanh",
-    link: "/tin-tuc",
-  },
-  {
-    date: "20/06/2026",
-    title: "Chủ động quản trị rủi ro, giữ vững tiến độ Dự án Khí Lô B – Gói EPCI#1",
-    category: "Sản xuất - Kinh doanh",
-    link: "/tin-tuc",
-  },
-  {
-    date: "18/06/2026",
-    title:
-      "ĐHĐCĐ PTSC 2026: PTSC khẳng định vị thế sau năm kinh doanh kỷ lục, hướng tới mục tiêu nâng cao năng lực cạnh tranh trong khu vực",
-    category: "Sản xuất - Kinh doanh",
-    link: "/tin-tuc",
-  },
-];
+// Khối "Tin tức và sự kiện" ở trang chủ lấy trực tiếp từ collection "news"
+// (Admin -> Nội dung -> Tin tức), KHÔNG còn hardcode 3 bài cứng như trước —
+// xem hàm getLatestNews() bên dưới.
+
+// Chuyển "24/06/2026" (dd/mm/yyyy, định dạng admin đang nhập ở field "Ngày
+// đăng") thành mốc thời gian để so sánh mới/cũ. Bài không nhập ngày hoặc
+// nhập sai định dạng bị coi là cũ nhất (NaN -> luôn xếp sau các bài có ngày
+// hợp lệ) thay vì làm hỏng thứ tự của các bài còn lại.
+function parseVnDate(value: string | undefined): number {
+  if (!value) return -Infinity;
+  const m = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return -Infinity;
+  const [, d, mo, y] = m;
+  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
+}
 
 // Sản lượng & mực nước hiện tại được lấy từ /admin -> "Tình hình sản xuất &
 // Mực nước" (xem src/lib/cms/schema.ts, id "production-info"), không còn
@@ -101,6 +95,13 @@ const videoLibrary = [
 
 export default function Home() {
   const productionInfo = getCollection("production-info")[0];
+
+  // 3 tin mới nhất cho khối "Tin tức và sự kiện" — ưu tiên theo field "Ngày
+  // đăng" (không phải theo thứ tự vừa tạo/sửa trong admin), để admin tạo bài
+  // trước rồi hẹn ngày đăng sau vẫn lên đúng thứ tự mới → cũ ở trang chủ.
+  const latestNews = [...getCollection("news")]
+    .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
+    .slice(0, 3);
 
   // Ngày cập nhật hiển thị luôn là ngày hiện tại (giờ Việt Nam) — không cần
   // vào admin sửa tay mỗi ngày. Nếu sau này muốn cho phép ghi đè bằng tay,
@@ -158,23 +159,27 @@ export default function Home() {
   </div>
 
   <div className="mt-10 grid gap-6 lg:grid-cols-3">
-    {news.map((item) => (
+    {latestNews.map((item) => (
       <a
-        key={item.title}
-        href={item.link}
-        className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+        key={item.id}
+        href={`/tin-tuc/${item.id}`}
+        className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
       >
-        {/* Đã bỏ CẬP NHẬT */}
+        {item.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={item.image} alt="" className="h-44 w-full object-cover" />
+        )}
+        <div className="flex flex-1 flex-col p-6">
+          <h3 className="text-lg font-semibold leading-7 text-slate-900">
+            {item.title}
+          </h3>
 
-        <h3 className="text-lg font-semibold leading-7 text-slate-900">
-          {item.title}
-        </h3>
-
-        <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-          <span>{item.date}</span>
-          <span className="text-cyan-700 transition group-hover:translate-x-1">
-            →
-          </span>
+          <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+            <span>{item.date}</span>
+            <span className="text-cyan-700 transition group-hover:translate-x-1">
+              →
+            </span>
+          </div>
         </div>
       </a>
     ))}
@@ -183,7 +188,7 @@ export default function Home() {
 
 
 {/* Production */}
-<section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+<section id="production" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
   <div className="flex flex-col items-center text-center">
     <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
       Thông tin sản xuất
