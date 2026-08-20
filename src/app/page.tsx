@@ -146,13 +146,6 @@ export default function Home() {
             trước khi ảnh nền load xong. Cỡ chữ co theo từng breakpoint để vẫn
             đọc tốt trên điện thoại và máy tính bảng. */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-slate-950/10" />
-        <div className="absolute inset-0 flex items-end">
-          <div className="mx-auto w-full max-w-7xl px-6 pb-6 sm:pb-9 md:pb-12 lg:px-8 lg:pb-16">
-            <p className="max-w-2xl text-lg font-bold leading-snug text-white drop-shadow-sm sm:text-2xl md:text-3xl lg:text-4xl">
-              {heroSlides[0].title}
-            </p>
-          </div>
-        </div>
       </section>
 
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
