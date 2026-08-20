@@ -33,7 +33,8 @@ export type CollectionId =
   | "photo-albums"
   | "video-albums"
   | "site-marquee"
-  | "production-info";
+  | "production-info"
+  | "contacts";
 
 export type CollectionDef = {
   id: CollectionId;
@@ -337,6 +338,24 @@ export const COLLECTIONS: CollectionDef[] = [
         ngay_cap_nhat: "",
       },
     ],
+  },
+  {
+    // Không có nút "+ Thêm mới" nào tạo dữ liệu ở đây trong thực tế — mỗi
+    // bản ghi được tạo tự động khi có người gửi form "Liên hệ" ở trang chủ
+    // (POST /api/contact, xem src/app/lien-he/page.tsx). Admin vào đây chỉ
+    // để xem, đổi trạng thái Chưa duyệt/Đã duyệt, và xoá bớt các liên hệ
+    // rác/spam.
+    id: "contacts",
+    label: "Khách hàng liên hệ",
+    fields: [
+      { key: "name", label: "Khách hàng", type: "text", required: true, width: "half" },
+      { key: "status", label: "Trạng thái", type: "select", options: ["Chưa duyệt", "Đã duyệt"], width: "half" },
+      { key: "email", label: "Email", type: "text", required: true, width: "half" },
+      { key: "phone", label: "Điện thoại", type: "text", width: "half" },
+      { key: "message", label: "Nội dung liên hệ", type: "textarea" },
+      { key: "createdAt", label: "Ngày tạo", type: "text" },
+    ],
+    seed: [],
   },
 ];
 

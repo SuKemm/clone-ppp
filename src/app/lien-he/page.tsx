@@ -24,7 +24,7 @@ export default function ContactPage() {
     message: "",
     captchaInput: "",
   });
-  const [status, setStatus] = useState<"idle" | "error" | "sent">("idle");
+  const [status, setStatus] = useState<"idle" | "error" | "sent" | "sending">("idle");
 
   const captchaLetters = useMemo(() => captcha.split(""), [captcha]);
 
@@ -33,17 +33,32 @@ export default function ContactPage() {
     setForm((f) => ({ ...f, captchaInput: "" }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (form.captchaInput.trim().toUpperCase() !== captcha) {
       setStatus("error");
       return;
     }
-    // No backend endpoint wired up yet — swap this out for a real API call
-    // (e.g. fetch("/api/contact", ...)) once one exists.
-    setStatus("sent");
-    setForm({ name: "", phone: "", email: "", subject: "", message: "", captchaInput: "" });
-    refreshCaptcha();
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          subject: form.subject,
+          message: form.message,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("sent");
+      setForm({ name: "", phone: "", email: "", subject: "", message: "", captchaInput: "" });
+      refreshCaptcha();
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
@@ -153,7 +168,9 @@ export default function ContactPage() {
               </div>
 
               {status === "error" ? (
-                <p className="text-sm text-red-600">Mã hiển thị không đúng, vui lòng thử lại.</p>
+                <p className="text-sm text-red-600">
+                  Mã hiển thị không đúng hoặc gửi thất bại, vui lòng thử lại.
+                </p>
               ) : null}
               {status === "sent" ? (
                 <p className="text-sm text-[#089F50]">
@@ -163,9 +180,10 @@ export default function ContactPage() {
 
               <button
                 type="submit"
-                className="rounded-full bg-[#FF6B00] px-10 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-[#e65f00]"
+                disabled={status === "sending"}
+                className="rounded-full bg-[#FF6B00] px-10 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition hover:bg-[#e65f00] disabled:opacity-60"
               >
-                Gửi
+                {status === "sending" ? "Đang gửi..." : "Gửi"}
               </button>
             </form>
           </div>

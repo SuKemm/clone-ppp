@@ -18,6 +18,8 @@ import {
   Pencil,
   Trash2,
   ExternalLink,
+  MessageSquare,
+  Eye,
 } from "lucide-react";
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
@@ -38,6 +40,7 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   "video-albums": Video,
   "site-marquee": Megaphone,
   "production-info": Activity,
+  contacts: MessageSquare,
 };
 
 // "list": danh sách các mục của 1 collection.
@@ -206,12 +209,16 @@ export default function AdminApp() {
           {view.kind === "users" ? (
             <UsersPanel />
           ) : view.kind === "list" ? (
-            <CollectionListPanel
-              key={active!.id}
-              def={active!}
-              onAdd={() => setView({ kind: "edit", id: active!.id, item: null })}
-              onEdit={(item) => setView({ kind: "edit", id: active!.id, item })}
-            />
+            active!.id === "contacts" ? (
+              <ContactsListPanel def={active!} onEdit={(item) => setView({ kind: "edit", id: active!.id, item })} />
+            ) : (
+              <CollectionListPanel
+                key={active!.id}
+                def={active!}
+                onAdd={() => setView({ kind: "edit", id: active!.id, item: null })}
+                onEdit={(item) => setView({ kind: "edit", id: active!.id, item })}
+              />
+            )
           ) : (
             <ItemFormPage
               key={`${view.id}-${view.item?.id ?? "new"}`}
@@ -227,6 +234,150 @@ export default function AdminApp() {
   );
 }
 
+
+// Bảng "Khách hàng liên hệ" — bố cục dạng bảng (Khách hàng / Email / Điện
+// thoại / Nội dung / Ngày tạo / Trạng thái / Chức năng) giống trang quản trị
+// dakdrinh.com.vn, khác với kiểu danh sách thẻ dùng chung cho các collection
+// còn lại (CollectionListPanel bên dưới) vì dữ liệu ở đây không có ảnh đại
+// diện và cần xem được nhiều cột cùng lúc.
+function ContactsListPanel({
+  def,
+  onEdit,
+}: {
+  def: CollectionDef;
+  onEdit: (item: CmsItem) => void;
+}) {
+  const [items, setItems] = useState<CmsItem[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  async function load() {
+    setError(null);
+    const res = await fetch(`/api/admin/content/${def.id}`);
+    if (!res.ok) {
+      setError("Không tải được dữ liệu");
+      return;
+    }
+    const body = await res.json();
+    setItems(body.items);
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [def.id]);
+
+  async function handleDelete(id: string) {
+    if (!confirm("Xoá liên hệ này?")) return;
+    const res = await fetch(`/api/admin/content/${def.id}/${id}`, { method: "DELETE" });
+    if (res.ok) load();
+  }
+
+  // Bấm trực tiếp vào nhãn trạng thái trong bảng để duyệt/bỏ duyệt — không
+  // cần mở form Sửa chỉ để đổi mỗi trường này.
+  async function toggleStatus(item: CmsItem) {
+    setUpdatingId(item.id);
+    const nextStatus = item.status === "Đã duyệt" ? "Chưa duyệt" : "Đã duyệt";
+    try {
+      const res = await fetch(`/api/admin/content/${def.id}/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, status: nextStatus }),
+      });
+      if (res.ok) load();
+    } finally {
+      setUpdatingId(null);
+    }
+  }
+
+  return (
+    <div>
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">{def.label}</h2>
+          {items && <p className="text-sm text-slate-500">{items.length} liên hệ</p>}
+        </div>
+      </div>
+
+      {error && (
+        <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+      )}
+      {!items && !error && <p className="text-sm text-slate-500">Đang tải...</p>}
+
+      {items && items.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+          <p className="text-sm text-slate-500">
+            Chưa có khách hàng nào gửi liên hệ. Dữ liệu ở đây tự thêm vào khi có người gửi form
+            &quot;Liên hệ&quot; ở trang chủ.
+          </p>
+        </div>
+      )}
+
+      {items && items.length > 0 && (
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="w-full min-w-[900px] text-left text-sm">
+            <thead className="border-b border-slate-200 bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="px-4 py-3">Khách hàng</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Điện thoại</th>
+                <th className="px-4 py-3">Nội dung liên hệ</th>
+                <th className="px-4 py-3">Ngày tạo</th>
+                <th className="px-4 py-3">Trạng thái</th>
+                <th className="px-4 py-3">Chức năng</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr key={item.id} className="border-b border-slate-100 align-top last:border-0">
+                  <td className="max-w-[220px] px-4 py-3 font-medium text-slate-900">{item.name}</td>
+                  <td className="px-4 py-3 text-slate-600">{item.email}</td>
+                  <td className="px-4 py-3 text-slate-600">{item.phone}</td>
+                  <td className="max-w-[280px] whitespace-pre-wrap px-4 py-3 text-slate-600">
+                    {item.message}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3 text-slate-500">{item.createdAt}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => toggleStatus(item)}
+                      disabled={updatingId === item.id}
+                      className={`rounded-full px-2.5 py-1 text-xs font-medium transition disabled:opacity-50 ${
+                        item.status === "Đã duyệt"
+                          ? "bg-green-50 text-green-700 hover:bg-green-100"
+                          : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                      }`}
+                      title="Bấm để đổi trạng thái"
+                    >
+                      {updatingId === item.id ? "Đang cập nhật..." : item.status || "Chưa duyệt"}
+                    </button>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex shrink-0 gap-2">
+                      <button
+                        onClick={() => onEdit(item)}
+                        className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 transition hover:border-slate-400 hover:bg-slate-50"
+                      >
+                        <Eye className="h-3.5 w-3.5" />
+                        Xem
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-sm text-red-600 transition hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Xoá
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function CollectionListPanel({
   def,
