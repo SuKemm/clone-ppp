@@ -64,12 +64,7 @@ export default async function NewsPageEn({
   // Fixed category list (always shown even with no articles yet), matching
   // the canonical order on the Vietnamese page. Any extra category an admin
   // adds is appended automatically at the end.
-  const CANONICAL_CATEGORIES = [
-    "PV Power Activities",
-    "Press on PV Power",
-    "PVN Activities",
-    "Other News",
-  ];
+
   const dataCategories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
   const extraCategories = dataCategories.filter((c) => !CANONICAL_CATEGORIES.includes(c));
   const categories = [...CANONICAL_CATEGORIES, ...extraCategories];

@@ -57,10 +57,6 @@ export default async function NewsPage({
   // Danh mục cố định (hiển thị luôn dù chưa có bài trong danh mục đó), theo
   // đúng thứ tự chuẩn của trang PV Power DHC gốc. Nếu admin thêm chuyên mục
   // khác ngoài danh sách này, nó sẽ được nối thêm vào cuối tự động.
-  const CANONICAL_CATEGORIES = [
-    "Hoạt động PV Power",
-    "Tin tức khác",
-  ];
   const dataCategories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
   const extraCategories = dataCategories.filter((c) => !CANONICAL_CATEGORIES.includes(c));
   const categories = [...CANONICAL_CATEGORIES, ...extraCategories];
