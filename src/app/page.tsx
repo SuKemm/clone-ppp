@@ -8,18 +8,18 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 
 const heroSlides = [
   {
-    title: "Tổng thầu các dự án dầu khí và Năng lượng tái tạo ngoài khơi",
+    title: "Công ty Cổ phần Thủy điện Đakđrinh — Chất lượng - An toàn - Hiệu quả - Phát triển",
     // Ảnh panorama toàn cảnh nhà máy — đặt file tại
     // public/images/ptsc/banner-panorama.jpg (đã đổi tên từ
     // "Untitled_Panorama-00.jpg" cho gọn, không dấu/khoảng trắng).
     image: "/images/ptsc/banner-panorama.jpg",
   },
   {
-    title: "Tổng thầu các dự án Dầu khí và Năng lượng tái tạo ngoài khơi",
+    title: "Công ty Cổ phần Thủy điện Đakđrinh — Chất lượng - An toàn - Hiệu quả - Phát triển",
     image: "/images/ptsc/service-co-khi.jpg",
   },
   {
-    title: "Tổng thầu các dự án dầu khí và Năng lượng tái tạo ngoài khơi",
+    title: "Công ty Cổ phần Thủy điện Đakđrinh — Chất lượng - An toàn - Hiệu quả - Phát triển",
     image: "/images/ptsc/service-bien.jpg",
   },
 ];
@@ -136,8 +136,23 @@ export default function Home() {
         <img
           src={heroSlides[0].image}
           alt={heroSlides[0].title}
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
           className="h-[260px] w-full object-cover sm:h-[380px] md:h-[480px] lg:h-[620px]"
         />
+        {/* Lớp phủ gradient + khẩu hiệu — hiện chữ ngay cả khi ảnh còn đang tải
+            (nhất là trên mạng di động chậm), tránh trang trông như "trống/đen"
+            trước khi ảnh nền load xong. Cỡ chữ co theo từng breakpoint để vẫn
+            đọc tốt trên điện thoại và máy tính bảng. */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-slate-950/10" />
+        <div className="absolute inset-0 flex items-end">
+          <div className="mx-auto w-full max-w-7xl px-6 pb-6 sm:pb-9 md:pb-12 lg:px-8 lg:pb-16">
+            <p className="max-w-2xl text-lg font-bold leading-snug text-white drop-shadow-sm sm:text-2xl md:text-3xl lg:text-4xl">
+              {heroSlides[0].title}
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
