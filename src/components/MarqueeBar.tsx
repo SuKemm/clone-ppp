@@ -16,7 +16,13 @@ type MarqueeItem = { id: string; text?: string; text_en?: string };
 
 export function MarqueeBar({ isEnglish = false }: { isEnglish?: boolean }) {
   const [items, setItems] = useState<MarqueeItem[] | null>(null);
-  const [index, setIndex] = useState(0);
+  // cycle luôn tăng dần (không lấy dư) để bảo đảm "key" của <span> luôn
+  // đổi giá trị sau mỗi lượt chạy — kể cả khi chỉ có đúng 1 dòng chữ.
+  // Nếu dùng index % length làm key, trường hợp 1 dòng sẽ luôn ra key = 0,
+  // React không remount lại span nên animation không được restart, dòng
+  // chữ đứng yên ở vị trí cuối (đã trượt khỏi màn hình) — "chạy 1 lần rồi
+  // mất luôn" thay vì lặp lại.
+  const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -40,7 +46,7 @@ export function MarqueeBar({ isEnglish = false }: { isEnglish?: boolean }) {
 
   if (items === null || texts.length === 0) return null;
 
-  const current = texts[index % texts.length];
+  const current = texts[cycle % texts.length];
   // Tốc độ chạy tỉ lệ theo độ dài chữ để dòng nào cũng đọc kịp.
   const duration = Math.max(6, current.length * 0.09);
 
@@ -48,8 +54,8 @@ export function MarqueeBar({ isEnglish = false }: { isEnglish?: boolean }) {
     <section className="border-b border-slate-200 bg-slate-50/80">
       <div className="relative overflow-hidden py-4">
         <span
-          key={index}
-          onAnimationEnd={() => setIndex((i) => (i + 1) % texts.length)}
+          key={cycle}
+          onAnimationEnd={() => setCycle((c) => c + 1)}
           style={{ animationDuration: `${duration}s, 1.8s` }}
           className="marquee-once glow-text inline-block whitespace-nowrap px-6 text-[18px] font-semibold uppercase tracking-[0.15em] text-red-600"
         >
