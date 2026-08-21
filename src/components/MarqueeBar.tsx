@@ -43,10 +43,10 @@ export function MarqueeBar({ isEnglish = false }: { isEnglish?: boolean }) {
     <section className="border-b border-slate-200 bg-slate-50/80">
       <div className="overflow-hidden py-4">
         <div className="flex w-max animate-marquee whitespace-nowrap">
-          <span className="px-6 text-sm font-semibold uppercase tracking-[0.15em] text-cyan-700 sm:text-base">
+          <span className="animate-blink px-6 text-[18px] font-semibold uppercase tracking-[0.15em] text-red-600">
             {joined}
           </span>
-          <span className="px-6 text-sm font-semibold uppercase tracking-[0.15em] text-cyan-700 sm:text-base">
+          <span className="animate-blink px-6 text-[18px] font-semibold uppercase tracking-[0.15em] text-red-600">
             {joined}
           </span>
         </div>
