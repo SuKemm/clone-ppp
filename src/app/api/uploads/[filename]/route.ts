@@ -14,6 +14,7 @@ const MIME: Record<string, string> = {
   png: "image/png",
   webp: "image/webp",
   gif: "image/gif",
+  pdf: "application/pdf",
 };
 
 export async function GET(

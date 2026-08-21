@@ -26,6 +26,7 @@ export default async function ShareholdersPage() {
               date: item.date || "cập nhật gần nhất",
               title: item.title,
               excerpt: item.excerpt,
+              attachment: item.attachment || undefined,
             })),
         }))
       : [];

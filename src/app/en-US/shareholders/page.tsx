@@ -26,6 +26,7 @@ export default function ShareholdersPageEn() {
               date: item.date || "latest update",
               title: item.title_en || item.title,
               excerpt: item.excerpt_en || item.excerpt,
+              attachment: item.attachment || undefined,
             })),
         }))
       : [];

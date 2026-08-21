@@ -30,6 +30,7 @@ export type SrArticle = {
   date: string;
   title: string;
   excerpt: string;
+  attachment?: string;
 };
 
 export type SrTab = {
@@ -131,6 +132,16 @@ export function ShareholderRelations({
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   {article.excerpt}
                 </p>
+                {article.attachment && (
+                  <a
+                    href={article.attachment}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
+                  >
+                    📄 {isEnglish ? "Download PDF" : "Tải xuống PDF"}
+                  </a>
+                )}
                 <ArticleViewCount
                   id={article.id}
                   mode="display"
