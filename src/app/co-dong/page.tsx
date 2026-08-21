@@ -1,4 +1,5 @@
 import { PtscShell } from "@/components/ptsc-shell";
+import { FloatingNav } from "@/components/FloatingNav";
 import { ShareholderRelations, type SrTab } from "@/components/shareholder-relations";
 import { getCollection } from "@/lib/cms/store";
 
@@ -33,11 +34,9 @@ export default async function ShareholdersPage() {
             .filter((item) => item.category === cat.name)
             .map((item) => ({
               id: item.id,
-              // Luôn dùng logo công ty làm ảnh đại diện — mục Quan hệ cổ
-              // đông không cho chọn ảnh riêng nữa (xem schema.ts), để tránh
-              // gắn nhầm ảnh không liên quan tới bài (vd: ảnh đào tạo, ảnh
-              // đại hội...). Bỏ qua item.image dù dữ liệu cũ còn sót lại.
-              image: "/images/ptsc/logo-ptsc.png",
+              // Dùng ảnh riêng của bài (nhập ở /admin); nếu chưa chọn ảnh,
+              // ShareholderRelations sẽ tự dùng logo công ty làm ảnh dự phòng.
+              image: item.image || "",
               category: item.category,
               date: item.date || "cập nhật gần nhất",
               title: item.title,
@@ -49,7 +48,7 @@ export default async function ShareholdersPage() {
 
   const sidebarItems = items.slice(0, 4).map((item) => ({
     id: item.id,
-    image: "/images/ptsc/logo-ptsc.png",
+    image: item.image || "",
     title: item.title,
   }));
 
@@ -64,6 +63,7 @@ export default async function ShareholdersPage() {
   if (tabs.length === 0) {
     return (
       <PtscShell>
+        <FloatingNav />
         <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
             Quan hệ cổ đông
@@ -79,8 +79,10 @@ export default async function ShareholdersPage() {
 
   return (
     <PtscShell>
+      <FloatingNav />
       <ShareholderRelations
         tabs={tabs}
+        pageTitle="Quan hệ cổ đông"
         sidebarTitle="Xem nhiều nhất"
         sidebarItems={sidebarItems}
         videoSectionTitle="Video nổi bật"

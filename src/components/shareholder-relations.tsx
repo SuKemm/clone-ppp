@@ -7,6 +7,9 @@ import { ArticleViewCount } from "@/components/ArticleViewCount";
 
 const PAGE_SIZE = 5; // số bài / trang trong mỗi tab
 
+// Ảnh dự phòng khi bài viết chưa có ảnh đại diện riêng.
+const FALLBACK_IMAGE = "/images/ptsc/shareholder-pvpower-dhc.png";
+
 // Sinh danh sách số trang kiểu "1 2 3 ... 10", ẩn bớt số ở giữa khi có
 // nhiều trang để thanh phân trang không bị quá dài.
 function getPageNumbers(current: number, total: number): (number | "...")[] {
@@ -46,6 +49,7 @@ export type SrVideoItem = {
 
 export function ShareholderRelations({
   tabs,
+  pageTitle,
   sidebarTitle,
   sidebarItems,
   videoSectionTitle,
@@ -55,6 +59,7 @@ export function ShareholderRelations({
   detailBasePath = "/co-dong",
 }: {
   tabs: SrTab[];
+  pageTitle?: string;
   sidebarTitle: string;
   sidebarItems: { id: string; image: string; title: string }[];
   videoSectionTitle?: string;
@@ -100,42 +105,47 @@ export function ShareholderRelations({
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-x-8 gap-y-2 border-b border-slate-200">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => {
-              setActiveKey(tab.key);
-              setPage(1);
-              window.history.replaceState(null, "", `#${tab.key}`);
-            }}
-            className={`relative pb-4 text-sm font-semibold uppercase tracking-wide transition ${
-              activeKey === tab.key
-                ? "text-cyan-700"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {tab.label}
-            {activeKey === tab.key ? (
-              <span className="absolute inset-x-0 -bottom-px h-[2px] bg-cyan-600" />
-            ) : null}
-          </button>
-        ))}
+      {pageTitle && (
+        <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">{pageTitle}</h1>
+      )}
+
+      {/* Tabs — thanh nền xám nhạt full-bleed, tab active có chữ xanh
+          + gạch chân xanh, giống bố cục trang Tin tức của pvpower.vn. */}
+      <div className={`-mx-6 border-y border-slate-200 bg-slate-50 px-6 lg:-mx-8 lg:px-8 ${pageTitle ? "mt-6" : ""}`}>
+        <div className="flex flex-wrap gap-x-8 gap-y-2 overflow-x-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => {
+                setActiveKey(tab.key);
+                setPage(1);
+                window.history.replaceState(null, "", `#${tab.key}`);
+              }}
+              aria-current={activeKey === tab.key ? "page" : undefined}
+              className={`-mb-px whitespace-nowrap border-b-2 py-4 text-sm font-semibold transition ${
+                activeKey === tab.key
+                  ? "border-cyan-600 text-cyan-700"
+                  : "border-transparent text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="mt-10 grid gap-10 lg:grid-cols-[7fr_3fr]">
         {/* Article list */}
         <div className="space-y-8">
           {/* Bài nổi bật — chỉ hiện ở trang 1 của mỗi tab */}
           {featuredArticle && (
-            <article className="border-b border-slate-100 pb-8 text-center sm:text-left">
-              <div className="mx-auto flex h-56 w-full max-w-sm items-center justify-center overflow-hidden rounded-lg bg-white sm:mx-0">
+            <article className="border-b border-slate-100 pb-8">
+              <div className="flex h-72 w-full items-center justify-center overflow-hidden rounded-lg bg-white sm:h-96">
                 <img
-                  src={featuredArticle.image}
+                  src={FALLBACK_IMAGE}
                   alt={featuredArticle.title}
-                  className="h-full w-full object-contain p-4"
+                  className="h-full w-full object-contain p-6"
                 />
               </div>
               <div className="mt-4">
@@ -177,7 +187,7 @@ export function ShareholderRelations({
                 <article key={article.id}>
                   <div className="flex h-32 w-full items-center justify-center overflow-hidden rounded-lg bg-white">
                     <img
-                      src={article.image}
+                      src={FALLBACK_IMAGE}
                       alt={article.title}
                       className="h-full w-full object-contain p-3"
                     />
@@ -291,7 +301,7 @@ export function ShareholderRelations({
               <li key={item.id} className="flex gap-3">
                 <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white">
                   <img
-                    src={item.image}
+                    src={FALLBACK_IMAGE}
                     alt={item.title}
                     className="h-full w-full object-contain p-1"
                   />
@@ -322,21 +332,27 @@ export function ShareholderRelations({
                     >
                       {video.title}
                     </Link>
-                    <Link
-                      href={videoLinkHref}
-                      className="group relative mt-2 flex h-28 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-800"
-                    >
-                      {video.image ? (
+                    {video.image ? (
+                      <Link
+                        href={videoLinkHref}
+                        className="group relative mt-2 flex h-28 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-800"
+                      >
                         <img
                           src={video.image}
                           alt={video.title}
                           className="h-full w-full object-cover opacity-80 transition group-hover:opacity-100"
                         />
-                      ) : null}
-                      <span className="absolute flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
-                        <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
-                      </span>
-                    </Link>
+                        <span className="absolute flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
+                          <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
+                        </span>
+                      </Link>
+                    ) : (
+                      // Chưa có thumbnail riêng — hiện logo công ty làm ảnh
+                      // dự phòng, không có khung/nút play.
+                      <Link href={videoLinkHref} className="mt-2 flex h-28 items-center justify-center">
+                        <img src={FALLBACK_IMAGE} alt={video.title} className="h-full w-auto object-contain" />
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

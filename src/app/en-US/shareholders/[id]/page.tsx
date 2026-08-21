@@ -40,7 +40,11 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
         </div>
 
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={LOGO} alt="Petrovietnam Power" className="mx-auto mt-8 h-32 w-auto object-contain" />
+        <img
+          src={item.image || LOGO}
+          alt={item.title_en || item.title}
+          className="mx-auto mt-8 h-32 w-auto object-contain"
+        />
 
         <h1 className="mt-8 text-3xl font-bold text-slate-900 sm:text-4xl">
           {item.title_en || item.title}

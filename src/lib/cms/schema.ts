@@ -160,10 +160,10 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "title_en", label: "Tiêu đề (EN)", type: "text", width: "half" },
       { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea", width: "half" },
       { key: "excerpt_en", label: "Tóm tắt (EN)", type: "textarea", width: "half" },
-      // Không có field "image" ở đây nữa — mục Quan hệ cổ đông luôn hiện
-      // logo công ty làm ảnh đại diện (xem FALLBACK_IMAGE trong
-      // shareholder-relations.tsx), không cho admin chọn ảnh khác để tránh
-      // gắn nhầm ảnh không liên quan (vd: ảnh đào tạo, ảnh đại hội...).
+      // Ảnh đại diện riêng cho từng bài — nếu admin không chọn ảnh, trang sẽ
+      // tự dùng logo công ty làm ảnh dự phòng (xem FALLBACK_IMAGE trong
+      // shareholder-relations.tsx).
+      { key: "image", label: "Ảnh đại diện (hiện ở trang danh sách)", type: "image" },
       { key: "attachment", label: "File đính kèm (PDF)", type: "file" },
       { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết)", type: "richtext" },
       { key: "content_en", label: "Nội dung đầy đủ (EN)", type: "richtext" },

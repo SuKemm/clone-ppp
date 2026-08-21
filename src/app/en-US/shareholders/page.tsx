@@ -1,4 +1,5 @@
 import { PtscShell } from "@/components/ptsc-shell";
+import { FloatingNav } from "@/components/FloatingNav";
 import { ShareholderRelations, type SrTab } from "@/components/shareholder-relations";
 import { getCollection } from "@/lib/cms/store";
 
@@ -30,9 +31,10 @@ export default function ShareholdersPageEn() {
             .filter((item) => item.category === cat.name)
             .map((item) => ({
               id: item.id,
-              // Luôn dùng logo công ty — đồng bộ với trang tiếng Việt
-              // (src/app/co-dong/page.tsx), bỏ qua item.image.
-              image: "/images/ptsc/logo-ptsc.png",
+              // Dùng ảnh riêng của bài — đồng bộ với trang tiếng Việt
+              // (src/app/co-dong/page.tsx); nếu chưa có ảnh, component sẽ tự
+              // dùng logo công ty làm ảnh dự phòng.
+              image: item.image || "",
               category: cat.name_en || cat.name,
               date: item.date || "latest update",
               title: item.title_en || item.title,
@@ -44,7 +46,7 @@ export default function ShareholdersPageEn() {
 
   const sidebarItems = items.slice(0, 4).map((item) => ({
     id: item.id,
-    image: "/images/ptsc/logo-ptsc.png",
+    image: item.image || "",
     title: item.title_en || item.title,
   }));
 
@@ -56,6 +58,7 @@ export default function ShareholdersPageEn() {
   if (tabs.length === 0) {
     return (
       <PtscShell>
+        <FloatingNav />
         <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
             Shareholder Relations
@@ -71,8 +74,10 @@ export default function ShareholdersPageEn() {
 
   return (
     <PtscShell>
+      <FloatingNav />
       <ShareholderRelations
         tabs={tabs}
+        pageTitle="Shareholder Relations"
         sidebarTitle="Most Viewed"
         sidebarItems={sidebarItems}
         videoSectionTitle="Featured Videos"
