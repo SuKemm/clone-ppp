@@ -165,12 +165,12 @@ export default function Home() {
       TIN TỨC VÀ SỰ KIỆN
     </h2>
 
-    <a
+    <Link
       href="/tin-tuc"
       className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
     >
       Xem thêm →
-    </a>
+    </Link>
   </div>
 
   <div className="mt-10 grid gap-6 lg:grid-cols-3">

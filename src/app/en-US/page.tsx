@@ -140,12 +140,12 @@ export default function EnglishHomePage() {
             News and Events
           </h2>
 
-          <a
+          <Link
             href="/en-US/news"
             className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
           >
             View more →
-          </a>
+          </Link>
         </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {latestNews.map((item) => (
@@ -295,12 +295,12 @@ export default function EnglishHomePage() {
                   </div>
                 ))}
               </div>
-              <a
+              <Link
                 href="/en-US/news"
                 className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
               >
                 View all
-              </a>
+              </Link>
             </div>
           </div>
         </div>

@@ -50,7 +50,6 @@ export function ArticleViewCount({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, mode]);
 
   return (
