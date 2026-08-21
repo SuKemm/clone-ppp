@@ -387,8 +387,12 @@ export function PtscShell({
             (+84) 255 629 3777
           </p>
 
-          {/* Gradient divider, echoing the reference footer's colored line */}
-          <div className="mx-auto mt-8 h-[3px] w-full max-w-2xl bg-gradient-to-r from-cyan-400 via-sky-500 to-amber-400" />
+          {/* Gradient divider, echoing the reference footer's colored line, split with the site name in the middle */}
+          <div className="mx-auto mt-8 flex w-full max-w-2xl items-center gap-4">
+            <div className="h-[2px] flex-1 bg-gradient-to-r from-blue-600 to-cyan-400" />
+            <span className="shrink-0 text-xs font-medium text-slate-300">dakdrink.vn</span>
+            <div className="h-[2px] flex-1 bg-gradient-to-r from-red-500 to-amber-400" />
+          </div>
         </div>
 
         {/* Visitor stats bar — full-width, left to right, sitting right above the footer's bottom edge */}
