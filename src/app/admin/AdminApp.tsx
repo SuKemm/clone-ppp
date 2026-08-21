@@ -51,6 +51,7 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   "video-albums": Video,
   "site-marquee": Megaphone,
   "production-info": Activity,
+  "production-daily": BarChart3,
   contacts: MessageSquare,
   "shareholder-categories": Landmark,
   "shareholder-relations": ScrollText,
@@ -89,7 +90,7 @@ const SIDEBAR_GROUPS: { label: string; ids: CollectionId[] }[] = [
   { label: "Tin tức – Sự kiện", ids: ["news-categories", "news"] },
   { label: "Thư viện", ids: ["photo-albums", "video-albums", "culture-handbook-pages"] },
   { label: "Liên hệ", ids: ["contacts"] },
-  { label: "Khác", ids: ["jobs", "site-marquee", "production-info"] },
+  { label: "Khác", ids: ["jobs", "site-marquee", "production-info", "production-daily"] },
 ];
 
 // "list": danh sách các mục của 1 collection.

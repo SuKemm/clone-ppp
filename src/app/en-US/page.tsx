@@ -2,7 +2,9 @@ import Link from "next/link";
 import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { MarqueeBar } from "@/components/MarqueeBar";
+import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
+import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
 
 // Đồng bộ nội dung và cấu trúc với trang tiếng Việt (src/app/page.tsx).
 
@@ -38,6 +40,11 @@ function parseVnDate(value: string | undefined): number {
   const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
   return Number.isNaN(t) ? -Infinity : t;
 }
+
+// Output for Day/Week/Month/Quarter/Year is auto-accumulated from the
+// "production-daily" collection (one record per day, entered in /admin) —
+// see computeProductionTotals() / getProductionPeriodLabels() in
+// src/lib/production.ts. Same logic as the Vietnamese page.
 
 const shareholderRelations = [
   {
@@ -104,11 +111,17 @@ export default function EnglishHomePage() {
     year: "numeric",
   });
 
+  const now = new Date();
+  const dailyEntries = getCollection("production-daily");
+  const productionTotals = computeProductionTotals(dailyEntries, now);
+  const productionPeriods = getProductionPeriodLabels(now, "en");
+
   const productionStatus: [string, string, string][] = [
-    [productionInfo?.san_luong_ngay ?? "", "Output", productionInfo?.san_luong_ngay_ky ?? ""],
-    [productionInfo?.san_luong_thang ?? "", "Output", productionInfo?.san_luong_thang_ky ?? ""],
-    [productionInfo?.san_luong_quy ?? "", "Output", productionInfo?.san_luong_quy_ky ?? ""],
-    [productionInfo?.san_luong_nam ?? "", "Output", productionInfo?.san_luong_nam_ky ?? ""],
+    [formatVnNumber(productionTotals.day), "Output", productionPeriods.ngay],
+    [formatVnNumber(productionTotals.week), "Output", productionPeriods.tuan],
+    [formatVnNumber(productionTotals.month), "Output", productionPeriods.thang],
+    [formatVnNumber(productionTotals.quarter), "Output", productionPeriods.quy],
+    [formatVnNumber(productionTotals.year), "Output", productionPeriods.nam],
   ];
 
   const waterLevels = [
@@ -176,13 +189,14 @@ export default function EnglishHomePage() {
       </section>
 
       <section id="production" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <AutoRefresh intervalMs={60_000} />
         <div className="flex flex-col items-center text-center">
           <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
             Production Status
           </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            {/* Left: 4 production cards, 2x2 */}
-            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
+            {/* Left: 5 output cards (Day/Week/Month/Quarter/Year) */}
+            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:col-span-2">
               {productionStatus.map(([value, label, period], index) => (
                 <div
                   key={`${period}-${index}`}

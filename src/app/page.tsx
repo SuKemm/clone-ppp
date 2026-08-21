@@ -2,7 +2,9 @@ import Link from "next/link";
 import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { MarqueeBar } from "@/components/MarqueeBar";
+import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
+import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin (sản lượng, mực nước, dòng chữ chạy)
 
@@ -45,11 +47,11 @@ function parseVnDate(value: string | undefined): number {
   return Number.isNaN(t) ? -Infinity : t;
 }
 
-// Sản lượng & mực nước hiện tại được lấy từ /admin -> "Tình hình sản xuất &
-// Mực nước" (xem src/lib/cms/schema.ts, id "production-info"), không còn
-// hardcode ở đây nữa — xem hàm Home() bên dưới.
-
-
+// Sản lượng Ngày/Tuần/Tháng/Quý/Năm được TỰ CỘNG DỒN từ collection
+// "production-daily" (mỗi bản ghi = sản lượng của đúng 1 ngày, admin nhập ở
+// /admin) — xem computeProductionTotals() và getProductionPeriodLabels()
+// trong src/lib/production.ts. Mực nước hồ vẫn lấy từ "production-info" như
+// cũ (đây là số liệu tức thời, không phải số cộng dồn).
 const shareholderRelations = [
   {
     label: "Thông tin/Tài liệu cổ đông",
@@ -120,11 +122,17 @@ export default function Home() {
     year: "numeric",
   });
 
+  const now = new Date();
+  const dailyEntries = getCollection("production-daily");
+  const productionTotals = computeProductionTotals(dailyEntries, now);
+  const productionPeriods = getProductionPeriodLabels(now, "vi");
+
   const productionStatus: [string, string, string][] = [
-    [productionInfo?.san_luong_ngay ?? "", "Sản lượng", productionInfo?.san_luong_ngay_ky ?? ""],
-    [productionInfo?.san_luong_thang ?? "", "Sản lượng", productionInfo?.san_luong_thang_ky ?? ""],
-    [productionInfo?.san_luong_quy ?? "", "Sản lượng", productionInfo?.san_luong_quy_ky ?? ""],
-    [productionInfo?.san_luong_nam ?? "", "Sản lượng", productionInfo?.san_luong_nam_ky ?? ""],
+    [formatVnNumber(productionTotals.day), "Sản lượng", productionPeriods.ngay],
+    [formatVnNumber(productionTotals.week), "Sản lượng", productionPeriods.tuan],
+    [formatVnNumber(productionTotals.month), "Sản lượng", productionPeriods.thang],
+    [formatVnNumber(productionTotals.quarter), "Sản lượng", productionPeriods.quy],
+    [formatVnNumber(productionTotals.year), "Sản lượng", productionPeriods.nam],
   ];
 
   const waterLevels = [
@@ -204,13 +212,16 @@ export default function Home() {
 
 {/* Production */}
 <section id="production" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+  {/* Không hiện gì cả — âm thầm refresh dữ liệu + nhãn ngày/tháng/quý/năm
+      định kỳ để khối này luôn "sống", tự cập nhật theo thời gian thực. */}
+  <AutoRefresh intervalMs={60_000} />
   <div className="flex flex-col items-center text-center">
     <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
       Thông tin sản xuất
     </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            {/* Bên trái: 4 thẻ sản lượng, xếp 2x2 */}
-            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
+            {/* Bên trái: 5 thẻ sản lượng (Ngày/Tuần/Tháng/Quý/Năm) */}
+            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:col-span-2">
               {productionStatus.map(([value, label, period], index) => (
                 <div
                   key={`${period}-${index}`}
