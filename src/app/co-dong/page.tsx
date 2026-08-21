@@ -4,6 +4,18 @@ import { getCollection } from "@/lib/cms/store";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
+// Chuyển ngày admin nhập ("dd/mm/yyyy" hoặc "dd.mm.yyyy") thành mốc thời
+// gian để sắp xếp mới → cũ. Dùng chung logic với khối video ở trang chủ
+// (src/app/page.tsx) — tách riêng ở đây để không phải export thêm.
+function parseAlbumDate(value: string | undefined): number {
+  if (!value) return -Infinity;
+  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+  if (!m) return -Infinity;
+  const [, d, mo, y] = m;
+  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
+}
+
 export default async function ShareholdersPage() {
   const categories = getCollection("shareholder-categories");
   const items = getCollection("shareholder-relations");
@@ -41,6 +53,14 @@ export default async function ShareholdersPage() {
     title: item.title,
   }));
 
+  // Khối "Video nổi bật" ở sidebar — lấy 2 video mới nhất từ Admin > Thư
+  // viện video (collection "video-albums"), giống cách trang chủ đang lấy
+  // ảnh/video mới nhất.
+  const videoItems = [...getCollection("video-albums")]
+    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+    .slice(0, 2)
+    .map((v) => ({ title: v.title, image: v.image || undefined }));
+
   if (tabs.length === 0) {
     return (
       <PtscShell>
@@ -63,6 +83,8 @@ export default async function ShareholdersPage() {
         tabs={tabs}
         sidebarTitle="Xem nhiều nhất"
         sidebarItems={sidebarItems}
+        videoSectionTitle="Video nổi bật"
+        videoItems={videoItems}
       />
     </PtscShell>
   );

@@ -8,6 +8,15 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 // đọc từ "shareholder-categories" + "shareholder-relations", chỉ khác lấy
 // các field "_en" (name_en, title_en, excerpt_en).
 
+function parseAlbumDate(value: string | undefined): number {
+  if (!value) return -Infinity;
+  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+  if (!m) return -Infinity;
+  const [, d, mo, y] = m;
+  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
+}
+
 export default function ShareholdersPageEn() {
   const categories = getCollection("shareholder-categories");
   const items = getCollection("shareholder-relations");
@@ -39,6 +48,11 @@ export default function ShareholdersPageEn() {
     title: item.title_en || item.title,
   }));
 
+  const videoItems = [...getCollection("video-albums")]
+    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+    .slice(0, 2)
+    .map((v) => ({ title: v.title_en || v.title, image: v.image || undefined }));
+
   if (tabs.length === 0) {
     return (
       <PtscShell>
@@ -61,6 +75,8 @@ export default function ShareholdersPageEn() {
         tabs={tabs}
         sidebarTitle="Most Viewed"
         sidebarItems={sidebarItems}
+        videoSectionTitle="Featured Videos"
+        videoItems={videoItems}
         isEnglish
         detailBasePath="/en-US/shareholders"
       />

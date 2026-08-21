@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 
@@ -39,16 +39,27 @@ export type SrTab = {
   articles: SrArticle[];
 };
 
+export type SrVideoItem = {
+  title: string;
+  image?: string;
+};
+
 export function ShareholderRelations({
   tabs,
   sidebarTitle,
   sidebarItems,
+  videoSectionTitle,
+  videoItems = [],
+  videoLinkHref = "/dich-vu#thu-vien-video",
   isEnglish = false,
   detailBasePath = "/co-dong",
 }: {
   tabs: SrTab[];
   sidebarTitle: string;
   sidebarItems: { id: string; image: string; title: string }[];
+  videoSectionTitle?: string;
+  videoItems?: SrVideoItem[];
+  videoLinkHref?: string;
   isEnglish?: boolean;
   detailBasePath?: string;
 }) {
@@ -63,6 +74,14 @@ export function ShareholderRelations({
     currentPage * PAGE_SIZE
   ) ?? [];
   const pageNumbers = getPageNumbers(currentPage, totalPages);
+
+  // Giống pvpower.vn: bài ĐẦU TIÊN của toàn bộ tab (không phải đầu mỗi
+  // trang) được tách ra hiện dạng "nổi bật" — logo to, tiêu đề lớn. Vì
+  // pageArticles ở trang 1 luôn chứa đúng bài đầu tab tại vị trí [0], chỉ
+  // cần tách nó ra khi đang ở trang 1; các bài còn lại xếp dạng lưới 2 cột.
+  const isFirstPage = currentPage === 1;
+  const featuredArticle = isFirstPage ? pageArticles[0] : undefined;
+  const gridArticles = isFirstPage ? pageArticles.slice(1) : pageArticles;
 
   // Cho phép menu điều hướng liên kết thẳng tới 1 tab cụ thể qua URL hash,
   // ví dụ /co-dong#dai-hoi sẽ tự mở tab "Đại hội cổ đông" khi vào trang.
@@ -109,34 +128,30 @@ export function ShareholderRelations({
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
         {/* Article list */}
         <div className="space-y-8">
-          {pageArticles.map((article) => (
-            <article
-              key={article.id}
-              className="grid gap-5 border-b border-slate-100 pb-8 last:border-0 sm:grid-cols-[220px_1fr]"
-            >
-              <div className="aspect-[4/3] w-full overflow-hidden rounded-lg bg-slate-100">
+          {/* Bài nổi bật — chỉ hiện ở trang 1 của mỗi tab */}
+          {featuredArticle && (
+            <article className="border-b border-slate-100 pb-8 text-center sm:text-left">
+              <div className="mx-auto flex h-56 w-full max-w-sm items-center justify-center overflow-hidden rounded-lg bg-white sm:mx-0">
                 <img
-                  src={article.image}
-                  alt={article.title}
-                  className="h-full w-full object-cover"
+                  src={featuredArticle.image}
+                  alt={featuredArticle.title}
+                  className="h-full w-full object-contain p-4"
                 />
               </div>
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-cyan-700">
-                  {article.category}{" "}
-                  <span className="font-normal text-slate-400">
-                    ({article.date})
+              <div className="mt-4">
+                <h2 className="text-xl font-bold leading-snug text-slate-900 transition hover:text-cyan-700 sm:text-2xl">
+                  <Link href={`${detailBasePath}/${featuredArticle.id}`}>{featuredArticle.title}</Link>
+                </h2>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-cyan-700">
+                  {featuredArticle.category}{" "}
+                  <span className="font-normal normal-case italic text-slate-400">
+                    ({featuredArticle.date})
                   </span>
                 </p>
-                <h3 className="mt-2 text-lg font-semibold leading-snug text-slate-900 transition hover:text-cyan-700">
-                  <Link href={`${detailBasePath}/${article.id}`}>{article.title}</Link>
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {article.excerpt}
-                </p>
-                {article.attachment && (
+                <p className="mt-2 text-sm leading-6 text-slate-600">{featuredArticle.excerpt}</p>
+                {featuredArticle.attachment && (
                   <a
-                    href={article.attachment}
+                    href={featuredArticle.attachment}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
@@ -145,14 +160,64 @@ export function ShareholderRelations({
                   </a>
                 )}
                 <ArticleViewCount
-                  id={article.id}
+                  id={featuredArticle.id}
                   mode="display"
                   className="mt-2 text-xs text-slate-400"
                   isEnglish={isEnglish}
                 />
               </div>
             </article>
-          ))}
+          )}
+
+          {/* Các bài còn lại — lưới 2 cột, giống trang danh sách của
+              pvpower.vn (mỗi thẻ: logo, tiêu đề, danh mục+ngày, tóm tắt) */}
+          {gridArticles.length > 0 && (
+            <div className="grid gap-x-8 gap-y-10 sm:grid-cols-2">
+              {gridArticles.map((article) => (
+                <article key={article.id}>
+                  <div className="flex h-32 w-full items-center justify-center overflow-hidden rounded-lg bg-white">
+                    <img
+                      src={article.image}
+                      alt={article.title}
+                      className="h-full w-full object-contain p-3"
+                    />
+                  </div>
+                  <h3 className="mt-3 text-base font-semibold leading-snug text-slate-900 transition hover:text-cyan-700">
+                    <Link href={`${detailBasePath}/${article.id}`}>{article.title}</Link>
+                  </h3>
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-cyan-700">
+                    {article.category}{" "}
+                    <span className="font-normal normal-case italic text-slate-400">
+                      ({article.date})
+                    </span>
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{article.excerpt}</p>
+                  {article.attachment && (
+                    <a
+                      href={article.attachment}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-100"
+                    >
+                      📄 {isEnglish ? "Download PDF" : "Tải xuống PDF"}
+                    </a>
+                  )}
+                  <ArticleViewCount
+                    id={article.id}
+                    mode="display"
+                    className="mt-2 text-xs text-slate-400"
+                    isEnglish={isEnglish}
+                  />
+                </article>
+              ))}
+            </div>
+          )}
+
+          {!featuredArticle && gridArticles.length === 0 && (
+            <p className="text-slate-500">
+              {isEnglish ? "No documents yet." : "Chưa có tài liệu nào trong mục này."}
+            </p>
+          )}
 
           {/* Phân trang */}
           {totalPages > 1 && (
@@ -224,11 +289,11 @@ export function ShareholderRelations({
           <ul className="mt-5 space-y-4">
             {sidebarItems.map((item) => (
               <li key={item.id} className="flex gap-3">
-                <div className="h-14 w-20 shrink-0 overflow-hidden rounded-md bg-slate-200">
+                <div className="flex h-14 w-20 shrink-0 items-center justify-center overflow-hidden rounded-md bg-white">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-contain p-1"
                   />
                 </div>
                 <Link
@@ -240,6 +305,43 @@ export function ShareholderRelations({
               </li>
             ))}
           </ul>
+
+          {/* Video nổi bật — lấy từ Admin > Thư viện video, không có trang
+              chi tiết riêng nên bấm vào sẽ tới thẳng mục Thư viện video. */}
+          {videoItems.length > 0 && (
+            <div className="mt-8 border-t border-slate-200 pt-6">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-slate-900">
+                {videoSectionTitle ?? (isEnglish ? "Featured Videos" : "Video nổi bật")}
+              </h3>
+              <ul className="mt-5 space-y-5">
+                {videoItems.map((video) => (
+                  <li key={video.title}>
+                    <Link
+                      href={videoLinkHref}
+                      className="text-sm font-medium leading-snug text-slate-700 transition hover:text-cyan-700"
+                    >
+                      {video.title}
+                    </Link>
+                    <Link
+                      href={videoLinkHref}
+                      className="group relative mt-2 flex h-28 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-800"
+                    >
+                      {video.image ? (
+                        <img
+                          src={video.image}
+                          alt={video.title}
+                          className="h-full w-full object-cover opacity-80 transition group-hover:opacity-100"
+                        />
+                      ) : null}
+                      <span className="absolute flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
+                        <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </aside>
       </div>
     </section>
