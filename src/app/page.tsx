@@ -137,7 +137,7 @@ export default function Home() {
 
   const waterLevels = [
     { label: "Mực nước hồ hiện tại", value: productionInfo?.muc_nuoc_ho ?? "", unit: "m" },
-    { label: "Lưu lượng về hồ", value: productionInfo?.luu_luong_ve_ho ?? "", unit: "m³/s" },
+    { label: "Lưu lượng về hồ trung binh ngày", value: productionInfo?.luu_luong_ve_ho ?? "", unit: "m³/s" },
     {
       label: "Lưu lượng phát điện trung bình ngày",
       value: productionInfo?.luu_luong_phat_dien ?? "",

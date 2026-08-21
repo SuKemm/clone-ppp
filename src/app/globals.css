@@ -201,18 +201,72 @@
   animation-play-state: paused;
 }
 
-/* Hiệu ứng nhấp nháy (blink) cho dòng chữ chạy */
-@keyframes blink {
-  0%,
-  49% {
-    opacity: 1;
+/* Dòng chữ chạy MarqueeBar (trang chủ): mỗi dòng chạy 1 lượt từ ngoài mép
+   phải vào và trượt hẳn ra khỏi mép trái rồi mới đổi sang dòng kế tiếp
+   (xử lý đổi dòng nằm ở component, qua sự kiện onAnimationEnd). */
+@keyframes run-once {
+  from {
+    transform: translateX(100%);
   }
-  50%,
-  100% {
-    opacity: 0.15;
+  to {
+    transform: translateX(-100%);
   }
 }
 
-.animate-blink {
-  animation: blink 1s step-start infinite;
+/* Viền chữ phát sáng (glow) đỏ, sáng mờ dần đều — không chớp tắt. */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    text-shadow:
+      0 0 4px rgba(220, 38, 38, 0.7),
+      0 0 10px rgba(220, 38, 38, 0.5),
+      0 0 16px rgba(220, 38, 38, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 8px rgba(220, 38, 38, 1),
+      0 0 20px rgba(220, 38, 38, 0.85),
+      0 0 32px rgba(220, 38, 38, 0.6);
+  }
+}
+
+.glow-text {
+  text-shadow:
+    0 0 4px rgba(220, 38, 38, 0.7),
+    0 0 10px rgba(220, 38, 38, 0.5),
+    0 0 16px rgba(220, 38, 38, 0.3);
+}
+
+.marquee-once {
+  animation-name: run-once, glow-pulse;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: forwards, none;
+}
+
+/* Sao lấp lánh (twinkle) hai bên dòng chữ — nhấp nhô độ sáng + kích thước,
+   không tắt hẳn, lệch nhịp nhau để trông tự nhiên hơn. */
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.7) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25) rotate(20deg);
+  }
+}
+
+.sparkle {
+  display: inline-block;
+  color: #fbbf24;
+  text-shadow:
+    0 0 4px rgba(251, 191, 36, 0.9),
+    0 0 10px rgba(251, 191, 36, 0.6);
+  animation: twinkle 1.4s ease-in-out infinite;
+}
+
+.sparkle-delay {
+  animation-delay: 0.7s;
 }
