@@ -71,27 +71,20 @@ const shareholderRelations = [
   },
 ];
 
-const photoGalleryTabs = [
-  {
-    label: "Hoạt động sản xuất kinh doanh",
-    image: "/images/ptsc/service-fso.jpg",
-  },
-  {
-    label: "Dịch vụ nhà máy điện",
-    image: "/images/ptsc/service-co-khi.jpg",
-  },
-  {
-    label: "Hoạt động đảng đoàn thể",
-    image: "/images/ptsc/service-bien.jpg",
-  },
-];
+// Ảnh mặc định nếu album/video chưa được gán ảnh đại diện trong /admin.
+const GALLERY_FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";
 
-const videoLibrary = [
-  { title: "Sê San 3A - Kết nối niềm tin" },
-  { title: "Sê San 3A tổng kết công tác năm 2023" },
-  { title: "Sê San 3A - 20 năm \"Xây dựng và phát triển\"" },
-  { title: "SESAN 3A - Connect" },
-];
+// Chuyển ngày admin nhập ở field "Ngày đăng" (chấp nhận cả "dd/mm/yyyy" và
+// "dd.mm.yyyy" — 2 collection Thư viện ảnh/Video đang seed theo kiểu dấu
+// chấm) thành mốc thời gian để sắp xếp mới → cũ.
+function parseAlbumDate(value: string | undefined): number {
+  if (!value) return -Infinity;
+  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+  if (!m) return -Infinity;
+  const [, d, mo, y] = m;
+  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
+}
 
 export default function Home() {
   const productionInfo = getCollection("production-info")[0];
@@ -102,6 +95,20 @@ export default function Home() {
   const latestNews = [...getCollection("news")]
     .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
     .slice(0, 3);
+
+  // Khối "Thư viện ảnh" / "Video tư liệu" ở trang chủ lấy trực tiếp từ 2
+  // collection "photo-albums" / "video-albums" (Admin -> Thư viện), luôn
+  // hiện 3 album ảnh và 4 video mới nhất theo "Ngày đăng" — không còn
+  // hardcode như trước, admin đăng thêm là trang chủ tự cập nhật.
+  const latestPhotoAlbums = [...getCollection("photo-albums")]
+    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+    .slice(0, 3)
+    .map((a) => ({ label: a.title, image: a.image || GALLERY_FALLBACK_IMAGE }));
+
+  const latestVideos = [...getCollection("video-albums")]
+    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+    .slice(0, 4)
+    .map((v) => ({ title: v.title }));
 
   // Ngày cập nhật hiển thị luôn là ngày hiện tại (giờ Việt Nam) — không cần
   // vào admin sửa tay mỗi ngày. Nếu sau này muốn cho phép ghi đè bằng tay,
@@ -283,7 +290,7 @@ export default function Home() {
           Thư viện ảnh
         </h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {photoGalleryTabs.map((tab) => (
+                {latestPhotoAlbums.map((tab) => (
                   <div key={tab.label} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                     <img src={tab.image} alt={tab.label} className="h-36 w-full object-cover" />
                     <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700">
@@ -303,7 +310,7 @@ export default function Home() {
             <div>
               <h2 className="text-center text-2xl font-semibold text-slate-900">Video tư liệu</h2>
               <div className="mt-6 grid grid-cols-2 gap-4">
-                {videoLibrary.map((video) => (
+                {latestVideos.map((video) => (
                   <div
                     key={video.title}
                     className="group relative flex h-32 items-end overflow-hidden rounded-xl border border-slate-200 bg-slate-800"
@@ -319,7 +326,7 @@ export default function Home() {
                 ))}
               </div>
               <a
-                href="/tin-tuc"
+                href="/dich-vu#thu-vien-video"
                 className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
               >
                 Xem tất cả
