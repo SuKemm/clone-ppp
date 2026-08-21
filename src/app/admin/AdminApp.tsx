@@ -23,6 +23,14 @@ import {
   Landmark,
   ScrollText,
   ChevronDown,
+  Building2,
+  BarChart3,
+  History,
+  Ruler,
+  Award,
+  UserCircle2,
+  UsersRound,
+  BookImage,
 } from "lucide-react";
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
@@ -46,6 +54,15 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   contacts: MessageSquare,
   "shareholder-categories": Landmark,
   "shareholder-relations": ScrollText,
+  "company-overview": Building2,
+  "company-stats": BarChart3,
+  "company-timeline": History,
+  "company-specs": Ruler,
+  "company-awards": Award,
+  "shareholders-list": UserCircle2,
+  leadership: UsersRound,
+  "units-page": Landmark,
+  "culture-handbook-pages": BookImage,
 };
 
 // Nhóm các collection vào đúng thư mục chính, khớp với cấu trúc menu chính
@@ -54,10 +71,23 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
 // Collection nào không thuộc mục nào trên menu chính (chỉ hiện ở trang chủ
 // hoặc là trang độc lập) thì gom vào nhóm "Khác" ở cuối.
 const SIDEBAR_GROUPS: { label: string; ids: CollectionId[] }[] = [
-  { label: "Giới thiệu DHC", ids: ["projects"] },
+  {
+    label: "Giới thiệu DHC",
+    ids: [
+      "projects",
+      "company-overview",
+      "company-stats",
+      "company-timeline",
+      "company-specs",
+      "company-awards",
+      "shareholders-list",
+      "leadership",
+      "units-page",
+    ],
+  },
   { label: "Quan hệ cổ đông", ids: ["shareholder-categories", "shareholder-relations"] },
   { label: "Tin tức – Sự kiện", ids: ["news-categories", "news"] },
-  { label: "Thư viện", ids: ["photo-albums", "video-albums"] },
+  { label: "Thư viện", ids: ["photo-albums", "video-albums", "culture-handbook-pages"] },
   { label: "Liên hệ", ids: ["contacts"] },
   { label: "Khác", ids: ["jobs", "site-marquee", "production-info"] },
 ];

@@ -36,7 +36,16 @@ export type CollectionId =
   | "production-info"
   | "contacts"
   | "shareholder-categories"
-  | "shareholder-relations";
+  | "shareholder-relations"
+  | "company-overview"
+  | "company-stats"
+  | "company-timeline"
+  | "company-specs"
+  | "company-awards"
+  | "shareholders-list"
+  | "leadership"
+  | "units-page"
+  | "culture-handbook-pages";
 
 export type CollectionDef = {
   id: CollectionId;
@@ -160,126 +169,162 @@ export const COLLECTIONS: CollectionDef[] = [
         category: "Thông tin / tài liệu cổ đông",
         date: "cập nhật gần nhất",
         title: "Thông báo chốt danh sách cổ đông",
+        title_en: "Notice of Shareholder Record Date",
         excerpt: "Thông báo về ngày đăng ký cuối cùng để thực hiện quyền của cổ đông hiện hữu.",
+        excerpt_en: "Notice of the final registration date for existing shareholders to exercise their rights.",
         image: "/images/ptsc/project-hd-mien-nam.jpg",
       },
       {
         category: "Thông tin / tài liệu cổ đông",
         date: "cập nhật gần nhất",
         title: "Điều lệ và quy chế quản trị công ty",
+        title_en: "Company Charter and Governance Regulations",
         excerpt: "Bản cập nhật Điều lệ tổ chức và hoạt động, Quy chế quản trị nội bộ của công ty.",
+        excerpt_en: "Updated Charter of organization and operation, and internal Corporate Governance Regulations.",
         image: "/images/ptsc/service-fso.jpg",
       },
       {
         category: "Thông tin / tài liệu cổ đông",
         date: "cập nhật gần nhất",
         title: "Công bố thông tin định kỳ",
+        title_en: "Periodic Information Disclosure",
         excerpt: "Các tài liệu công bố thông tin định kỳ theo quy định dành cho công ty đại chúng.",
+        excerpt_en: "Periodic disclosure documents required for a public company.",
         image: "/images/ptsc/project-lng.jpg",
       },
       {
         category: "Thông tin / tài liệu cổ đông",
         date: "cập nhật gần nhất",
         title: "Danh sách người có liên quan sở hữu cổ phiếu",
+        title_en: "List of Related Persons Holding Shares",
         excerpt: "Danh sách công bố định kỳ về người nội bộ và người có liên quan.",
+        excerpt_en: "Periodic disclosure of insiders and related persons.",
         image: "/images/ptsc/service-cong-nghiep.jpg",
       },
       {
         category: "Thông tin / tài liệu cổ đông",
         date: "cập nhật gần nhất",
         title: "Nghị quyết Hội đồng quản trị",
+        title_en: "Board of Directors' Resolutions",
         excerpt: "Các nghị quyết, quyết định của Hội đồng quản trị công bố tới cổ đông.",
+        excerpt_en: "Resolutions and decisions of the Board of Directors disclosed to shareholders.",
         image: "/images/ptsc/project-bien-dong.jpg",
       },
       {
         category: "Thông tin / tài liệu cổ đông",
         date: "cập nhật gần nhất",
         title: "Thông báo giao dịch cổ phiếu của cổ đông nội bộ",
+        title_en: "Notice of Share Transactions by Internal Shareholders",
         excerpt: "Thông báo về việc mua/bán cổ phiếu của cổ đông nội bộ và người liên quan.",
+        excerpt_en: "Notice of share purchases/sales by internal shareholders and related persons.",
         image: "/images/ptsc/service-fso.jpg",
       },
       {
         category: "Đại hội cổ đông",
         date: "cập nhật gần nhất",
         title: "Thông báo mời họp Đại hội đồng cổ đông thường niên",
+        title_en: "Notice of Annual General Meeting of Shareholders",
         excerpt: "Thư mời và tài liệu họp gửi tới quý cổ đông trước thềm Đại hội đồng cổ đông thường niên.",
+        excerpt_en: "Invitation letter and meeting documents sent to shareholders ahead of the Annual General Meeting.",
         image: "/images/ptsc/service-cong-nghiep.jpg",
       },
       {
         category: "Đại hội cổ đông",
         date: "cập nhật gần nhất",
         title: "Biên bản và Nghị quyết Đại hội đồng cổ đông thường niên",
+        title_en: "Minutes and Resolutions of the Annual General Meeting",
         excerpt: "Tổng hợp các nội dung đã được thông qua tại Đại hội đồng cổ đông thường niên.",
+        excerpt_en: "Summary of resolutions approved at the Annual General Meeting of Shareholders.",
         image: "/images/ptsc/project-bien-dong.jpg",
       },
       {
         category: "Đại hội cổ đông",
         date: "cập nhật gần nhất",
         title: "Tài liệu Đại hội đồng cổ đông bất thường",
+        title_en: "Extraordinary General Meeting Documents",
         excerpt: "Tài liệu liên quan tới các nội dung trình Đại hội đồng cổ đông bất thường (nếu có).",
+        excerpt_en: "Documents related to matters submitted to an Extraordinary General Meeting, if any.",
         image: "/images/ptsc/project-hd-mien-nam.jpg",
       },
       {
         category: "Đại hội cổ đông",
         date: "cập nhật gần nhất",
         title: "Quy chế tổ chức Đại hội đồng cổ đông",
+        title_en: "Rules of Procedure for the General Meeting of Shareholders",
         excerpt: "Quy chế làm việc và biểu quyết áp dụng tại Đại hội đồng cổ đông.",
+        excerpt_en: "Rules of procedure and voting applicable at the General Meeting of Shareholders.",
         image: "/images/ptsc/service-fso.jpg",
       },
       {
         category: "Đại hội cổ đông",
         date: "cập nhật gần nhất",
         title: "Tài liệu ứng cử, đề cử thành viên HĐQT/BKS",
+        title_en: "Board/Supervisory Board Nomination Documents",
         excerpt: "Hồ sơ ứng cử, đề cử nhân sự trình Đại hội đồng cổ đông thông qua.",
+        excerpt_en: "Nomination dossiers for personnel submitted to the General Meeting of Shareholders.",
         image: "/images/ptsc/project-lng.jpg",
       },
       {
         category: "Đại hội cổ đông",
         date: "cập nhật gần nhất",
         title: "Video/hình ảnh Đại hội đồng cổ đông thường niên",
+        title_en: "Photos/Video of the Annual General Meeting",
         excerpt: "Tổng hợp hình ảnh và video ghi nhận tại Đại hội đồng cổ đông thường niên.",
+        excerpt_en: "Collection of photos and videos recorded at the Annual General Meeting of Shareholders.",
         image: "/images/ptsc/project-bien-dong.jpg",
       },
       {
         category: "Báo cáo tài chính / Báo cáo thường niên",
         date: "cập nhật gần nhất",
         title: "Báo cáo tài chính đã kiểm toán",
+        title_en: "Audited Financial Statements",
         excerpt: "Báo cáo tài chính năm đã được kiểm toán bởi đơn vị kiểm toán độc lập.",
+        excerpt_en: "Annual financial statements audited by an independent auditor.",
         image: "/images/ptsc/service-fso.jpg",
       },
       {
         category: "Báo cáo tài chính / Báo cáo thường niên",
         date: "cập nhật gần nhất",
         title: "Báo cáo thường niên",
+        title_en: "Annual Report",
         excerpt: "Tổng quan kết quả hoạt động sản xuất kinh doanh và định hướng phát triển của công ty.",
+        excerpt_en: "Overview of business results and the company's development orientation.",
         image: "/images/ptsc/project-lng.jpg",
       },
       {
         category: "Báo cáo tài chính / Báo cáo thường niên",
         date: "cập nhật gần nhất",
         title: "Báo cáo tài chính các quý trong năm",
+        title_en: "Quarterly Financial Statements",
         excerpt: "Báo cáo tài chính theo từng quý gửi tới cổ đông và nhà đầu tư.",
+        excerpt_en: "Quarterly financial statements provided to shareholders and investors.",
         image: "/images/ptsc/service-cong-nghiep.jpg",
       },
       {
         category: "Báo cáo tài chính / Báo cáo thường niên",
         date: "cập nhật gần nhất",
         title: "Báo cáo phát triển bền vững",
+        title_en: "Sustainability Report",
         excerpt: "Báo cáo về các hoạt động phát triển bền vững, môi trường và xã hội.",
+        excerpt_en: "Report on sustainability, environmental and social activities.",
         image: "/images/ptsc/project-bien-dong.jpg",
       },
       {
         category: "Báo cáo tài chính / Báo cáo thường niên",
         date: "cập nhật gần nhất",
         title: "Giải trình biến động kết quả kinh doanh",
+        title_en: "Explanation of Business Results Fluctuation",
         excerpt: "Giải trình chênh lệch lợi nhuận sau thuế theo quy định công bố thông tin.",
+        excerpt_en: "Explanation of after-tax profit variance as required for information disclosure.",
         image: "/images/ptsc/project-hd-mien-nam.jpg",
       },
       {
         category: "Báo cáo tài chính / Báo cáo thường niên",
         date: "cập nhật gần nhất",
         title: "Báo cáo tài chính hợp nhất",
+        title_en: "Consolidated Financial Statements",
         excerpt: "Báo cáo tài chính hợp nhất toàn Tổng công ty đã được kiểm toán.",
+        excerpt_en: "Audited consolidated financial statements of the whole Corporation.",
         image: "/images/ptsc/service-fso.jpg",
       },
     ],
@@ -514,6 +559,229 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "createdAt", label: "Ngày tạo", type: "text" },
     ],
     seed: [],
+  },
+  {
+    // CHỈ GIỮ 1 BẢN GHI DUY NHẤT — các đoạn văn bản chính của trang
+    // "Giới thiệu" (/gioi-thieu). Bấm "Sửa" trên mục có sẵn để cập nhật,
+    // không bấm "+ Thêm mới".
+    id: "company-overview",
+    label: "Giới thiệu — Nội dung chính",
+    fields: [
+      { key: "overview_intro", label: "Đoạn giới thiệu tổng quan (Tổng quan doanh nghiệp)", type: "richtext" },
+      { key: "overview_intro_en", label: "Đoạn giới thiệu tổng quan (EN)", type: "richtext" },
+      { key: "vision", label: "Tầm nhìn", type: "textarea", width: "half" },
+      { key: "vision_en", label: "Tầm nhìn (EN)", type: "textarea", width: "half" },
+      { key: "mission", label: "Sứ mệnh", type: "textarea", width: "half" },
+      { key: "mission_en", label: "Sứ mệnh (EN)", type: "textarea", width: "half" },
+      { key: "investment_note", label: "Cơ cấu sở hữu — Tổng mức đầu tư", type: "richtext" },
+      { key: "investment_note_en", label: "Cơ cấu sở hữu — Tổng mức đầu tư (EN)", type: "richtext" },
+      { key: "closing_content", label: "Đoạn kết (Khẳng định thương hiệu)", type: "richtext" },
+      { key: "closing_content_en", label: "Đoạn kết (Khẳng định thương hiệu) (EN)", type: "richtext" },
+    ],
+    seed: [
+      {
+        overview_intro:
+          "<p><strong>Nhà máy thủy điện Đakđrinh có công suất thiết kế 125 MW, tổng mức đầu tư 5.921 tỷ đồng, điện lượng bình quân thiết kế E0 đạt 540,29 triệu kWh/năm, sản lượng theo hợp đồng mua bán điện là 527 triệu kWh/năm. Lũy kế sản lượng phát điện từ ngày 29/5/2014 đến nay đạt hơn 7 tỷ kWh, đóng góp hàng nghìn tỷ đồng cho ngân sách hai tỉnh Quảng Ngãi và Kon Tum.</strong></p><p>Công ty cổ phần Thủy điện Đakđrinh được thành lập ngày 16/03/2007 bởi 4 cổ đông sáng lập: Tập đoàn Dầu khí Quốc gia Việt Nam (nay chuyển quyền cho Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP, PV Power), Ngân hàng TMCP Đầu tư và Phát triển Việt Nam (BIDV), Tổng Công ty Sông Đà - CTCP (Sông Đà) và Tổng Công ty LICOGI - CTCP (LICOGI), theo Giấy chứng nhận đăng ký kinh doanh công ty cổ phần số 4300350203 do Sở Kế hoạch và Đầu tư tỉnh Quảng Ngãi cấp lần đầu ngày 21/03/2007, vốn điều lệ ban đầu 930 tỷ đồng. Qua nhiều lần thay đổi giấy chứng nhận đăng ký doanh nghiệp, vốn điều lệ hiện nay của Công ty là 1.160,011 tỷ đồng.</p><p>Công ty là chủ đầu tư Dự án thủy điện Đakđrinh, bố trí trên lưu vực sông Đakđrinh thuộc huyện Sơn Tây, tỉnh Quảng Ngãi và huyện Kon Plông, tỉnh Kon Tum, cách thành phố Quảng Ngãi khoảng 70 km về phía tây - một dự án trọng điểm trong chương trình phát triển kinh tế - xã hội và an ninh năng lượng quốc gia nói chung, tỉnh Quảng Ngãi nói riêng. Nhà máy gồm 2 tổ máy, tổ máy số 1 hòa lưới điện Quốc gia tháng 6/2014 và tổ máy số 2 vào tháng 9/2014; ngoài phát điện, Nhà máy còn tham gia cắt/giảm lũ mùa mưa và bổ sung nước mùa hạn cho hạ du.</p>",
+        overview_intro_en:
+          "<p><strong>Dakdrinh Hydropower Plant has a designed capacity of 125 MW, total investment of VND 5,921 billion, a designed average output (E0) of 540.29 million kWh/year, and a contracted output under the power purchase agreement of 527 million kWh/year. Cumulative generation from 29 May 2014 to date has exceeded 7 billion kWh, contributing thousands of billions of VND to the budgets of Quang Ngai and Kon Tum provinces.</strong></p><p>Dakdrinh Hydropower Joint Stock Company was established on 16 March 2007 by four founding shareholders: Vietnam Oil and Gas Group (rights since transferred to PetroVietnam Power Corporation - JSC, PV Power), the Joint Stock Commercial Bank for Investment and Development of Vietnam (BIDV), Song Da Corporation - JSC (Song Da), and LICOGI Corporation - JSC (LICOGI), under Business Registration Certificate No. 4300350203 first issued by the Quang Ngai Department of Planning and Investment on 21 March 2007, with an initial charter capital of VND 930 billion. Following several amendments to the enterprise registration certificate, the Company's charter capital now stands at VND 1,160.011 billion.</p><p>The Company is the investor of the Dakdrinh Hydropower Project, located on the Dakdrinh river basin in Son Tay District, Quang Ngai Province and Kon Plong District, Kon Tum Province, about 70 km west of Quang Ngai City — a key project in the country's socio-economic development and energy security programs, and in Quang Ngai Province in particular. The plant comprises two generating units; Unit 1 was connected to the National Grid in June 2014 and Unit 2 in September 2014. Besides power generation, the plant also helps mitigate flooding during the rainy season and supplements downstream water supply during the dry season.</p>",
+        vision:
+          "Phát triển bền vững, trở thành một trong những công ty cổ phần hoạt động sản xuất, kinh doanh điện hiệu quả hàng đầu khu vực miền Trung.",
+        vision_en:
+          "Sustainable development — becoming one of the leading, most efficient power generation and trading joint stock companies in the Central Vietnam region.",
+        mission:
+          "Cung cấp nguồn điện đảm bảo chất lượng, đề cao hợp tác bền vững với cổ đông và đối tác; xây dựng môi trường làm việc chuyên nghiệp, năng động, sáng tạo, hiệu quả, nhân văn và có trách nhiệm với xã hội.",
+        mission_en:
+          "Provide a reliable, quality power supply; foster sustainable cooperation with shareholders and partners; and build a professional, dynamic, creative, effective, people-centered and socially responsible working environment.",
+        investment_note:
+          "<p>Dự án đầu tư được Hội đồng Quản trị Công ty phê duyệt tại Quyết định số 16/DHC-HĐQT-QĐ ngày 17/05/2008.</p><p>Tổng mức đầu tư điều chỉnh lần 2 của dự án là <strong>5.921 tỷ đồng</strong>, đã được Đại hội đồng Cổ đông Công ty phê duyệt tại Quyết định số 105/QĐ-ĐHĐCĐ ngày 24/11/2017.</p>",
+        investment_note_en:
+          "<p>The investment project was approved by the Company's Board of Directors under Decision No. 16/DHC-HĐQT-QĐ dated 17 May 2008.</p><p>The project's second revised total investment of <strong>VND 5,921 billion</strong>, was approved by the Company's General Meeting of Shareholders under Resolution No. 105/QĐ-ĐHĐCĐ dated 24 November 2017.</p>",
+        closing_content:
+          "<p>Từ vốn điều lệ ban đầu 930 tỷ đồng, sau gần 12 năm hoạt động vốn điều lệ của Công ty đã tăng lên 1.160,01 tỷ đồng, với 4 phòng ban và 1 phân xưởng vận hành sửa chữa. Nhà máy thủy điện Đakđrinh duy trì sản lượng điện bình quân hằng năm gần 540,925 triệu kWh. Công ty có kế hoạch niêm yết hơn 116 triệu cổ phiếu lên sàn chứng khoán, hướng tới trở thành công ty đại chúng trong lĩnh vực đầu tư, xây dựng, sản xuất kinh doanh điện năng.</p><p>Hai tổ máy của Nhà máy thủy điện Đakđrinh vận hành ổn định dưới sự chỉ đạo, điều hành sát sao của Ban lãnh đạo, đồng bộ từ quản lý sản xuất, kỹ thuật đến chào giá cạnh tranh trên thị trường điện, cùng hệ thống quản lý theo tiêu chuẩn ISO 9001-2008 - nhờ đó lợi nhuận lũy kế các năm 2014-2022 của Công ty đạt 863 tỷ đồng.</p>",
+        closing_content_en:
+          "<p>From an initial charter capital of VND 930 billion, after nearly 12 years of operation the Company's charter capital has grown to VND 1,160.01 billion, supported by 4 departments and 1 operations and maintenance workshop. Dakdrinh Hydropower Plant maintains an average annual output of nearly 540.925 million kWh. The Company plans to list more than 116 million shares on the stock exchange, aiming to become a public company in power investment, construction, generation and trading.</p><p>Both units of Dakdrinh Hydropower Plant operate stably under the close direction of the Company's leadership, with coordinated production management, technical operations and competitive bidding on the power market, supported by an ISO 9001-2008 management system — as a result, the Company's cumulative profit for 2014–2022 reached VND 863 billion.</p>",
+      },
+    ],
+  },
+  {
+    id: "company-stats",
+    label: "Giới thiệu — Số liệu nổi bật",
+    fields: [
+      { key: "section", label: "Nhóm hiển thị", type: "select", options: ["Tổng quan doanh nghiệp", "Lũy kế phát điện"] },
+      { key: "value", label: "Giá trị", type: "text", width: "half" },
+      { key: "label", label: "Chú thích", type: "text", width: "half" },
+      { key: "label_en", label: "Chú thích (EN)", type: "text" },
+    ],
+    seed: [
+      { section: "Tổng quan doanh nghiệp", value: "125 MW", label: "Công suất lắp máy", label_en: "Installed capacity" },
+      { section: "Tổng quan doanh nghiệp", value: "1.160,011", label: "Vốn điều lệ (tỷ đồng)", label_en: "Charter capital (VND bn)" },
+      { section: "Tổng quan doanh nghiệp", value: "~7 tỷ", label: "Sản lượng điện lũy kế (kWh)", label_en: "Cumulative output (kWh)" },
+      { section: "Tổng quan doanh nghiệp", value: "12", label: "Năm vận hành (từ 2014)", label_en: "Years in operation (since 2014)" },
+      { section: "Lũy kế phát điện", value: "~7 tỷ kWh", label: "Sản lượng điện lũy kế lên lưới điện Quốc gia (29/5/2014 - hết tháng 5/2026), bình quân 564 triệu kWh/năm, cao hơn E0 540,29 triệu kWh/năm", label_en: "Cumulative output delivered to the National Grid (29/05/2014 – end of May 2026), averaging 564 million kWh/year, above the E0 target of 540.29 million kWh/year" },
+      { section: "Lũy kế phát điện", value: "6.622 tỷ đồng", label: "Doanh thu trước thuế VAT lũy kế", label_en: "Cumulative revenue before VAT" },
+      { section: "Lũy kế phát điện", value: "1.050 tỷ đồng", label: "Lợi nhuận sau thuế lũy kế", label_en: "Cumulative after-tax profit" },
+      { section: "Lũy kế phát điện", value: "1.550 tỷ đồng", label: "Nộp Ngân sách Nhà nước từ khi vận hành Nhà máy", label_en: "Contributions to the State Budget since the plant began operation" },
+    ],
+  },
+  {
+    id: "company-timeline",
+    label: "Giới thiệu — Lịch sử hình thành",
+    fields: [
+      { key: "date", label: "Mốc thời gian", type: "text", required: true },
+      { key: "summary", label: "Nội dung", type: "textarea", required: true },
+      { key: "summary_en", label: "Nội dung (EN)", type: "textarea" },
+    ],
+    seed: [
+      { date: "21/03/2007", summary: "Thành lập Công ty cổ phần Thủy điện Đakđrinh theo quy định của Luật Doanh nghiệp, hoạt động theo mô hình công ty cổ phần.", summary_en: "Established Dakdrinh Hydropower Joint Stock Company under the Enterprise Law, operating as a joint stock company." },
+      { date: "28/03/2007", summary: "Dự án thủy điện Đakđrinh chính thức động thổ.", summary_en: "The Dakdrinh Hydropower Project officially broke ground." },
+      { date: "17/05/2008", summary: "Hội đồng Quản trị Công ty phê duyệt dự án đầu tư tại Quyết định số 16/DHC-HĐQT-QĐ.", summary_en: "The Company's Board of Directors approved the investment project under Decision No. 16/DHC-HĐQT-QĐ." },
+      { date: "23/01/2011", summary: "Khởi công xây dựng, ngăn sông đợt 1.", summary_en: "Construction began, first-stage river diversion." },
+      { date: "16/10/2013", summary: "Tích nước hồ chứa (ngăn sông đợt 2).", summary_en: "Reservoir impoundment began (second-stage river diversion)." },
+      { date: "29/05/2014", summary: "Tổ máy 1 (H1) phát điện, hòa lưới điện Quốc gia.", summary_en: "Unit 1 (H1) generated power and was connected to the National Grid." },
+      { date: "29/08/2014", summary: "Tổ máy 2 phát điện, hòa lưới điện Quốc gia.", summary_en: "Unit 2 generated power and was connected to the National Grid." },
+      { date: "24/11/2017", summary: "Đại hội đồng Cổ đông phê duyệt tổng mức đầu tư điều chỉnh lần 2 tại Quyết định số 105/QĐ-ĐHĐCĐ.", summary_en: "The General Meeting of Shareholders approved the second revision of the total investment under Resolution No. 105/QĐ-ĐHĐCĐ." },
+      { date: "2015 - 27/01/2016", summary: "Hoàn thành công trình; Hội đồng nghiệm thu Nhà nước chấp thuận cho Chủ đầu tư bàn giao, đưa công trình vào khai thác sử dụng (Thông báo số 02/TB-HĐNTNN).", summary_en: "Construction completed; the State Acceptance Council approved handover of the facility for commercial operation (Notice No. 02/TB-HĐNTNN)." },
+    ],
+  },
+  {
+    id: "company-specs",
+    label: "Giới thiệu — Thông số Dự án",
+    fields: [
+      { key: "label", label: "Tên thông số", type: "text", required: true, width: "half" },
+      { key: "label_en", label: "Tên thông số (EN)", type: "text", width: "half" },
+      { key: "value", label: "Giá trị", type: "text", required: true, width: "half" },
+      { key: "value_en", label: "Giá trị (EN)", type: "text", width: "half" },
+    ],
+    seed: [
+      { label: "Công suất lắp máy", label_en: "Installed capacity", value: "125 MW", value_en: "125 MW" },
+      { label: "Sản lượng điện bình quân nhiều năm (E0, theo hợp đồng)", label_en: "Multi-year average output (E0, per PPA)", value: "527,6 triệu kWh/năm", value_en: "527.6 million kWh/year" },
+      { label: "Vị trí xây dựng", label_en: "Location", value: "Huyện Sơn Tây, tỉnh Quảng Ngãi và huyện Kon Plông, tỉnh Kon Tum", value_en: "Son Tay District, Quang Ngai Province and Kon Plong District, Kon Tum Province" },
+      { label: "Quy hoạch", label_en: "Power planning", value: "Thuộc Quy hoạch điện VI và Quy hoạch điện VII", value_en: "Part of Power Development Plan VI and Plan VII" },
+      { label: "Cấp công trình", label_en: "Structure classification", value: "Công trình cấp I", value_en: "Grade I structure" },
+      { label: "Đường hầm dẫn nước", label_en: "Headrace tunnel", value: "Dài 10,7 km - một trong những đường hầm thủy điện dài nhất tại thời điểm xây dựng", value_en: "10.7 km long — one of the longest hydropower tunnels at the time of construction" },
+      { label: "Khối lượng bê tông", label_en: "Concrete volume", value: "Trên 800.000 m³ bê tông RCC và CVC", value_en: "Over 800,000 m³ of RCC and CVC concrete" },
+      { label: "Dung tích hồ chứa", label_en: "Reservoir capacity", value: "248 triệu m³", value_en: "248 million m³" },
+      { label: "Diện tích lưu vực", label_en: "Catchment area", value: "420 km²", value_en: "420 km²" },
+      { label: "Mực nước dâng bình thường (MNDBT)", label_en: "Normal water level", value: "410 m", value_en: "410 m" },
+      { label: "Diện tích mặt hồ ứng với MNDBT", label_en: "Reservoir surface area at normal water level", value: "9,12 km²", value_en: "9.12 km²" },
+    ],
+  },
+  {
+    id: "company-awards",
+    label: "Giới thiệu — Khen thưởng",
+    fields: [
+      { key: "award_type", label: "Loại", type: "select", options: ["Danh hiệu thi đua", "Hình thức khen thưởng"], required: true },
+      { key: "year", label: "Năm", type: "text", required: true, width: "half" },
+      { key: "title", label: "Tên danh hiệu/khen thưởng", type: "text", required: true, width: "half" },
+      { key: "title_en", label: "Tên danh hiệu/khen thưởng (EN)", type: "text", width: "half" },
+      { key: "decision", label: "Quyết định công nhận", type: "textarea", width: "half" },
+      { key: "decision_en", label: "Quyết định công nhận (EN)", type: "textarea", width: "half" },
+    ],
+    seed: [
+      { award_type: "Danh hiệu thi đua", year: "2012", title: "Tập thể lao động xuất sắc", title_en: "Excellent Labor Collective", decision: "QĐ số 608/QĐ-ĐLDK ngày 04/12/2012 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 608/QĐ-ĐLDK dated 04/12/2012 issued by PetroVietnam Power Corporation" },
+      { award_type: "Danh hiệu thi đua", year: "2013", title: "Tập thể lao động xuất sắc", title_en: "Excellent Labor Collective", decision: "QĐ số 665/QĐ-ĐLDK ngày 29/11/2013 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 665/QĐ-ĐLDK dated 29/11/2013 issued by PetroVietnam Power Corporation" },
+      { award_type: "Danh hiệu thi đua", year: "2015", title: "Tập thể lao động tiên tiến", title_en: "Advanced Labor Collective", decision: "QĐ số 956/QĐ-ĐLDK ngày 01/12/2015 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 956/QĐ-ĐLDK dated 01/12/2015 issued by PetroVietnam Power Corporation" },
+      { award_type: "Danh hiệu thi đua", year: "2016", title: "Tập thể lao động tiên tiến", title_en: "Advanced Labor Collective", decision: "QĐ số 1313/QĐ-ĐLDK ngày 01/12/2016 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 1313/QĐ-ĐLDK dated 01/12/2016 issued by PetroVietnam Power Corporation" },
+      { award_type: "Danh hiệu thi đua", year: "2017", title: "Tập thể lao động tiên tiến", title_en: "Advanced Labor Collective", decision: "QĐ số 1158/QĐ-ĐLDK ngày 01/12/2017 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 1158/QĐ-ĐLDK dated 01/12/2017 issued by PetroVietnam Power Corporation" },
+      { award_type: "Danh hiệu thi đua", year: "2018", title: "Tập thể lao động tiên tiến", title_en: "Advanced Labor Collective", decision: "QĐ số 698/QĐ-ĐLDK ngày 06/12/2018 của Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP", decision_en: "Decision No. 698/QĐ-ĐLDK dated 06/12/2018 issued by PetroVietnam Power Corporation - JSC" },
+      { award_type: "Danh hiệu thi đua", year: "2019", title: "Tập thể hoàn thành tốt nhiệm vụ", title_en: "Collective That Successfully Fulfilled Its Duties", decision: "QĐ số 1220/QĐ-ĐKDK ngày 28/11/2019 của Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP", decision_en: "Decision No. 1220/QĐ-ĐKDK dated 28/11/2019 issued by PetroVietnam Power Corporation - JSC" },
+      { award_type: "Danh hiệu thi đua", year: "2020", title: "Tập thể lao động tiên tiến", title_en: "Advanced Labor Collective", decision: "QĐ số 1081/QĐ-ĐKDK ngày 27/11/2020 của Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP", decision_en: "Decision No. 1081/QĐ-ĐKDK dated 27/11/2020 issued by PetroVietnam Power Corporation - JSC" },
+      { award_type: "Hình thức khen thưởng", year: "2012", title: "Giấy khen của Tổng Công ty", title_en: "Certificate of Merit from the Corporation", decision: "QĐ số 609/QĐ-ĐLDK ngày 04/12/2012 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 609/QĐ-ĐLDK dated 04/12/2012 issued by PetroVietnam Power Corporation" },
+      { award_type: "Hình thức khen thưởng", year: "2014", title: "Bằng khen của Bộ trưởng Bộ Công Thương", title_en: "Certificate of Merit from the Minister of Industry and Trade", decision: "QĐ số 783/QĐ-BCT ngày 22/01/2014 của Bộ trưởng Bộ Công Thương", decision_en: "Decision No. 783/QĐ-BCT dated 22/01/2014 issued by the Minister of Industry and Trade" },
+      { award_type: "Hình thức khen thưởng", year: "2015", title: "Giấy khen của Tổng Công ty", title_en: "Certificate of Merit from the Corporation", decision: "QĐ số 959/QĐ-ĐLDK ngày 07/12/2015 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 959/QĐ-ĐLDK dated 07/12/2015 issued by PetroVietnam Power Corporation" },
+      { award_type: "Hình thức khen thưởng", year: "2016", title: "Bằng khen của UBND tỉnh Quảng Ngãi", title_en: "Certificate of Merit from the Quang Ngai Provincial People's Committee", decision: "QĐ số 1699/QĐ-UBND ngày 20/9/2016 của UBND tỉnh Quảng Ngãi", decision_en: "Decision No. 1699/QĐ-UBND dated 20/9/2016 issued by the Quang Ngai Provincial People's Committee" },
+      { award_type: "Hình thức khen thưởng", year: "2016", title: "Giấy khen của Tổng Công ty", title_en: "Certificate of Merit from the Corporation", decision: "QĐ số 1312/QĐ-ĐLDK ngày 01/12/2016 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 1312/QĐ-ĐLDK dated 01/12/2016 issued by PetroVietnam Power Corporation" },
+      { award_type: "Hình thức khen thưởng", year: "2017", title: "Bằng khen của UBND tỉnh Quảng Ngãi", title_en: "Certificate of Merit from the Quang Ngai Provincial People's Committee", decision: "QĐ số 496/QĐ-UBND ngày 23/3/2017 của UBND tỉnh Quảng Ngãi", decision_en: "Decision No. 496/QĐ-UBND dated 23/3/2017 issued by the Quang Ngai Provincial People's Committee" },
+      { award_type: "Hình thức khen thưởng", year: "2017", title: "Giấy khen của Tổng Công ty", title_en: "Certificate of Merit from the Corporation", decision: "QĐ số 1160/QĐ-ĐLDK ngày 01/12/2017 của Tổng Công ty Điện lực Dầu khí Việt Nam", decision_en: "Decision No. 1160/QĐ-ĐLDK dated 01/12/2017 issued by PetroVietnam Power Corporation" },
+      { award_type: "Hình thức khen thưởng", year: "2018", title: "Bằng khen của UBND tỉnh Quảng Ngãi", title_en: "Certificate of Merit from the Quang Ngai Provincial People's Committee", decision: "QĐ số 185/QĐ-UBND ngày 30/01/2018 của UBND tỉnh Quảng Ngãi", decision_en: "Decision No. 185/QĐ-UBND dated 30/01/2018 issued by the Quang Ngai Provincial People's Committee" },
+      { award_type: "Hình thức khen thưởng", year: "2018", title: "Giấy khen của Tổng Công ty", title_en: "Certificate of Merit from the Corporation", decision: "QĐ số 697/QĐ-ĐLDK ngày 06/12/2018 của Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP", decision_en: "Decision No. 697/QĐ-ĐLDK dated 06/12/2018 issued by PetroVietnam Power Corporation - JSC" },
+      { award_type: "Hình thức khen thưởng", year: "2019", title: "Giấy khen của Tổng Công ty", title_en: "Certificate of Merit from the Corporation", decision: "QĐ số 1220/QĐ-ĐKDK ngày 28/11/2019 của Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP", decision_en: "Decision No. 1220/QĐ-ĐKDK dated 28/11/2019 issued by PetroVietnam Power Corporation - JSC" },
+      { award_type: "Hình thức khen thưởng", year: "2020", title: "Giấy khen của Tổng Công ty", title_en: "Certificate of Merit from the Corporation", decision: "QĐ số 1084/QĐ-ĐKDK ngày 27/11/2019 của Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP", decision_en: "Decision No. 1084/QĐ-ĐKDK dated 27/11/2019 issued by PetroVietnam Power Corporation - JSC" },
+    ],
+  },
+  {
+    id: "shareholders-list",
+    label: "Giới thiệu — Danh sách cổ đông sáng lập",
+    fields: [
+      { key: "name", label: "Tên cổ đông", type: "text", required: true, width: "half" },
+      { key: "name_en", label: "Tên cổ đông (EN)", type: "text", width: "half" },
+    ],
+    seed: [
+      { name: "Tổng Công ty Điện lực Dầu khí Việt Nam - CTCP (PV Power)", name_en: "PetroVietnam Power Corporation - JSC (PV Power)" },
+      { name: "Ngân hàng Thương mại cổ phần Đầu tư và Phát triển Việt Nam (BIDV)", name_en: "Joint Stock Commercial Bank for Investment and Development of Vietnam (BIDV)" },
+      { name: "Tổng Công ty LICOGI - CTCP (LICOGI)", name_en: "LICOGI Corporation - JSC (LICOGI)" },
+      { name: "Tổng Công ty Sông Đà - CTCP (Sông Đà)", name_en: "Song Da Corporation - JSC (Song Da)" },
+      { name: "Bà Hà Thị Phương Thúy", name_en: "Ms. Ha Thi Phuong Thuy" },
+    ],
+  },
+  {
+    id: "leadership",
+    label: "Ban lãnh đạo",
+    fields: [
+      { key: "group", label: "Nhóm", type: "select", options: ["Hội đồng Quản trị", "Ban Giám đốc", "Ban kiểm soát"], required: true, width: "half" },
+      { key: "role", label: "Vai trò trong nhóm", type: "select", options: ["Trưởng nhóm", "Thành viên"], required: true, width: "half" },
+      { key: "name", label: "Họ tên", type: "text", required: true, width: "half" },
+      { key: "name_en", label: "Họ tên (EN)", type: "text", width: "half" },
+      { key: "title", label: "Chức danh", type: "text", required: true, width: "half" },
+      { key: "title_en", label: "Chức danh (EN)", type: "text", width: "half" },
+      { key: "photo", label: "Ảnh chân dung", type: "image" },
+    ],
+    seed: [
+      { group: "Hội đồng Quản trị", role: "Trưởng nhóm", name: "Ông Nguyễn Ngọc Hải", name_en: "Mr. Nguyễn Ngọc Hải", title: "Chủ tịch Hội đồng Quản trị", title_en: "Chairman of the Board of Directors", photo: "/images/leadership/hdqt-chu-tich-nguyen-ngoc-hai.png" },
+      { group: "Hội đồng Quản trị", role: "Thành viên", name: "Ông Đỗ Xuân Bình", name_en: "Mr. Đỗ Xuân Bình", title: "Thành viên HĐQT", title_en: "Board Member", photo: "/images/leadership/hdqt-uv-do-xuan-binh.jpg" },
+      { group: "Hội đồng Quản trị", role: "Thành viên", name: "Ông Lê Quang Hào", name_en: "Mr. Lê Quang Hào", title: "Thành viên HĐQT", title_en: "Board Member", photo: "/images/leadership/hdqt-uv-le-quang-hao.jpg" },
+      { group: "Ban Giám đốc", role: "Trưởng nhóm", name: "Ông Đỗ Xuân Bình", name_en: "Mr. Đỗ Xuân Bình", title: "Giám đốc", title_en: "Director", photo: "/images/leadership/bgd-giam-doc-do-xuan-binh.jpg" },
+      { group: "Ban Giám đốc", role: "Thành viên", name: "Ông Lê Năng", name_en: "Mr. Lê Năng", title: "Phó Giám đốc", title_en: "Deputy Director", photo: "/images/leadership/bgd-pgd-le-nang.jpg" },
+      { group: "Ban Giám đốc", role: "Thành viên", name: "Ông Nguyễn Xuân Hải", name_en: "Mr. Nguyễn Xuân Hải", title: "Phó Giám đốc", title_en: "Deputy Director", photo: "/images/leadership/bgd-pgd-nguyen-xuan-hai.png" },
+      { group: "Ban Giám đốc", role: "Thành viên", name: "Ông Nguyễn Đình Tới", name_en: "Mr. Nguyễn Đình Tới", title: "Kế toán trưởng", title_en: "Chief Accountant", photo: "/images/leadership/bgd-ktt-nguyen-dinh-toi.jpg" },
+      { group: "Ban kiểm soát", role: "Trưởng nhóm", name: "Ông Nguyễn Thanh Khiết", name_en: "Mr. Nguyễn Thanh Khiết", title: "Trưởng Ban kiểm soát", title_en: "Head of the Supervisory Board", photo: "/images/leadership/bks-truong-nguyen-thanh-khiet.jpg" },
+      { group: "Ban kiểm soát", role: "Thành viên", name: "Ông Nguyễn Trung Tuấn", name_en: "Mr. Nguyễn Trung Tuấn", title: "Thành viên Ban Kiểm soát", title_en: "Supervisor", photo: "/images/leadership/bks-tv-nguyen-trung-tuan.jpg" },
+      { group: "Ban kiểm soát", role: "Thành viên", name: "Bà Ngô Thị Hồng Hạnh", name_en: "Mrs. Ngô Thị Hồng Hạnh", title: "Thành viên Ban Kiểm soát", title_en: "Supervisor", photo: "/images/leadership/bks-tv-ngo-thi-hong-hanh.png" },
+    ],
+  },
+  {
+    // CHỈ GIỮ 1 BẢN GHI DUY NHẤT — nội dung trang "Đơn vị" (/don-vi).
+    id: "units-page",
+    label: "Đơn vị — Nội dung trang",
+    fields: [
+      { key: "intro_title", label: "Tiêu đề khối giới thiệu", type: "text", width: "half" },
+      { key: "intro_title_en", label: "Tiêu đề khối giới thiệu (EN)", type: "text", width: "half" },
+      { key: "intro_content", label: "Nội dung giới thiệu", type: "richtext" },
+      { key: "intro_content_en", label: "Nội dung giới thiệu (EN)", type: "richtext" },
+      { key: "list_title", label: "Tiêu đề danh sách", type: "text", width: "half" },
+      { key: "list_title_en", label: "Tiêu đề danh sách (EN)", type: "text", width: "half" },
+      { key: "list_items", label: "Danh sách (mỗi dòng 1 mục)", type: "textarea" },
+      { key: "list_items_en", label: "Danh sách (EN, mỗi dòng 1 mục)", type: "textarea" },
+    ],
+    seed: [
+      {
+        intro_title: "Đơn vị thành viên",
+        intro_title_en: "Member Units",
+        intro_content:
+          "<p>Thông tin về các đơn vị, phòng ban trực thuộc Công ty Cổ phần Thủy điện Đakđrinh — nội dung mẫu, vui lòng cập nhật lại cho đúng thực tế qua trang quản trị.</p>",
+        intro_content_en:
+          "<p>Information about the units and departments under Dakdrinh Hydropower Joint Stock Company — sample content, please update via the admin panel to reflect actual information.</p>",
+        list_title: "Danh sách đơn vị / phòng ban",
+        list_title_en: "Units / Departments",
+        list_items: "Phòng Tổ chức - Hành chính\nPhòng Kỹ thuật - An toàn\nPhòng Tài chính - Kế toán\nPhân xưởng Vận hành - Sửa chữa",
+        list_items_en: "Organization - Administration Department\nTechnical - Safety Department\nFinance - Accounting Department\nOperations - Maintenance Workshop",
+      },
+    ],
+  },
+  {
+    id: "culture-handbook-pages",
+    label: "Sổ tay văn hóa — Các trang",
+    fields: [
+      { key: "image", label: "Ảnh trang sổ tay", type: "image", required: true },
+      { key: "caption", label: "Chú thích", type: "text", width: "half" },
+      { key: "caption_en", label: "Chú thích (EN)", type: "text", width: "half" },
+    ],
+    seed: [
+      { image: "/images/ptsc/service-nang-luong.jpg", caption: "Trang bìa — Sổ tay văn hóa PV Power DHC", caption_en: "Cover — PV Power DHC Culture Handbook" },
+      { image: "/images/ptsc/service-tau.jpg", caption: "Tầm nhìn — Sứ mệnh", caption_en: "Vision — Mission" },
+      { image: "/images/ptsc/service-cong-nghiep.jpg", caption: "Giá trị cốt lõi", caption_en: "Core values" },
+      { image: "/images/ptsc/service-khao-sat.jpg", caption: "Chuẩn mực ứng xử", caption_en: "Code of conduct" },
+    ],
   },
 ];
 

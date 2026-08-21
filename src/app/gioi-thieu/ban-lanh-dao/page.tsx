@@ -1,11 +1,16 @@
 import Link from "next/link";
 import { PtscShell } from "@/components/ptsc-shell";
 import {
-  leadershipGroups,
+  buildLeadershipGroups,
   LeadershipBoard,
 } from "@/components/leadership";
+import { getCollection } from "@/lib/cms/store";
+
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 export default function BanLanhDaoPage() {
+  const leadershipGroups = buildLeadershipGroups(getCollection("leadership"));
+
   return (
     <PtscShell>
       <section className="border-b border-slate-200 bg-slate-50 py-6">

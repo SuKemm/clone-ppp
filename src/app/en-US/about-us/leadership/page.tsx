@@ -1,11 +1,16 @@
 import Link from "next/link";
 import {
-  leadershipGroups,
+  buildLeadershipGroups,
   LeadershipBoard,
 } from "@/components/leadership";
 import { PtscShell } from "@/components/ptsc-shell";
+import { getCollection } from "@/lib/cms/store";
+
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 export default function LeadershipPageEn() {
+  const leadershipGroups = buildLeadershipGroups(getCollection("leadership"));
+
   return (
     <PtscShell>
       {/* =========================================================

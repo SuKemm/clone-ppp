@@ -1,9 +1,17 @@
 import Link from "next/link";
 import { PtscShell } from "@/components/ptsc-shell";
 import { CultureHandbookViewer } from "@/components/CultureHandbookViewer";
-import { cultureHandbookPages } from "@/data/culture-handbook";
+import { getCollection } from "@/lib/cms/store";
+
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 export default function CultureHandbookPage() {
+  const cultureHandbookPages = getCollection("culture-handbook-pages").map((p) => ({
+    image: p.image,
+    caption: p.caption ?? "",
+    captionEn: p.caption_en ?? "",
+  }));
+
   return (
     <PtscShell
       title="Sổ tay văn hóa"

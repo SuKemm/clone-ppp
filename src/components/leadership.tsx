@@ -1,3 +1,5 @@
+import type { CmsItem } from "@/lib/cms/store";
+
 // ============================================================================
 // BAN LÃNH ĐẠO
 // Layout mô phỏng sơ đồ tổ chức theo hình mẫu:
@@ -24,103 +26,42 @@ export type LeadershipGroup = {
   members: LeadershipPerson[];
 };
 
-export const leadershipGroups: LeadershipGroup[] = [
-  {
-  id: "hdqt",
-  groupTitle: "Hội đồng Quản trị",
-  groupTitle_en: "Board of Directors",
-
-  leader: {
-    name: "Ông Nguyễn Ngọc Hải",
-    name_en: "Mr. Nguyễn Ngọc Hải",
-    title: "Chủ tịch Hội đồng Quản trị",
-    title_en: "Chairman of the Board of Directors",
-    photo: "/images/leadership/hdqt-chu-tich-nguyen-ngoc-hai.png",
-  },
-
-  members: [
-    {
-      name: "Ông Đỗ Xuân Bình",
-      name_en: "Mr. Đỗ Xuân Bình",
-      title: "Thành viên HĐQT",
-      title_en: "Board Member",
-      photo: "/images/leadership/hdqt-uv-do-xuan-binh.jpg",
-    },
-    {
-      name: "Ông Lê Quang Hào",
-      name_en: "Mr. Lê Quang Hào",
-      title: "Thành viên HĐQT",
-      title_en: "Board Member",
-      photo: "/images/leadership/hdqt-uv-le-quang-hao.jpg",
-    },
-  ],
-},
-
-  {
-    id: "btgd",
-    groupTitle: "Ban Giám đốc",
-    groupTitle_en: "Board of Management",
-    leader: {
-      name: "Ông Đỗ Xuân Bình",
-      name_en: "Mr. Đỗ Xuân Bình",
-      title: "Giám đốc",
-      title_en: "Director",
-      photo: "/images/leadership/bgd-giam-doc-do-xuan-binh.jpg",
-    },
-    members: [
-      {
-        name: "Ông Lê Năng",
-        name_en: "Mr. Lê Năng",
-        title: "Phó Giám đốc",
-        title_en: "Deputy Director",
-        photo: "/images/leadership/bgd-pgd-le-nang.jpg",
-      },
-      {
-        name: "Ông Nguyễn Xuân Hải",
-        name_en: "Mr. Nguyễn Xuân Hải",
-        title: "Phó Giám đốc",
-        title_en: "Deputy Director",
-        photo: "/images/leadership/bgd-pgd-nguyen-xuan-hai.png",
-      },
-      {
-        name: "Ông Nguyễn Đình Tới",
-        name_en: "Mr. Nguyễn Đình Tới",
-        title: "Kế toán trưởng",
-        title_en: "Chief Accountant",
-        photo: "/images/leadership/bgd-ktt-nguyen-dinh-toi.jpg",
-      },
-    ],
-  },
-
-  {
-    id: "bks",
-    groupTitle: "Ban kiểm soát",
-    groupTitle_en: "Supervisory Board",
-    leader: {
-      name: "Ông Nguyễn Thanh Khiết",
-      name_en: "Mr. Nguyễn Thanh Khiết",
-      title: "Trưởng Ban kiểm soát",
-      title_en: "Head of the Supervisory Board",
-      photo: "/images/leadership/bks-truong-nguyen-thanh-khiet.jpg",
-    },
-    members: [
-      {
-        name: "Ông Nguyễn Trung Tuấn",
-        name_en: "Mr. Nguyễn Trung Tuấn",
-        title: "Thành viên Ban Kiểm soát",
-        title_en: "Supervisor",
-        photo: "/images/leadership/bks-tv-nguyen-trung-tuan.jpg",
-      },
-      {
-        name: "Bà Ngô Thị Hồng Hạnh",
-        name_en: "Mrs. Ngô Thị Hồng Hạnh",
-        title: "Thành viên Ban Kiểm soát",
-        title_en: "Supervisor",
-        photo: "/images/leadership/bks-tv-ngo-thi-hong-hanh.png",
-      },
-    ],
-  },
+// Thứ tự nhóm cố định hiển thị trên trang, khớp với option "group" trong
+// collection "leadership" (xem src/lib/cms/schema.ts).
+const GROUP_ORDER: { key: string; title: string; title_en: string }[] = [
+  { key: "Hội đồng Quản trị", title: "Hội đồng Quản trị", title_en: "Board of Directors" },
+  { key: "Ban Giám đốc", title: "Ban Giám đốc", title_en: "Board of Management" },
+  { key: "Ban kiểm soát", title: "Ban kiểm soát", title_en: "Supervisory Board" },
 ];
+
+// Dữ liệu từ /admin (collection "leadership") lưu phẳng — mỗi item 1 người,
+// có field "group" và "role" ("Trưởng nhóm" | "Thành viên"). Hàm này gom lại
+// thành cấu trúc LeadershipGroup[] để component bên dưới render.
+export function buildLeadershipGroups(items: CmsItem[]): LeadershipGroup[] {
+  return GROUP_ORDER.map(({ key, title, title_en }) => {
+    const groupItems = items.filter((it) => it.group === key);
+    const leaderItem = groupItems.find((it) => it.role === "Trưởng nhóm") ?? groupItems[0];
+    const memberItems = groupItems.filter((it) => it.id !== leaderItem?.id);
+
+    const toPerson = (it: CmsItem): LeadershipPerson => ({
+      name: it.name,
+      name_en: it.name_en,
+      title: it.title,
+      title_en: it.title_en,
+      photo: it.photo,
+    });
+
+    return {
+      id: key,
+      groupTitle: title,
+      groupTitle_en: title_en,
+      leader: leaderItem
+        ? toPerson(leaderItem)
+        : { name: "", title: "" },
+      members: memberItems.map(toPerson),
+    };
+  }).filter((g) => g.leader.name);
+}
 
 
 // ============================================================================
