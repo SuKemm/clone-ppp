@@ -44,11 +44,13 @@ export function ShareholderRelations({
   sidebarTitle,
   sidebarItems,
   isEnglish = false,
+  detailBasePath = "/co-dong",
 }: {
   tabs: SrTab[];
   sidebarTitle: string;
-  sidebarItems: { image: string; title: string }[];
+  sidebarItems: { id: string; image: string; title: string }[];
   isEnglish?: boolean;
+  detailBasePath?: string;
 }) {
   const [activeKey, setActiveKey] = useState(tabs[0]?.key);
   const [page, setPage] = useState(1);
@@ -127,7 +129,7 @@ export function ShareholderRelations({
                   </span>
                 </p>
                 <h3 className="mt-2 text-lg font-semibold leading-snug text-slate-900 transition hover:text-cyan-700">
-                  {article.title}
+                  <Link href={`${detailBasePath}/${article.id}`}>{article.title}</Link>
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   {article.excerpt}
@@ -221,7 +223,7 @@ export function ShareholderRelations({
           </h3>
           <ul className="mt-5 space-y-4">
             {sidebarItems.map((item) => (
-              <li key={item.title} className="flex gap-3">
+              <li key={item.id} className="flex gap-3">
                 <div className="h-14 w-20 shrink-0 overflow-hidden rounded-md bg-slate-200">
                   <img
                     src={item.image}
@@ -230,7 +232,7 @@ export function ShareholderRelations({
                   />
                 </div>
                 <Link
-                  href="#"
+                  href={`${detailBasePath}/${item.id}`}
                   className="text-sm font-medium leading-snug text-slate-700 transition hover:text-cyan-700"
                 >
                   {item.title}

@@ -21,7 +21,11 @@ export default async function ShareholdersPage() {
             .filter((item) => item.category === cat.name)
             .map((item) => ({
               id: item.id,
-              image: item.image || "/images/ptsc/logo-ptsc.png",
+              // Luôn dùng logo công ty làm ảnh đại diện — mục Quan hệ cổ
+              // đông không cho chọn ảnh riêng nữa (xem schema.ts), để tránh
+              // gắn nhầm ảnh không liên quan tới bài (vd: ảnh đào tạo, ảnh
+              // đại hội...). Bỏ qua item.image dù dữ liệu cũ còn sót lại.
+              image: "/images/ptsc/logo-ptsc.png",
               category: item.category,
               date: item.date || "cập nhật gần nhất",
               title: item.title,
@@ -32,7 +36,8 @@ export default async function ShareholdersPage() {
       : [];
 
   const sidebarItems = items.slice(0, 4).map((item) => ({
-    image: item.image || "/images/ptsc/logo-ptsc.png",
+    id: item.id,
+    image: "/images/ptsc/logo-ptsc.png",
     title: item.title,
   }));
 

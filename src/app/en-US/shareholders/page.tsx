@@ -21,7 +21,9 @@ export default function ShareholdersPageEn() {
             .filter((item) => item.category === cat.name)
             .map((item) => ({
               id: item.id,
-              image: item.image || "/images/ptsc/logo-ptsc.png",
+              // Luôn dùng logo công ty — đồng bộ với trang tiếng Việt
+              // (src/app/co-dong/page.tsx), bỏ qua item.image.
+              image: "/images/ptsc/logo-ptsc.png",
               category: cat.name_en || cat.name,
               date: item.date || "latest update",
               title: item.title_en || item.title,
@@ -32,7 +34,8 @@ export default function ShareholdersPageEn() {
       : [];
 
   const sidebarItems = items.slice(0, 4).map((item) => ({
-    image: item.image || "/images/ptsc/logo-ptsc.png",
+    id: item.id,
+    image: "/images/ptsc/logo-ptsc.png",
     title: item.title_en || item.title,
   }));
 
@@ -59,6 +62,7 @@ export default function ShareholdersPageEn() {
         sidebarTitle="Most Viewed"
         sidebarItems={sidebarItems}
         isEnglish
+        detailBasePath="/en-US/shareholders"
       />
     </PtscShell>
   );
