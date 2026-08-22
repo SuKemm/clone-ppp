@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 
@@ -6,6 +7,14 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 
 // Đồng bộ nội dung với trang tiếng Việt (src/app/gioi-thieu/page.tsx) — cùng
 // đọc từ các collection "company-*", chỉ khác lấy các field "_en".
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc — nếu không, tab trình
+// duyệt / kết quả tìm kiếm cho trang này vẫn hiện tiêu đề tiếng Việt.
+export const metadata: Metadata = {
+  title: "About Us",
+  description:
+    "Dakdrinh Hydropower Joint Stock Company (PV Power DHC) — investor and operator of the 125 MW Dakdrinh Hydropower Plant in Son Tay District (Quang Ngai) and Kon Plong District (Kon Tum).",
+};
 
 export default function AboutUsPage() {
   const overview = getCollection("company-overview")[0];

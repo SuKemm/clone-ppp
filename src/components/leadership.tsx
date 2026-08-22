@@ -167,10 +167,10 @@ function LeadershipSection({
 
   let gridClass = "";
 
- if (group.id === "hdqt") {
+ if (group.id === "Hội đồng Quản trị") {
   gridClass =
     "grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-16 lg:gap-x-32";
-} else if (group.id === "btgd") {
+} else if (group.id === "Ban Giám đốc") {
     gridClass =
       "grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 sm:gap-x-10 lg:gap-x-20";
   } else {

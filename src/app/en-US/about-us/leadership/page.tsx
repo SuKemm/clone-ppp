@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   buildLeadershipGroups,
   LeadershipBoard,
@@ -7,6 +8,12 @@ import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Board of Directors",
+  description: "Leadership and board of directors of Dakdrinh Hydropower Joint Stock Company.",
+};
 
 export default function LeadershipPageEn() {
   const leadershipGroups = buildLeadershipGroups(getCollection("leadership"));

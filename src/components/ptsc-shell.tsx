@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { VisitorStats } from "./VisitorStats";
 
 // Logo cổ đông / nhà đầu tư — trước đây nằm ngay dưới banner trang chủ, nay
@@ -145,6 +145,13 @@ export function PtscShell({
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Layout gốc (src/app/layout.tsx) không biết route hiện tại nên luôn để
+  // sẵn lang="vi" — component này (dùng chung mọi trang) tự cập nhật lại
+  // thuộc tính lang của thẻ <html> mỗi khi chuyển qua bản tiếng Anh.
+  useEffect(() => {
+    document.documentElement.lang = isEnglish ? "en" : "vi";
+  }, [isEnglish]);
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <header className="sticky top-0 z-30">
@@ -262,7 +269,7 @@ export function PtscShell({
               type="button"
               onClick={() => setMobileOpen((v) => !v)}
               className="flex h-9 w-9 items-center justify-center rounded-sm text-white md:hidden"
-              aria-label="Toggle menu"
+              aria-label={isEnglish ? "Toggle menu" : "Mở/đóng menu"}
             >
               <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none">
                 <path
@@ -403,7 +410,8 @@ export function PtscShell({
         </div>
 
         <div className="relative border-t border-white/5 py-4 text-center text-xs text-slate-500">
-          © {new Date().getFullYear()} PV Power DHC. All rights reserved.
+          © {new Date().getFullYear()} PV Power DHC.{" "}
+          {isEnglish ? "All rights reserved." : "Bảo lưu mọi quyền."}
         </div>
       </footer>
     </div>

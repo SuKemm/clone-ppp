@@ -1,10 +1,17 @@
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 // Đồng bộ nội dung với trang tiếng Việt (src/app/don-vi/page.tsx) — cùng đọc
 // từ collection "units-page", chỉ khác lấy các field "_en".
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Corporate Information",
+  description: "Member units and departments of Dakdrinh Hydropower Joint Stock Company.",
+};
 
 export default function UnitsPageEn() {
   const content = getCollection("units-page")[0];

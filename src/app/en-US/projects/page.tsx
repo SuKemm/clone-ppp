@@ -1,8 +1,15 @@
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
+import type { Metadata } from "next";
 
 // Đồng bộ với trang tiếng Việt /du-an — không còn mảng viết cứng riêng.
 export const dynamic = "force-dynamic";
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Projects",
+  description: "Highlights of PTSC's major projects that shape Vietnam's industrial landscape.",
+};
 
 export default function ProjectsPageEn() {
   const projects = getCollection("projects");

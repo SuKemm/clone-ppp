@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { MarqueeBar } from "@/components/MarqueeBar";
@@ -7,6 +8,14 @@ import { getCollection } from "@/lib/cms/store";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
 
 // Đồng bộ nội dung và cấu trúc với trang tiếng Việt (src/app/page.tsx).
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc (src/app/layout.tsx) —
+// nếu không, tab trình duyệt / kết quả tìm kiếm cho trang chủ tiếng Anh vẫn
+// hiện tiêu đề/mô tả tiếng Việt.
+export const metadata: Metadata = {
+  title: "Dakdrinh Hydropower Joint Stock Company",
+  description: "Official information page of Dakdrinh Hydropower Joint Stock Company.",
+};
 
 const heroSlides = [
   {
@@ -67,27 +76,19 @@ const shareholderRelations = [
   },
 ];
 
-const photoGalleryTabs = [
-  {
-    label: "Production & Business Activities",
-    image: "/images/ptsc/service-fso.jpg",
-  },
-  {
-    label: "Power Plant Services",
-    image: "/images/ptsc/service-co-khi.jpg",
-  },
-  {
-    label: "Party & Union Activities",
-    image: "/images/ptsc/service-bien.jpg",
-  },
-];
+// Ảnh mặc định + hàm parse ngày album — dùng chung logic với trang tiếng
+// Việt (src/app/page.tsx) để khối "Photo Gallery" / "Video Library" luôn
+// lấy đúng dữ liệu mới nhất từ /admin thay vì hardcode.
+const GALLERY_FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";
 
-const videoLibrary = [
-  { title: "Se San 3A - Connecting Trust" },
-  { title: "Se San 3A 2023 Year-End Review" },
-  { title: "Se San 3A - 20 Years of \"Building and Developing\"" },
-  { title: "SESAN 3A - Connect" },
-];
+function parseAlbumDate(value: string | undefined): number {
+  if (!value) return -Infinity;
+  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+  if (!m) return -Infinity;
+  const [, d, mo, y] = m;
+  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
+}
 
 // Same data source as the Vietnamese homepage (src/app/page.tsx) — always
 // reads the latest values entered in /admin instead of hardcoded numbers.
@@ -101,6 +102,20 @@ export default function EnglishHomePage() {
   const latestNews = [...getCollection("news")]
     .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
     .slice(0, 3);
+
+  // Khối "Photo Gallery" / "Video Library" lấy trực tiếp từ 2 collection
+  // "photo-albums" / "video-albums" (Admin -> Thư viện), ưu tiên tiêu đề
+  // tiếng Anh (title_en) nếu admin đã nhập — cùng nguồn dữ liệu với trang
+  // tiếng Việt, không còn hardcode.
+  const latestPhotoAlbums = [...getCollection("photo-albums")]
+    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+    .slice(0, 3)
+    .map((a) => ({ label: a.title_en || a.title, image: a.image || GALLERY_FALLBACK_IMAGE }));
+
+  const latestVideos = [...getCollection("video-albums")]
+    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+    .slice(0, 4)
+    .map((v) => ({ title: v.title_en || v.title }));
 
   // Update date always shows today's date (Vietnam time zone) — same
   // approach as the Vietnamese page, so it never needs manual editing.
@@ -274,7 +289,7 @@ export default function EnglishHomePage() {
             <div>
               <h2 className="text-center text-2xl font-semibold text-slate-900">Photo Gallery</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {photoGalleryTabs.map((tab) => (
+                {latestPhotoAlbums.map((tab) => (
                   <div key={tab.label} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                     <img src={tab.image} alt={tab.label} className="h-36 w-full object-cover" />
                     <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700">
@@ -294,7 +309,7 @@ export default function EnglishHomePage() {
             <div>
               <h2 className="text-center text-2xl font-semibold text-slate-900">Video Library</h2>
               <div className="mt-6 grid grid-cols-2 gap-4">
-                {videoLibrary.map((video) => (
+                {latestVideos.map((video) => (
                   <div
                     key={video.title}
                     className="group relative flex h-32 items-end overflow-hidden rounded-xl border border-slate-200 bg-slate-800"
@@ -309,12 +324,12 @@ export default function EnglishHomePage() {
                   </div>
                 ))}
               </div>
-              <Link
-                href="/en-US/news"
+              <a
+                href="/en-US/services#videos"
                 className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
               >
                 View all
-              </Link>
+              </a>
             </div>
           </div>
         </div>

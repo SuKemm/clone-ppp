@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import {
   Newspaper,
   ArrowRight,
@@ -11,6 +12,12 @@ import { ArticleViewCount } from "@/components/ArticleViewCount";
 
 // Đọc cùng dữ liệu với trang tiếng Việt (/tin-tuc)
 export const dynamic = "force-dynamic";
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "News & Events",
+  description: "Latest news and events from Dakdrinh Hydropower Joint Stock Company.",
+};
 
 const PAGE_SIZE = 9;
 
@@ -170,7 +177,7 @@ export default async function NewsPageEn({
       ? pageItems.slice(1)
       : pageItems;
 
-  // Sidebar Featured news
+  // Sidebar Most read
   const sidebarItems = news.slice(0, 5);
 
   const pageNumbers =

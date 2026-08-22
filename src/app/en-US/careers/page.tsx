@@ -1,11 +1,18 @@
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
+import type { Metadata } from "next";
 
 // Đọc cùng dữ liệu với trang tiếng Việt (/tuyen-dung) để hai ngôn ngữ luôn
 // đồng bộ — không còn mảng viết cứng riêng cho tiếng Anh. Field "<key>_en"
 // (nhập ở /admin) được ưu tiên hiển thị; nếu vị trí chưa có bản dịch, tạm
 // hiển thị bản tiếng Việt để trang không bị trống.
 export const dynamic = "force-dynamic";
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Careers",
+  description: "Career opportunities at PTSC.",
+};
 
 export default function CareersPageEn() {
   const jobs = getCollection("jobs");

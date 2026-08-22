@@ -1,4 +1,11 @@
 import { PtscShell } from "@/components/ptsc-shell";
+import type { Metadata } from "next";
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Tenders",
+  description: "Tender information and cooperation opportunities with PTSC.",
+};
 
 export default function TendersPageEn() {
   return (

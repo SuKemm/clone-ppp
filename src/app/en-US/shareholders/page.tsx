@@ -2,12 +2,19 @@ import { PtscShell } from "@/components/ptsc-shell";
 import { FloatingNav } from "@/components/FloatingNav";
 import { ShareholderRelations, type SrTab } from "@/components/shareholder-relations";
 import { getCollection } from "@/lib/cms/store";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
 // Đồng bộ nội dung với trang tiếng Việt (src/app/co-dong/page.tsx) — cùng
 // đọc từ "shareholder-categories" + "shareholder-relations", chỉ khác lấy
 // các field "_en" (name_en, title_en, excerpt_en).
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Shareholder Relations",
+  description: "Shareholder information, general meetings, and financial/annual reports.",
+};
 
 function parseAlbumDate(value: string | undefined): number {
   if (!value) return -Infinity;
@@ -58,7 +65,7 @@ export default function ShareholdersPageEn() {
   if (tabs.length === 0) {
     return (
       <PtscShell>
-        <FloatingNav />
+        <FloatingNav isEnglish />
         <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
             Shareholder Relations
@@ -74,7 +81,7 @@ export default function ShareholdersPageEn() {
 
   return (
     <PtscShell>
-      <FloatingNav />
+      <FloatingNav isEnglish />
       <ShareholderRelations
         tabs={tabs}
         pageTitle="Shareholder Relations"
@@ -82,6 +89,7 @@ export default function ShareholdersPageEn() {
         sidebarItems={sidebarItems}
         videoSectionTitle="Featured Videos"
         videoItems={videoItems}
+        videoLinkHref="/en-US/services#videos"
         isEnglish
         detailBasePath="/en-US/shareholders"
       />

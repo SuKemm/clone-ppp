@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection, type CmsItem } from "@/lib/cms/store";
 import { PhotoGalleryGrid } from "@/components/PhotoGalleryGrid";
@@ -8,6 +9,12 @@ import { PhotoGalleryGrid } from "@/components/PhotoGalleryGrid";
 // ở /admin) được ưu tiên hiển thị; nếu album chưa có bản dịch, tạm hiển thị
 // bản tiếng Việt để trang không bị trống.
 export const dynamic = "force-dynamic";
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Gallery",
+  description: "Photos and videos of the company's activities, projects and key events over the years.",
+};
 
 // Ảnh mặc định nếu album chưa được gán ảnh đại diện trong /admin.
 const FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";

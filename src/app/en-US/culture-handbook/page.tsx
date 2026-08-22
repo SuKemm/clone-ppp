@@ -1,9 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { CultureHandbookViewer } from "@/components/CultureHandbookViewer";
 import { getCollection } from "@/lib/cms/store";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc.
+export const metadata: Metadata = {
+  title: "Culture Handbook",
+  description:
+    "The values, standards, and cultural identity of PV Power DHC, gathered in a handbook for every employee.",
+};
 
 export default function CultureHandbookPageEn() {
   const cultureHandbookPages = getCollection("culture-handbook-pages").map((p) => ({

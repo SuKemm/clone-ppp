@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
@@ -7,6 +8,17 @@ import { ArticleViewCount } from "@/components/ArticleViewCount";
 export const dynamic = "force-dynamic";
 
 type Params = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { id } = await params;
+  const item = getCollection("news").find((n) => n.id === id);
+  if (!item) return {};
+
+  return {
+    title: item.title_en || item.title,
+    description: item.excerpt_en || item.excerpt || undefined,
+  };
+}
 
 export default async function NewsDetailPageEn({ params }: Params) {
   const { id } = await params;
