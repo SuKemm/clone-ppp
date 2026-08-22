@@ -62,7 +62,7 @@ const categories = Array.from(
   new Set(news.map((item) => item.category).filter(Boolean))
 );
 
-const tabs = ["Tất cả", ...categories];
+const tabs = categories;
 
 const activeTab =
   category && categories.includes(category)
@@ -259,7 +259,7 @@ const activeTab =
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <h2 className="border-b border-slate-200 pb-3 text-base font-bold uppercase tracking-wide text-slate-900">
-              Tin nổi bật
+              Xem nhiều nhất
             </h2>
             <div className="mt-5 space-y-5">
               {sidebarItems.length === 0 && (

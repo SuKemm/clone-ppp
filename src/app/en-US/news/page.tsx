@@ -121,8 +121,8 @@ export default async function NewsPageEn({
     )
   );
 
-  // Tab All + các danh mục từ Admin
-  const tabs = ["All", ...categories];
+  // Danh mục từ Admin (không hiển thị tab "All" nữa)
+  const tabs = categories;
 
   // Xác định tab hiện tại
   const activeTab =
@@ -422,7 +422,7 @@ export default async function NewsPageEn({
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <h2 className="border-b border-slate-200 pb-3 text-base font-bold uppercase tracking-wide text-slate-900">
-              Featured news
+              Most read
             </h2>
 
             <div className="mt-5 space-y-5">
