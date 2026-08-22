@@ -98,6 +98,12 @@ export default function Home() {
     .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
     .slice(0, 3);
 
+  // 3 gói thầu mới nhất cho khối "Đấu thầu" ở trang chủ — cùng logic sắp
+  // xếp với khối tin tức ở trên.
+  const latestTenders = [...getCollection("tenders")]
+    .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
+    .slice(0, 3);
+
   // Khối "Thư viện ảnh" / "Video tư liệu" ở trang chủ lấy trực tiếp từ 2
   // collection "photo-albums" / "video-albums" (Admin -> Thư viện), luôn
   // hiện 3 album ảnh và 4 video mới nhất theo "Ngày đăng" — không còn
@@ -291,6 +297,57 @@ export default function Home() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* Đấu thầu — cùng khuôn với khối "TIN TỨC VÀ SỰ KIỆN" ở trên, chỉ khác
+          nguồn dữ liệu và đường dẫn, để đồng bộ giao diện toàn trang chủ. */}
+      <section id="dau-thau" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <div className="flex flex-col items-center text-center">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
+            Đấu thầu
+          </h2>
+
+          <Link
+            href="/dau-thau"
+            className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
+          >
+            Xem thêm →
+          </Link>
+        </div>
+
+        {latestTenders.length > 0 ? (
+          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+            {latestTenders.map((item) => (
+              <a
+                key={item.id}
+                href={`/dau-thau/${item.id}`}
+                className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              >
+                {item.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.image} alt="" className="h-44 w-full object-cover" />
+                )}
+                <div className="flex flex-1 flex-col p-6">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-cyan-700">
+                    {item.category}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold leading-7 text-slate-900">
+                    {item.title}
+                  </h3>
+
+                  <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+                    <span>{item.date}</span>
+                    <span className="text-cyan-700 transition group-hover:translate-x-1">
+                      →
+                    </span>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-10 text-center text-slate-500">Chưa có thông báo đấu thầu nào.</p>
+        )}
       </section>
 
       <section id="thu-vien" className="bg-slate-50 py-16">

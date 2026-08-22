@@ -15,11 +15,16 @@ export function ArticleViewCount({
   mode,
   className,
   isEnglish = false,
+  // Cho phép trang khác (vd. /dau-thau) dùng chung component này nhưng ghi
+  // lượt xem vào 1 API/kho dữ liệu riêng — mặc định vẫn là "/api/news/view"
+  // để không ảnh hưởng các chỗ đang gọi component này cho tin tức.
+  endpoint = "/api/news/view",
 }: {
   id: string;
   mode: "increment" | "display";
   className?: string;
   isEnglish?: boolean;
+  endpoint?: string;
 }) {
   const [views, setViews] = useState<number | null>(null);
 
@@ -29,7 +34,7 @@ export function ArticleViewCount({
     async function run() {
       try {
         if (mode === "increment") {
-          const res = await fetch("/api/news/view", {
+          const res = await fetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id }),
@@ -37,7 +42,7 @@ export function ArticleViewCount({
           const data = await res.json();
           if (!cancelled && typeof data?.views === "number") setViews(data.views);
         } else {
-          const res = await fetch(`/api/news/view?id=${encodeURIComponent(id)}`);
+          const res = await fetch(`${endpoint}?id=${encodeURIComponent(id)}`);
           const data = await res.json();
           if (!cancelled && typeof data?.views === "number") setViews(data.views);
         }
@@ -50,7 +55,7 @@ export function ArticleViewCount({
     return () => {
       cancelled = true;
     };
-  }, [id, mode]);
+  }, [id, mode, endpoint]);
 
   return (
     <span className={className}>

@@ -64,6 +64,8 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   leadership: UsersRound,
   "units-page": Landmark,
   "culture-handbook-pages": BookImage,
+  "tender-categories": Landmark,
+  tenders: ScrollText,
 };
 
 // Nhóm các collection vào đúng thư mục chính, khớp với cấu trúc menu chính
@@ -87,6 +89,7 @@ const SIDEBAR_GROUPS: { label: string; ids: CollectionId[] }[] = [
     ],
   },
   { label: "Quan hệ cổ đông", ids: ["shareholder-categories", "shareholder-relations"] },
+  { label: "Đấu thầu", ids: ["tender-categories", "tenders"] },
   { label: "Tin tức – Sự kiện", ids: ["news-categories", "news"] },
   { label: "Thư viện", ids: ["photo-albums", "video-albums", "culture-handbook-pages"] },
   { label: "Liên hệ", ids: ["contacts"] },

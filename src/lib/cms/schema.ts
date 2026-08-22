@@ -38,6 +38,8 @@ export type CollectionId =
   | "contacts"
   | "shareholder-categories"
   | "shareholder-relations"
+  | "tender-categories"
+  | "tenders"
   | "company-overview"
   | "company-stats"
   | "company-timeline"
@@ -331,6 +333,71 @@ export const COLLECTIONS: CollectionDef[] = [
         excerpt: "Báo cáo tài chính hợp nhất toàn Tổng công ty đã được kiểm toán.",
         excerpt_en: "Audited consolidated financial statements of the whole Corporation.",
         image: "/images/ptsc/service-fso.jpg",
+      },
+    ],
+  },
+  {
+    // Danh mục (tab) cho mục Đấu thầu — giống cấu trúc "shareholder-categories"
+    // ở trên. Trước đây mục "Đấu thầu" trên menu trỏ tới trang tĩnh /don-vi
+    // (Thông tin doanh nghiệp); nay thay bằng nội dung thật, quản trị được
+    // qua Admin.
+    id: "tender-categories",
+    label: "Danh mục Đấu thầu",
+    fields: [
+      { key: "name", label: "Tên danh mục", type: "text", required: true },
+      { key: "name_en", label: "Tên danh mục (EN)", type: "text" },
+    ],
+    seed: [
+      { name: "Thông báo mời thầu", name_en: "Invitation for Bids" },
+      { name: "Kế hoạch lựa chọn nhà thầu", name_en: "Contractor Selection Plan" },
+      { name: "Kết quả lựa chọn nhà thầu", name_en: "Contractor Selection Results" },
+      { name: "Thông báo mời sơ tuyển", name_en: "Pre-qualification Notice" },
+    ],
+  },
+  {
+    id: "tenders",
+    label: "Danh sách Đấu thầu",
+    fields: [
+      { key: "category", label: "Danh mục", type: "select", optionsFrom: "tender-categories", width: "half" },
+      { key: "date", label: "Ngày đăng", type: "date", width: "half" },
+      { key: "title", label: "Tiêu đề", type: "text", required: true, width: "half" },
+      { key: "title_en", label: "Tiêu đề (EN)", type: "text", width: "half" },
+      { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea", width: "half" },
+      { key: "excerpt_en", label: "Tóm tắt (EN)", type: "textarea", width: "half" },
+      // Các trường nghiệp vụ đấu thầu thường gặp — không bắt buộc, chỉ hiện
+      // ở trang chi tiết nếu admin có điền.
+      { key: "ben_moi_thau", label: "Bên mời thầu", type: "text", width: "half" },
+      { key: "nguon_von", label: "Nguồn vốn", type: "text", width: "half" },
+      { key: "hinh_thuc", label: "Hình thức lựa chọn nhà thầu", type: "text", width: "half" },
+      { key: "thoi_gian_dong_thau", label: "Thời gian đóng thầu", type: "text", width: "half" },
+      { key: "image", label: "Ảnh đại diện", type: "image" },
+      { key: "attachment", label: "File đính kèm (PDF)", type: "file" },
+      { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết)", type: "richtext" },
+      { key: "content_en", label: "Nội dung đầy đủ (EN)", type: "richtext" },
+    ],
+    seed: [
+      {
+        category: "Thông báo mời thầu",
+        date: "20/08/2026",
+        title: "Thông báo mời thầu gói thầu bảo dưỡng, sửa chữa thiết bị cơ khí thủy công",
+        title_en: "Invitation for Bids: Hydro-mechanical Equipment Maintenance Package",
+        excerpt: "Công ty Cổ phần Thủy điện Đakđrinh thông báo mời thầu gói thầu bảo dưỡng, sửa chữa hệ thống thiết bị cơ khí thủy công năm 2026.",
+        excerpt_en: "PV Power DHC invites bids for the 2026 hydro-mechanical equipment maintenance package.",
+        ben_moi_thau: "Công ty Cổ phần Thủy điện Đakđrinh",
+        nguon_von: "Vốn sản xuất kinh doanh của Công ty",
+        hinh_thuc: "Đấu thầu rộng rãi trong nước",
+        thoi_gian_dong_thau: "09h00 ngày 05/09/2026",
+      },
+      {
+        category: "Kế hoạch lựa chọn nhà thầu",
+        date: "10/08/2026",
+        title: "Kế hoạch lựa chọn nhà thầu cung cấp vật tư dự phòng năm 2026",
+        title_en: "Contractor Selection Plan: 2026 Spare Parts Supply",
+        excerpt: "Thông báo kế hoạch lựa chọn nhà thầu cung cấp vật tư, thiết bị dự phòng phục vụ vận hành nhà máy năm 2026.",
+        excerpt_en: "Notice of the contractor selection plan for supplying spare parts and equipment for plant operation in 2026.",
+        ben_moi_thau: "Công ty Cổ phần Thủy điện Đakđrinh",
+        nguon_von: "Vốn sản xuất kinh doanh của Công ty",
+        hinh_thuc: "Chào hàng cạnh tranh",
       },
     ],
   },

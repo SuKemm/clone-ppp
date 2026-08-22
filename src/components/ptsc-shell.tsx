@@ -35,7 +35,7 @@ const navItemsVi: NavItem[] = [
       { href: "/gioi-thieu", label: "Giới thiệu chung" },
       { href: "/gioi-thieu/ban-lanh-dao", label: "Ban lãnh đạo" },
       { href: "/du-an", label: "Dự án" },
-      { href: "/don-vi", label: "Thông tin doanh nghiệp" },
+      { href: "/dau-thau", label: "Đấu thầu" },
     ],
   },
   {
