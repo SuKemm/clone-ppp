@@ -4,8 +4,22 @@ import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
+import { MostViewedSidebar } from "@/components/MostViewedSidebar";
+import { getAllViews } from "@/lib/news-views-store";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
+
+// Chuyển ngày admin nhập ("dd/mm/yyyy" hoặc "dd.mm.yyyy") thành mốc thời
+// gian để sắp xếp mới → cũ — dùng cho khối "Video nổi bật" ở sidebar, giống
+// logic ở trang danh sách Quan hệ cổ đông (src/app/co-dong/page.tsx).
+function parseAlbumDate(value: string | undefined): number {
+  if (!value) return -Infinity;
+  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+  if (!m) return -Infinity;
+  const [, d, mo, y] = m;
+  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
+  return Number.isNaN(t) ? -Infinity : t;
+}
 
 // Đồng bộ với bản tiếng Anh (src/app/en-US/shareholders/[id]/page.tsx) — cùng
 // đọc từ "shareholder-relations", chỉ khác không lấy các field "_en".
@@ -31,52 +45,78 @@ export default async function ShareholderRelationDetailPage({ params }: Params) 
 
   const contentHtml = item.content || "";
 
+  // Khối "Xem nhiều nhất" — sắp xếp toàn bộ mục Quan hệ cổ đông (trừ mục
+  // đang xem) theo lượt xem giảm dần, lấy 5 mục đầu.
+  const allViews = getAllViews();
+  const relations = getCollection("shareholder-relations");
+  const sidebarItems = [...relations]
+    .filter((n) => n.id !== item.id)
+    .sort((a, b) => (allViews[b.id] ?? 0) - (allViews[a.id] ?? 0))
+    .slice(0, 5)
+    .map((n) => ({ id: n.id, image: n.image, title: n.title, date: n.date }));
+
+  // Khối "Video nổi bật" — 2 video mới nhất từ Admin > Thư viện video.
+  const videoItems = [...getCollection("video-albums")]
+    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+    .slice(0, 2)
+    .map((v) => ({ title: v.title, image: v.image || undefined }));
+
   return (
     <PtscShell title={item.title} description={item.excerpt || ""}>
-      <section className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
-        <div className="flex items-center justify-between">
-          <Link href="/co-dong" className="text-sm font-semibold text-cyan-700 hover:underline">
-            ← Quay lại Quan hệ cổ đông
-          </Link>
-          <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" />
-        </div>
+      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
+          <div className="max-w-3xl">
+            <div className="flex items-center justify-between">
+              <Link href="/co-dong" className="text-sm font-semibold text-cyan-700 hover:underline">
+                ← Quay lại Quan hệ cổ đông
+              </Link>
+              <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" />
+            </div>
 
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={item.image || LOGO}
-          alt={item.title}
-          className="mx-auto mt-8 h-32 w-auto object-contain"
-        />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.image || LOGO}
+              alt={item.title}
+              className="mx-auto mt-8 h-32 w-auto object-contain"
+            />
 
-        <h1 className="mt-8 text-3xl font-bold text-slate-900 sm:text-4xl">
-          {item.title}
-        </h1>
-        <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-cyan-700">
-          {item.category}{" "}
-          <span className="font-normal normal-case text-slate-400">
-            ({item.date || "cập nhật mới nhất"})
-          </span>
-        </p>
+            <h1 className="mt-8 text-3xl font-bold text-slate-900 sm:text-4xl">
+              {item.title}
+            </h1>
+            <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-cyan-700">
+              {item.category}{" "}
+              <span className="font-normal normal-case text-slate-400">
+                ({item.date || "cập nhật mới nhất"})
+              </span>
+            </p>
 
-        {item.attachment && (
-          <a
-            href={item.attachment}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-100"
-          >
-            📄 Tải file PDF
-          </a>
-        )}
+            {item.attachment && (
+              <a
+                href={item.attachment}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-100"
+              >
+                📄 Tải file PDF
+              </a>
+            )}
 
-        <div className="prose prose-slate mt-8 max-w-none">
-          {contentHtml ? (
-            <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
-          ) : item.excerpt ? (
-            <p className="text-lg leading-8 text-slate-700">{item.excerpt}</p>
-          ) : (
-            <p className="text-slate-500">Bài viết chưa có nội dung chi tiết.</p>
-          )}
+            <div className="prose prose-slate mt-8 max-w-none">
+              {contentHtml ? (
+                <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
+              ) : item.excerpt ? (
+                <p className="text-lg leading-8 text-slate-700">{item.excerpt}</p>
+              ) : (
+                <p className="text-slate-500">Bài viết chưa có nội dung chi tiết.</p>
+              )}
+            </div>
+          </div>
+
+          <MostViewedSidebar
+            items={sidebarItems}
+            detailBasePath="/co-dong"
+            videoItems={videoItems}
+          />
         </div>
       </section>
     </PtscShell>

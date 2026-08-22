@@ -34,6 +34,15 @@ export function getViews(id: string): number {
   return all[id] ?? 0;
 }
 
+/**
+ * Đọc toàn bộ lượt xem của mọi bài viết — dùng để dựng khối "Xem nhiều
+ * nhất" (sắp xếp theo lượt xem giảm dần) ở trang danh sách/chi tiết, thay vì
+ * chỉ hiện các bài mới nhất.
+ */
+export function getAllViews(): ViewsMap {
+  return readAll();
+}
+
 /** Tăng lượt xem của 1 bài viết lên 1 và trả về số mới. */
 export function incrementViews(id: string): number {
   const all = readAll();
