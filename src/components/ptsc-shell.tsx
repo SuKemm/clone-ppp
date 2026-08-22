@@ -109,6 +109,54 @@ const navItemsEn: NavItem[] = [
   { href: "/en-US/contact", label: "Contact" },
 ];
 
+// Ánh xạ segment đầu tiên của URL giữa 2 bản VI <-> EN (và một vài segment
+// con đã biết, vd "ban-lanh-dao" <-> "leadership"), để nút chuyển ngôn ngữ ở
+// header đưa người dùng sang ĐÚNG trang tương ứng thay vì luôn về trang chủ.
+const VI_TO_EN_SEGMENT: Record<string, string> = {
+  "gioi-thieu": "about-us",
+  "du-an": "projects",
+  "don-vi": "units",
+  "co-dong": "shareholders",
+  "tin-tuc": "news",
+  "dich-vu": "services",
+  "so-tay-van-hoa": "culture-handbook",
+  "lien-he": "contact",
+  "dau-thau": "tenders",
+  "tuyen-dung": "careers",
+};
+const VI_TO_EN_SUBSEGMENT: Record<string, string> = {
+  "ban-lanh-dao": "leadership",
+};
+const EN_TO_VI_SEGMENT: Record<string, string> = Object.fromEntries(
+  Object.entries(VI_TO_EN_SEGMENT).map(([vi, en]) => [en, vi])
+);
+const EN_TO_VI_SUBSEGMENT: Record<string, string> = Object.fromEntries(
+  Object.entries(VI_TO_EN_SUBSEGMENT).map(([vi, en]) => [en, vi])
+);
+
+// Trả về href tương ứng ở bản ngôn ngữ kia cho pathname hiện tại, thay vì
+// luôn hard-code về "/" hay "/en-US". Segment lạ (không nằm trong bảng ánh
+// xạ, vd "/admin") sẽ rơi về trang chủ của ngôn ngữ đích.
+function getLanguageSwitchHref(pathname: string, toEnglish: boolean): string {
+  const segments = pathname.split("/").filter(Boolean);
+
+  if (toEnglish) {
+    if (segments[0] === "en-US") return pathname; // đã ở bản EN
+    const [first, ...rest] = segments;
+    const enFirst = first ? VI_TO_EN_SEGMENT[first] : undefined;
+    if (!enFirst) return "/en-US";
+    const mappedRest = rest.map((seg) => VI_TO_EN_SUBSEGMENT[seg] ?? seg);
+    return ["/en-US", enFirst, ...mappedRest].join("/");
+  }
+
+  if (segments[0] !== "en-US") return pathname; // đã ở bản VI
+  const [, first, ...rest] = segments;
+  const viFirst = first ? EN_TO_VI_SEGMENT[first] : undefined;
+  if (!viFirst) return "/";
+  const mappedRest = rest.map((seg) => EN_TO_VI_SUBSEGMENT[seg] ?? seg);
+  return "/" + [viFirst, ...mappedRest].join("/");
+}
+
 function ChevronDown({ className = "" }: { className?: string }) {
   return (
     <svg
@@ -137,8 +185,8 @@ export function PtscShell({
   title?: string;
   description?: string;
 }) {
-  const pathname = usePathname();
-  const isEnglish = pathname?.startsWith("/en-US");
+  const pathname = usePathname() || "/";
+  const isEnglish = pathname.startsWith("/en-US");
   const navItems = isEnglish ? navItemsEn : navItemsVi;
   const homeHref = isEnglish ? "/en-US" : "/";
 
@@ -170,7 +218,7 @@ export function PtscShell({
     {/* VI / EN bên phải */}
     <div className="absolute right-6 flex shrink-0 items-center overflow-hidden rounded-sm text-xs font-semibold lg:right-8">
       <Link
-        href="/"
+        href={getLanguageSwitchHref(pathname, false)}
         className={`px-2.5 py-1 transition ${
           !isEnglish
             ? "bg-[#FF6B00] text-white"
@@ -181,7 +229,7 @@ export function PtscShell({
       </Link>
 
       <Link
-        href="/en-US"
+        href={getLanguageSwitchHref(pathname, true)}
         className={`px-2.5 py-1 transition ${
           isEnglish
             ? "bg-[#FF6B00] text-white"
