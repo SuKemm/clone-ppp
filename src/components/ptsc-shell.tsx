@@ -364,18 +364,6 @@ export function PtscShell({
       </header>
 
       <main>
-        {title ? (
-          <section className="border-b border-slate-200 bg-slate-50/80">
-            <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-              <h1 className="mt-3 text-4xl font-semibold text-slate-900 sm:text-5xl">
-                {title}
-              </h1>
-              {description ? (
-                <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-600">{description}</p>
-              ) : null}
-            </div>
-          </section>
-        ) : null}
         {children}
       </main>
 
