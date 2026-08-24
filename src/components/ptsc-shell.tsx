@@ -206,17 +206,23 @@ export function PtscShell({
         {/* Top utility bar — same navy as the main nav so the header reads as one block,
             plus the company slogan (bilingual) sitting level with the language switcher. */}
         <div className="bg-[#075B9F] border-b border-[#063E70]">
-  <div className="relative mx-auto flex max-w-7xl items-center justify-center px-6 py-1.5 lg:px-8">
+  <div className="relative mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-6 py-1.5 lg:px-8">
+
+    {/* Cột trống bên trái để cân bằng với khối VI/EN bên phải, giữ khẩu hiệu
+        luôn đứng giữa thật sự thay vì canh giữa "ảo" (trước đây VI/EN nằm
+        absolute nên trên màn hình hẹp <380px, khẩu hiệu dài có thể lấn vào
+        khối VI/EN). */}
+    <span aria-hidden="true" />
 
     {/* Slogan chính giữa */}
-    <p className="text-center text-[12px] font-bold uppercase tracking-[0.04em] text-[#FF6B00] sm:text-sm">
+    <p className="text-center text-[11px] font-bold uppercase leading-tight tracking-[0.04em] text-[#FF6B00] xs:text-[12px] sm:text-sm">
       {isEnglish
         ? "Quality - Safety - Efficiency - Development"
         : "Chất lượng - An toàn - Hiệu quả - Phát triển"}
     </p>
 
     {/* VI / EN bên phải */}
-    <div className="absolute right-6 flex shrink-0 items-center overflow-hidden rounded-sm text-xs font-semibold lg:right-8">
+    <div className="flex shrink-0 items-center justify-self-end overflow-hidden rounded-sm text-xs font-semibold">
       <Link
         href={getLanguageSwitchHref(pathname, false)}
         className={`px-2.5 py-1 transition ${

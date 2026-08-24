@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Play } from "lucide-react";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 // Sidebar dùng chung cho các trang CHI TIẾT (tin tức / quan hệ cổ đông):
 // - Khối "Xem nhiều nhất": danh sách bài viết sắp xếp theo lượt xem giảm
@@ -16,6 +17,7 @@ export type MostViewedItem = {
   image?: string;
   title: string;
   date?: string;
+  gio?: string;
 };
 
 export type SidebarVideoItem = {
@@ -70,7 +72,11 @@ export function MostViewedSidebar({
                 >
                   {item.title}
                 </Link>
-                {item.date && <p className="mt-1 text-xs text-slate-400">{item.date}</p>}
+                {item.date && (
+                  <p className="mt-1 text-xs text-slate-400">
+                    {formatNewsDateTime(item.date, item.gio)}
+                  </p>
+                )}
               </div>
             </li>
           ))}

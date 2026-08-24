@@ -6,6 +6,7 @@ import { MarqueeBar } from "@/components/MarqueeBar";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 // Đồng bộ nội dung và cấu trúc với trang tiếng Việt (src/app/page.tsx).
 
@@ -194,7 +195,7 @@ export default function EnglishHomePage() {
                   {item.title_en || item.title}
                 </h3>
                 <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-                  <span>{item.date}</span>
+                  <span>{formatNewsDateTime(item.date, item.gio)}</span>
                   <span className="text-cyan-700 transition group-hover:translate-x-1">→</span>
                 </div>
               </div>

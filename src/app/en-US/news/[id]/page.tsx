@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +46,7 @@ export default async function NewsDetailPageEn({ params }: Params) {
 
         <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{category}</p>
         <h1 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">{title}</h1>
-        <p className="mt-3 text-sm text-slate-500">{item.date}</p>
+        <p className="mt-3 text-sm text-slate-500">{formatNewsDateTime(item.date, item.gio)}</p>
 
         {item.image && (
           // eslint-disable-next-line @next/next/no-img-element

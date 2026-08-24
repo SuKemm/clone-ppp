@@ -98,6 +98,7 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "excerpt", label: "Tóm tắt (hiện ở trang danh sách)", type: "textarea", width: "half" },
       { key: "excerpt_en", label: "Tóm tắt (EN)", type: "textarea", width: "half" },
       { key: "date", label: "Ngày đăng", type: "date", width: "half" },
+      { key: "gio", label: "Giờ đăng (vd: 14:30)", type: "text", width: "half" },
       { key: "category_en", label: "Chuyên mục (EN)", type: "text", width: "half" },
       { key: "image", label: "Ảnh đại diện", type: "image" },
       { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết bài)", type: "richtext" },
@@ -106,6 +107,7 @@ export const COLLECTIONS: CollectionDef[] = [
     seed: [
       {
         date: "24/06/2026",
+        gio: "09:15",
         title:
           "PTSC tổ chức thành công Lễ Đặt tên và Bàn giao FSO PTSC Lạc Đà Vàng, sẵn sàng cho mục tiêu First Oil của mỏ Lạc Đà Vàng",
         title_en:
@@ -115,6 +117,7 @@ export const COLLECTIONS: CollectionDef[] = [
       },
       {
         date: "20/06/2026",
+        gio: "14:40",
         title: "Chủ động quản trị rủi ro, giữ vững tiến độ Dự án Khí Lô B – Gói EPCI#1",
         title_en:
           "Proactive Risk Management Keeps the Block B Gas Project – EPCI#1 Package on Schedule",
@@ -123,6 +126,7 @@ export const COLLECTIONS: CollectionDef[] = [
       },
       {
         date: "18/06/2026",
+        gio: "08:00",
         title:
           "ĐHĐCĐ PTSC 2026: PTSC khẳng định vị thế sau năm kinh doanh kỷ lục, hướng tới mục tiêu nâng cao năng lực cạnh tranh trong khu vực",
         title_en:
@@ -132,6 +136,7 @@ export const COLLECTIONS: CollectionDef[] = [
       },
       {
         date: "12/06/2026",
+        gio: "16:20",
         title:
           "PVFCCo - Phú Mỹ và PTSC ký kết Thỏa thuận Hợp tác, tăng cường liên kết trong hệ sinh thái Petrovietnam",
         title_en:

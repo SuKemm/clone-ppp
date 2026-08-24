@@ -6,6 +6,7 @@ import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
 import { getAllViews } from "@/lib/news-views-store";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
@@ -52,7 +53,7 @@ export default async function NewsDetailPage({ params }: Params) {
     .filter((n) => n.id !== item.id)
     .sort((a, b) => (allViews[b.id] ?? 0) - (allViews[a.id] ?? 0))
     .slice(0, 5)
-    .map((n) => ({ id: n.id, image: n.image, title: n.title, date: n.date }));
+    .map((n) => ({ id: n.id, image: n.image, title: n.title, date: n.date, gio: n.gio }));
 
   // Khối "Video nổi bật" — 2 video mới nhất từ Admin > Thư viện video.
   const videoItems = [...getCollection("video-albums")]
@@ -76,7 +77,7 @@ export default async function NewsDetailPage({ params }: Params) {
               {item.category}
             </p>
             <h1 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">{item.title}</h1>
-            <p className="mt-3 text-sm text-slate-500">{item.date}</p>
+            <p className="mt-3 text-sm text-slate-500">{formatNewsDateTime(item.date, item.gio)}</p>
 
             {item.image && (
               // eslint-disable-next-line @next/next/no-img-element

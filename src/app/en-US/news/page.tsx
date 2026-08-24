@@ -9,6 +9,7 @@ import {
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection, type CmsItem } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 // Đọc cùng dữ liệu với trang tiếng Việt (/tin-tuc)
 export const dynamic = "force-dynamic";
@@ -259,7 +260,7 @@ export default async function NewsPageEn({
                   </Link>{" "}
 
                   <span className="italic text-slate-500">
-                    ({featured.date})
+                    ({formatNewsDateTime(featured.date, featured.gio)})
                   </span>
                 </p>
 
@@ -327,7 +328,7 @@ export default async function NewsPageEn({
                       </Link>{" "}
 
                       <span className="italic text-slate-500">
-                        ({item.date})
+                        ({formatNewsDateTime(item.date, item.gio)})
                       </span>
                     </p>
 
@@ -464,7 +465,7 @@ export default async function NewsPageEn({
                     </p>
 
                     <p className="mt-1 text-xs text-slate-400">
-                      {item.date}
+                      {formatNewsDateTime(item.date, item.gio)}
                     </p>
                   </div>
                 </Link>

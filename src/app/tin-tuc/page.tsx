@@ -3,6 +3,7 @@ import { Newspaper, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
@@ -147,7 +148,7 @@ const activeTab =
                   >
                     {featured.category}
                   </Link>{" "}
-                  <span className="italic text-slate-500">({featured.date})</span>
+                  <span className="italic text-slate-500">({formatNewsDateTime(featured.date, featured.gio)})</span>
                 </p>
                 {featured.excerpt && <p className="mt-3 text-slate-600">{featured.excerpt}</p>}
                 <div className="mt-3">
@@ -187,7 +188,7 @@ const activeTab =
                       >
                         {item.category}
                       </Link>{" "}
-                      <span className="italic text-slate-500">({item.date})</span>
+                      <span className="italic text-slate-500">({formatNewsDateTime(item.date, item.gio)})</span>
                     </p>
                     {item.excerpt && (
                       <p className="mt-2 line-clamp-2 text-sm text-slate-600">{item.excerpt}</p>
@@ -283,7 +284,7 @@ const activeTab =
                     <p className="line-clamp-3 text-sm font-semibold leading-snug text-slate-800 transition group-hover:text-cyan-700">
                       {item.title}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{item.date}</p>
+                    <p className="mt-1 text-xs text-slate-400">{formatNewsDateTime(item.date, item.gio)}</p>
                   </div>
                 </Link>
               ))}

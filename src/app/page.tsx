@@ -5,6 +5,7 @@ import { MarqueeBar } from "@/components/MarqueeBar";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin (sản lượng, mực nước, dòng chữ chạy)
 
@@ -249,7 +250,7 @@ export default function Home() {
           </h3>
 
           <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-            <span>{item.date}</span>
+            <span>{formatNewsDateTime(item.date, item.gio)}</span>
             <span className="text-cyan-700 transition group-hover:translate-x-1">
               →
             </span>
