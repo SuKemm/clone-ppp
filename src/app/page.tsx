@@ -98,11 +98,11 @@ export default function Home() {
     .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
     .slice(0, 3);
 
-  // 3 gói thầu mới nhất cho khối "Đấu thầu" ở trang chủ — cùng logic sắp
-  // xếp với khối tin tức ở trên.
-  const latestTenders = [...getCollection("tenders")]
-    .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
-    .slice(0, 3);
+  // 4 ô "Thông báo nổi bật" ngay dưới dòng chữ chạy — luôn lấy 4 bản ghi mới
+  // nhất (Admin -> Khác -> "Thông báo nổi bật (trang chủ)"). Mới thêm ở
+  // admin sẽ tự lên đầu (createItem() dùng unshift), không cần sắp xếp theo
+  // ngày như Tin tức/Đấu thầu vì mục này không có field ngày.
+  const siteNotices = getCollection("site-notices").slice(0, 4);
 
   // Khối "Thư viện ảnh" / "Video tư liệu" ở trang chủ lấy trực tiếp từ 2
   // collection "photo-albums" / "video-albums" (Admin -> Thư viện), luôn
@@ -171,6 +171,51 @@ export default function Home() {
 
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
       <MarqueeBar isEnglish={false} />
+
+      {/* ===== Thông báo nổi bật — 4 ô ngay dưới dòng chữ chạy, quản lý ở
+          /admin -> Khác -> "Thông báo nổi bật (trang chủ)" ===== */}
+      {siteNotices.length > 0 && (
+        <section className="mx-auto max-w-7xl px-6 pt-10 lg:px-8">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {siteNotices.map((notice) => {
+              const tone =
+                notice.loai === "Khẩn cấp"
+                  ? "border-red-200 bg-red-50 text-red-700"
+                  : notice.loai === "Quan trọng"
+                    ? "border-amber-200 bg-amber-50 text-amber-700"
+                    : notice.loai === "Sự kiện"
+                      ? "border-sky-200 bg-sky-50 text-sky-700"
+                      : "border-slate-200 bg-slate-50 text-slate-700";
+              const content = (
+                <div
+                  className={`flex h-full flex-col rounded-2xl border p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md ${tone}`}
+                >
+                  {notice.loai && (
+                    <span className="text-[11px] font-bold uppercase tracking-wide">
+                      {notice.loai}
+                    </span>
+                  )}
+                  <h3 className="mt-2 text-base font-semibold leading-6 text-slate-900">
+                    {notice.tieu_de}
+                  </h3>
+                  {notice.mo_ta && (
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{notice.mo_ta}</p>
+                  )}
+                </div>
+              );
+              return notice.lien_ket ? (
+                <a key={notice.id} href={notice.lien_ket} className="block h-full">
+                  {content}
+                </a>
+              ) : (
+                <div key={notice.id} className="h-full">
+                  {content}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
      {/* News */}
 <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
@@ -297,57 +342,6 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Đấu thầu — cùng khuôn với khối "TIN TỨC VÀ SỰ KIỆN" ở trên, chỉ khác
-          nguồn dữ liệu và đường dẫn, để đồng bộ giao diện toàn trang chủ. */}
-      <section id="dau-thau" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
-            Đấu thầu
-          </h2>
-
-          <Link
-            href="/dau-thau"
-            className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
-          >
-            Xem thêm →
-          </Link>
-        </div>
-
-        {latestTenders.length > 0 ? (
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {latestTenders.map((item) => (
-              <a
-                key={item.id}
-                href={`/dau-thau/${item.id}`}
-                className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                {item.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.image} alt="" className="h-44 w-full object-cover" />
-                )}
-                <div className="flex flex-1 flex-col p-6">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-cyan-700">
-                    {item.category}
-                  </p>
-                  <h3 className="mt-2 text-lg font-semibold leading-7 text-slate-900">
-                    {item.title}
-                  </h3>
-
-                  <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-                    <span>{item.date}</span>
-                    <span className="text-cyan-700 transition group-hover:translate-x-1">
-                      →
-                    </span>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
-        ) : (
-          <p className="mt-10 text-center text-slate-500">Chưa có thông báo đấu thầu nào.</p>
-        )}
       </section>
 
       <section id="thu-vien" className="bg-slate-50 py-16">

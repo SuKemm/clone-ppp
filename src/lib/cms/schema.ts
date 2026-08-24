@@ -33,6 +33,7 @@ export type CollectionId =
   | "photo-albums"
   | "video-albums"
   | "site-marquee"
+  | "site-notices"
   | "production-info"
   | "production-daily"
   | "contacts"
@@ -573,6 +574,63 @@ export const COLLECTIONS: CollectionDef[] = [
       {
         text: "Chào mừng Quý cổ đông, đối tác và khách hàng đến với Công ty Cổ phần Thủy điện Đakđrinh!",
         text_en: "Welcome shareholders, partners and customers to Dakdrinh Hydropower Joint Stock Company!",
+      },
+    ],
+  },
+  {
+    // 4 ô "Thông báo nổi bật", hiện ngay dưới "Dòng chữ chạy" ở trang chủ
+    // (thay cho khối "Đấu thầu" cũ). Admin thêm/sửa/xoá y hệt các mục khác —
+    // trang chủ luôn lấy đúng 4 bản ghi đầu tiên (mới thêm lên trước, xem
+    // createItem() trong store.ts dùng unshift), nếu chưa đủ 4 thì hiện ít
+    // hơn, không báo lỗi.
+    id: "site-notices",
+    label: "Thông báo nổi bật (trang chủ)",
+    fields: [
+      { key: "tieu_de", label: "Tiêu đề", type: "text", required: true, width: "half" },
+      { key: "tieu_de_en", label: "Tiêu đề (EN)", type: "text", width: "half" },
+      { key: "mo_ta", label: "Nội dung ngắn", type: "textarea", width: "half" },
+      { key: "mo_ta_en", label: "Nội dung ngắn (EN)", type: "textarea", width: "half" },
+      {
+        key: "loai",
+        label: "Loại thông báo (màu sắc hiển thị)",
+        type: "select",
+        options: ["Thông thường", "Quan trọng", "Khẩn cấp", "Sự kiện"],
+        width: "half",
+      },
+      { key: "lien_ket", label: "Đường dẫn khi bấm vào (tuỳ chọn)", type: "text", width: "half" },
+    ],
+    seed: [
+      {
+        tieu_de: "Lịch tạm ngừng cấp điện bảo trì",
+        tieu_de_en: "Scheduled maintenance power outage",
+        mo_ta: "Xem lịch bảo trì định kỳ và các khung giờ tạm ngừng vận hành.",
+        mo_ta_en: "See the periodic maintenance schedule and planned downtime windows.",
+        loai: "Quan trọng",
+        lien_ket: "",
+      },
+      {
+        tieu_de: "Thông báo mời họp Đại hội cổ đông",
+        tieu_de_en: "Shareholders' meeting notice",
+        mo_ta: "Thông tin thời gian, địa điểm và tài liệu họp Đại hội đồng cổ đông.",
+        mo_ta_en: "Time, location and documents for the General Meeting of Shareholders.",
+        loai: "Sự kiện",
+        lien_ket: "/co-dong",
+      },
+      {
+        tieu_de: "Cảnh báo an toàn hồ chứa",
+        tieu_de_en: "Reservoir safety warning",
+        mo_ta: "Khuyến cáo an toàn khi mực nước hồ và lưu lượng xả thay đổi.",
+        mo_ta_en: "Safety advisory when reservoir level and discharge flow change.",
+        loai: "Khẩn cấp",
+        lien_ket: "",
+      },
+      {
+        tieu_de: "Tuyển dụng nhân sự",
+        tieu_de_en: "Recruitment notice",
+        mo_ta: "Các vị trí đang tuyển dụng tại Công ty Cổ phần Thủy điện Đakđrinh.",
+        mo_ta_en: "Open positions at Dakdrinh Hydropower Joint Stock Company.",
+        loai: "Thông thường",
+        lien_ket: "/tuyen-dung",
       },
     ],
   },
