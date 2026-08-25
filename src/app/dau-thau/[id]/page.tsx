@@ -6,6 +6,7 @@ import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
 import { getAllViews } from "@/lib/tender-views-store";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
@@ -82,7 +83,20 @@ export default async function TenderDetailPage({ params }: Params) {
               {item.category}
             </p>
             <h1 className="mt-3 break-words text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">{item.title}</h1>
-            <p className="mt-3 text-sm text-slate-500">{item.date}</p>
+            <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                className="h-4 w-4 shrink-0"
+              >
+                <circle cx="10" cy="10" r="7.25" />
+                <path d="M10 6v4l2.6 1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {formatNewsDateTime(item.date)}
+            </p>
 
             {item.image && (
               // eslint-disable-next-line @next/next/no-img-element

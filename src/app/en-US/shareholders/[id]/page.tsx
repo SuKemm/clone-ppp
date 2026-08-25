@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
+import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
@@ -50,10 +51,21 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
           {item.title_en || item.title}
         </h1>
         <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-cyan-700">
-          {item.category}{" "}
-          <span className="font-normal normal-case text-slate-400">
-            ({item.date || "latest update"})
-          </span>
+          {item.category}
+        </p>
+        <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            className="h-4 w-4 shrink-0"
+          >
+            <circle cx="10" cy="10" r="7.25" />
+            <path d="M10 6v4l2.6 1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {formatNewsDateTime(item.date, undefined, "en") || "latest update"}
         </p>
 
         {item.attachment && (
