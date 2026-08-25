@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   LayoutGrid,
@@ -679,6 +679,11 @@ function ItemFormPage({
     }
     return init;
   });
+  // Đánh dấu admin đã tự tay sửa ngày/giờ (để đăng lùi, lên lịch...). Khi
+  // vẫn còn false lúc bấm Lưu, ta tự lấy lại giờ hiện tại ngay tại thời điểm
+  // lưu (chứ không dùng giá trị đã điền sẵn lúc mở form, có thể đã cũ nếu
+  // admin soạn bài lâu) — xem handleSubmit bên dưới.
+  const dateTimeAutoRef = useRef(!item);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
@@ -791,10 +796,17 @@ function ItemFormPage({
       const url = item
         ? `/api/admin/content/${def.id}/${item.id}`
         : `/api/admin/content/${def.id}`;
+      // Bài mới, chưa bị admin sửa tay ngày/giờ -> lấy đúng thời điểm bấm
+      // Lưu (chứ không phải lúc mở form) để "Ngày đăng" luôn khớp thực tế.
+      let payload = values;
+      if (!item && dateTimeAutoRef.current) {
+        const { date, time } = getCurrentVietnamDateTime();
+        payload = { ...values, date, gio: time };
+      }
       const res = await fetch(url, {
         method: item ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error ?? "Lưu thất bại");
@@ -836,6 +848,9 @@ function ItemFormPage({
                 onClick={() => {
                   const { date, time } = getCurrentVietnamDateTime();
                   setValues((v) => ({ ...v, date, gio: time }));
+                  // Bấm nút này = quay lại chế độ tự động -> lúc bấm Lưu sẽ
+                  // lấy lại giờ mới nhất một lần nữa thay vì giữ giá trị này.
+                  dateTimeAutoRef.current = true;
                 }}
                 className="shrink-0 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
                 title="Điền ngày + giờ hiện tại (giờ Việt Nam) vào lúc đăng bài"
@@ -994,7 +1009,10 @@ function ItemFormPage({
             type="text"
             placeholder="vd: 15/08/2026"
             value={values[f.key]}
-            onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+            onChange={(e) => {
+              setValues((v) => ({ ...v, [f.key]: e.target.value }));
+              if (f.key === "date") dateTimeAutoRef.current = false;
+            }}
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
           />
         ) : f.type === "select" ? (
@@ -1013,7 +1031,10 @@ function ItemFormPage({
           <input
             type="text"
             value={values[f.key]}
-            onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+            onChange={(e) => {
+              setValues((v) => ({ ...v, [f.key]: e.target.value }));
+              if (f.key === "gio") dateTimeAutoRef.current = false;
+            }}
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
           />
         )}
