@@ -31,6 +31,8 @@ import {
   UserCircle2,
   UsersRound,
   BookImage,
+  Menu,
+  X,
 } from "lucide-react";
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
@@ -139,6 +141,17 @@ export default function AdminApp() {
   const toggleGroup = (label: string) =>
     setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
 
+  // Sidebar trên điện thoại mặc định ẩn (trượt ra khi bấm nút hamburger ở
+  // header) — trên màn hình từ "lg" trở lên luôn hiện cố định như cũ, biến
+  // này không có tác dụng gì (bị ghi đè bởi class "lg:translate-x-0").
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  // Chọn 1 mục trong sidebar xong thì tự đóng lại trên điện thoại, để không
+  // che mất nội dung vừa mở.
+  function selectView(next: View) {
+    setView(next);
+    setMobileNavOpen(false);
+  }
+
   // "user con" (role editor) chỉ thấy các collection nằm trong permissions
   // của họ — admin luôn thấy toàn bộ COLLECTIONS.
   const visibleCollections =
@@ -167,8 +180,23 @@ export default function AdminApp() {
 
   return (
     <div className="flex min-h-screen bg-slate-100">
-      {/* Sidebar tối màu — cố định, tách biệt khỏi vùng nội dung sáng màu */}
-      <aside className="flex w-64 shrink-0 flex-col bg-slate-900">
+      {/* Lớp phủ mờ phía sau sidebar khi mở trên điện thoại — bấm vào để đóng */}
+      {mobileNavOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"
+          onClick={() => setMobileNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar tối màu — cố định trên desktop (lg trở lên); trên điện
+          thoại mặc định trượt ẩn ngoài màn hình bên trái, hiện ra dạng
+          drawer khi bấm nút hamburger ở header. */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] shrink-0 flex-col bg-slate-900 transition-transform duration-200 ease-out lg:static lg:z-auto lg:w-64 lg:translate-x-0 ${
+          mobileNavOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="flex items-center gap-2.5 border-b border-white/10 px-5 py-5">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white p-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -178,10 +206,19 @@ export default function AdminApp() {
               className="h-full w-full object-contain"
             />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-white">Trang quản trị</p>
             <p className="truncate text-xs text-slate-400">Quản lý nội dung website</p>
           </div>
+          {/* Nút đóng sidebar — chỉ hiện trên điện thoại */}
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen(false)}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white lg:hidden"
+            aria-label="Đóng menu"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
@@ -217,7 +254,7 @@ export default function AdminApp() {
                       return (
                         <button
                           key={c.id}
-                          onClick={() => setView({ kind: "list", id: c.id })}
+                          onClick={() => selectView({ kind: "list", id: c.id })}
                           className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
                             isActive
                               ? "bg-cyan-600 text-white shadow-sm shadow-cyan-900/40"
@@ -241,7 +278,7 @@ export default function AdminApp() {
             <>
               <div className="my-3 border-t border-white/10" />
               <button
-                onClick={() => setView({ kind: "users" })}
+                onClick={() => selectView({ kind: "users" })}
                 className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition ${
                   view.kind === "users"
                     ? "bg-cyan-600 text-white shadow-sm shadow-cyan-900/40"
@@ -282,31 +319,40 @@ export default function AdminApp() {
 
       {/* Vùng nội dung */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-8 py-4 text-sm text-slate-500">
-          <div className="flex items-center gap-2">
+        <header className="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-4 py-4 text-sm text-slate-500 sm:px-8">
+          <div className="flex min-w-0 items-center gap-2 overflow-x-auto">
+            {/* Nút hamburger mở sidebar — chỉ hiện trên điện thoại/tablet nhỏ */}
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen(true)}
+              className="-ml-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 lg:hidden"
+              aria-label="Mở menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
             <button
               onClick={() =>
                 visibleCollections[0] && setView({ kind: "list", id: visibleCollections[0].id })
               }
-              className="hover:text-cyan-700"
+              className="shrink-0 hover:text-cyan-700"
             >
               Trang chủ
             </button>
-            <span className="text-slate-300">/</span>
+            <span className="shrink-0 text-slate-300">/</span>
             {view.kind === "users" ? (
-              <span className="font-medium text-slate-900">Người dùng</span>
+              <span className="shrink-0 font-medium text-slate-900">Người dùng</span>
             ) : view.kind === "list" ? (
-              <span className="font-medium text-slate-900">{active!.label}</span>
+              <span className="shrink-0 font-medium text-slate-900">{active!.label}</span>
             ) : (
               <>
                 <button
                   onClick={() => setView({ kind: "list", id: view.id })}
-                  className="hover:text-cyan-700"
+                  className="shrink-0 hover:text-cyan-700"
                 >
                   {active!.label}
                 </button>
-                <span className="text-slate-300">/</span>
-                <span className="font-medium text-slate-900">
+                <span className="shrink-0 text-slate-300">/</span>
+                <span className="shrink-0 font-medium text-slate-900">
                   {view.item ? "Sửa" : "Thêm mới"}
                 </span>
               </>
@@ -315,19 +361,20 @@ export default function AdminApp() {
 
           {/* Nút "Xem website" luôn hiện ở mọi trang trong khu vực admin —
               bấm vào mở trang chủ website ở tab mới, tiện xem lại ngay sau
-              khi vừa thêm/sửa xong một nội dung nào đó. */}
+              khi vừa thêm/sửa xong một nội dung nào đó. Trên điện thoại chỉ
+              hiện icon cho gọn, đủ chỗ cho phần breadcrumb bên trái. */}
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-xs font-medium text-cyan-700 transition hover:bg-cyan-100"
+            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-cyan-200 bg-cyan-50 px-2.5 py-1.5 text-xs font-medium text-cyan-700 transition hover:bg-cyan-100 sm:px-3"
           >
             <ExternalLink className="h-3.5 w-3.5" />
-            Xem website
+            <span className="hidden sm:inline">Xem website</span>
           </a>
         </header>
 
-        <main className="flex-1 px-8 py-7">
+        <main className="flex-1 px-4 py-5 sm:px-8 sm:py-7">
           {view.kind === "users" ? (
             <UsersPanel />
           ) : view.kind === "list" ? (
@@ -543,7 +590,7 @@ function CollectionListPanel({
 
   return (
     <div>
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">{def.label}</h2>
           {items && (
@@ -576,7 +623,7 @@ function CollectionListPanel({
         {items?.map((item, idx) => (
           <div
             key={item.id}
-            className={`flex items-center gap-4 px-5 py-4 ${
+            className={`flex flex-wrap items-center gap-x-4 gap-y-3 px-4 py-4 sm:px-5 ${
               idx !== items.length - 1 ? "border-b border-slate-100" : ""
             }`}
           >
@@ -589,7 +636,7 @@ function CollectionListPanel({
               </div>
             )}
 
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 basis-40">
               <p className="truncate font-medium text-slate-900">{item[titleField] || "(không có tiêu đề)"}</p>
 
               {hasMetaFields ? (
@@ -834,7 +881,7 @@ function ItemFormPage({
   function renderField(f: CollectionDef["fields"][number]) {
     return (
       <label key={f.key} className="block text-sm font-medium text-slate-700">
-        <span className="flex items-center justify-between gap-2">
+        <span className="flex flex-wrap items-center justify-between gap-2">
           <span>
             {f.label}
             {f.required && <span className="text-red-500"> *</span>}
@@ -1065,19 +1112,20 @@ function ItemFormPage({
       {/* Thanh tiêu đề + nút hành động — cùng cấu trúc với trang
           "Thông tin chi tiết" của dakdrinh.com.vn/admin (tiêu đề bên trái,
           Lưu/Thoát bên phải, luôn nổi trên đầu khi cuộn trang dài). */}
-      <div className="sticky top-0 z-10 -mx-8 mb-6 flex items-center justify-between border-b border-slate-200 bg-white/95 px-8 py-4 backdrop-blur">
+      <div className="sticky top-0 z-10 -mx-4 mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 bg-white/95 px-4 py-4 backdrop-blur sm:-mx-8 sm:px-8">
         <h2 className="text-lg font-semibold text-slate-900">Thông tin chi tiết</h2>
         <div className="flex items-center gap-2">
           {/* Mở trang chủ website ở tab mới — dùng sau khi bấm Lưu để xem
-              ngay nội dung vừa đăng, không cần rời khỏi trang admin đang làm. */}
+              ngay nội dung vừa đăng, không cần rời khỏi trang admin đang làm.
+              Trên điện thoại chỉ hiện icon cho gọn. */}
           <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 transition hover:bg-cyan-100"
+            className="flex items-center gap-1.5 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm font-medium text-cyan-700 transition hover:bg-cyan-100 sm:px-4"
           >
             <ExternalLink className="h-4 w-4" />
-            Xem website
+            <span className="hidden sm:inline">Xem website</span>
           </a>
           <button
             type="button"
@@ -1096,7 +1144,7 @@ function ItemFormPage({
         </div>
       </div>
 
-      <div className="max-w-5xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="max-w-5xl rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="space-y-5">
           {rows.map((row, idx) =>
             row.length === 2 ? (
