@@ -119,7 +119,7 @@ export default function Home() {
   const latestVideos = [...getCollection("video-albums")]
     .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
     .slice(0, 4)
-    .map((v) => ({ title: v.title }));
+    .map((v) => ({ title: v.title, image: v.image || undefined }));
 
   // Ngày cập nhật hiển thị luôn là ngày hiện tại (giờ Việt Nam) — không cần
   // vào admin sửa tay mỗi ngày. Nếu sau này muốn cho phép ghi đè bằng tay,
@@ -400,13 +400,25 @@ export default function Home() {
                   <Link
                     key={video.title}
                     href="/dich-vu#thu-vien-video"
-                    className="group relative flex h-32 items-end overflow-hidden rounded-xl border border-slate-200 bg-slate-800"
+                    className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-slate-900/10" />
-                    <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
-                      <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
-                    </span>
-                    <p className="relative z-10 p-3 text-xs font-semibold leading-5 text-white break-words">
+                    <div className="relative h-36 w-full overflow-hidden bg-slate-800">
+                      {video.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={video.image}
+                          alt={video.title}
+                          className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" />
+                      )}
+                      <div className="absolute inset-0 bg-slate-950/20" />
+                      <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
+                        <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
+                      </span>
+                    </div>
+                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words group-hover:text-cyan-700">
                       {video.title}
                     </p>
                   </Link>
