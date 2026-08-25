@@ -603,6 +603,9 @@ export const COLLECTIONS: CollectionDef[] = [
         width: "half",
       },
       { key: "lien_ket", label: "Đường dẫn khi bấm vào (tuỳ chọn)", type: "text", width: "half" },
+      // File đính kèm (PDF...) — nếu admin không điền "Đường dẫn khi bấm
+      // vào" ở trên thì bấm vào thông báo trên trang chủ sẽ mở file này.
+      { key: "file", label: "File đính kèm (tuỳ chọn)", type: "file", width: "half" },
     ],
     // Để trống mặc định — anh tự thêm thông báo thật ở /admin, không seed
     // sẵn nội dung mẫu nữa (khác với các collection khác luôn có seed).

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { getUploadsDir, isUploadsDirPublic } from "@/lib/storage-paths";
+import { getUploadsDir } from "@/lib/storage-paths";
 
 const ALLOWED_IMAGES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const ALLOWED_DOCS = new Set(["application/pdf"]);
@@ -37,10 +37,13 @@ export async function POST(req: NextRequest) {
   const bytes = Buffer.from(await file.arrayBuffer());
   fs.writeFileSync(path.join(uploadDir, filename), bytes);
 
-  // Trên VPS, public/uploads được Next serve tĩnh nên dùng /uploads/... như cũ.
-  // Trên Vercel (fallback ghi vào /tmp), /uploads/... không truy cập được vì
-  // /tmp nằm ngoài thư mục public — phải đi qua route /api/uploads/... để đọc
-  // và trả về đúng file (xem src/app/api/uploads/[filename]/route.ts).
-  const url = isUploadsDirPublic() ? `/uploads/${filename}` : `/api/uploads/${filename}`;
+  // Luôn trả về đường dẫn qua route /api/uploads/... (đọc file trực tiếp từ
+  // ổ đĩa mỗi lần có request — xem src/app/api/uploads/[filename]/route.ts),
+  // KHÔNG dùng /uploads/... (Next serve tĩnh) nữa. Lý do: ở chế độ dev của
+  // Next 16 (Turbopack), file mới thêm vào thư mục public/ SAU khi server đã
+  // chạy thường bị 404 cho tới khi restart server — Turbopack không tự nhận
+  // diện file mới. Đi qua route API tránh hẳn lỗi này, và vẫn hoạt động bình
+  // thường trên VPS lẫn Vercel (fallback /tmp).
+  const url = `/api/uploads/${filename}`;
   return NextResponse.json({ url });
 }

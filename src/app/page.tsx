@@ -254,8 +254,17 @@ export default function Home() {
                 </p>
               </div>
             );
-            return notice.lien_ket ? (
-              <a key={notice.id} href={notice.lien_ket} className="block">
+            // Ưu tiên "Đường dẫn khi bấm vào" nếu admin có điền; nếu không
+            // thì dùng file đính kèm (PDF...) đã tải lên làm đích bấm vào.
+            const href = notice.lien_ket || notice.file || "";
+            return href ? (
+              <a
+                key={notice.id}
+                href={href}
+                target={notice.lien_ket ? undefined : "_blank"}
+                rel={notice.lien_ket ? undefined : "noopener noreferrer"}
+                className="block"
+              >
                 {content}
               </a>
             ) : (

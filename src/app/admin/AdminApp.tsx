@@ -39,6 +39,28 @@ import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { SelectField, type SelectOption } from "@/components/admin/SelectField";
 import { UsersPanel } from "@/components/admin/UsersPanel";
 
+// Lấy ngày/giờ thực tế hiện tại theo múi giờ Việt Nam (Asia/Ho_Chi_Minh),
+// trả về đúng định dạng đang dùng cho field "date" (dd/mm/yyyy) và "gio"
+// (HH:mm) trong schema.ts. Dùng chung cho cả bản VN lẫn EN vì 2 bản hiển thị
+// chung 1 giá trị ngày/giờ đăng bài (xem src/lib/format-date.ts).
+function getCurrentVietnamDateTime(): { date: string; time: string } {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Ho_Chi_Minh",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).formatToParts(now);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
+  return {
+    date: `${get("day")}/${get("month")}/${get("year")}`,
+    time: `${get("hour")}:${get("minute")}`,
+  };
+}
+
 type CurrentUser = { id: string; username: string; role: AdminRole; permissions: CollectionId[] };
 
 // Icon riêng cho từng collection để sidebar dễ quét mắt hơn là chỉ có chữ.
@@ -645,6 +667,16 @@ function ItemFormPage({
   const [values, setValues] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     for (const f of def.fields) init[f.key] = item?.[f.key] ?? "";
+    // Tạo bài tin tức mới (chưa có "item") -> tự động điền ngày + giờ đăng
+    // theo thời gian thực tại thời điểm mở form (giờ Việt Nam). Áp dụng cho
+    // cả 2 field "date" và "gio" vì trang EN dùng chung 2 field này với
+    // trang VN (xem src/lib/format-date.ts). Admin vẫn có thể sửa tay nếu
+    // muốn đăng lùi ngày / lên lịch cho bài viết.
+    if (!item && def.fields.some((f) => f.key === "date") && def.fields.some((f) => f.key === "gio")) {
+      const { date, time } = getCurrentVietnamDateTime();
+      init.date = date;
+      init.gio = time;
+    }
     return init;
   });
   const [saving, setSaving] = useState(false);
@@ -796,6 +828,21 @@ function ItemFormPage({
               {translatingKey === targetKeyBySource.get(f.key) ? "Đang dịch..." : "Dịch tự động → EN"}
             </button>
           )}
+          {(f.key === "date" || f.key === "gio") &&
+            def.fields.some((x) => x.key === "date") &&
+            def.fields.some((x) => x.key === "gio") && (
+              <button
+                type="button"
+                onClick={() => {
+                  const { date, time } = getCurrentVietnamDateTime();
+                  setValues((v) => ({ ...v, date, gio: time }));
+                }}
+                className="shrink-0 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+                title="Điền ngày + giờ hiện tại (giờ Việt Nam) vào lúc đăng bài"
+              >
+                Lấy giờ hiện tại
+              </button>
+            )}
         </span>
 
         {f.type === "richtext" ? (
