@@ -102,7 +102,12 @@ export default function EnglishHomePage() {
   // "Ngày đăng" field (not creation/edit order), same rule as the VN page.
   const latestNews = [...getCollection("news")]
     .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
-    .slice(0, 3);
+    .slice(0, 2);
+
+  // "Featured Notices" column — mirrors the VN homepage (Admin -> Khác ->
+  // "Thông báo nổi bật (trang chủ)"), same collection "site-notices", just
+  // prefers the "_en" fields when the admin has filled them in.
+  const siteNotices = getCollection("site-notices").slice(0, 4);
 
   // Khối "Photo Gallery" / "Video Library" lấy trực tiếp từ 2 collection
   // "photo-albums" / "video-albums" (Admin -> Thư viện), ưu tiên tiêu đề
@@ -134,7 +139,6 @@ export default function EnglishHomePage() {
 
   const productionStatus: [string, string, string][] = [
     [formatVnNumber(productionTotals.day), "Output", productionPeriods.ngay],
-    [formatVnNumber(productionTotals.week), "Output", productionPeriods.tuan],
     [formatVnNumber(productionTotals.month), "Output", productionPeriods.thang],
     [formatVnNumber(productionTotals.quarter), "Output", productionPeriods.quy],
     [formatVnNumber(productionTotals.year), "Output", productionPeriods.nam],
@@ -201,6 +205,72 @@ export default function EnglishHomePage() {
               </div>
             </a>
           ))}
+
+          {/* Featured Notices — third column, always rendered (even when
+              empty) so the 3-column layout doesn't shift. Content is
+              managed from /admin -> Other -> "Thông báo nổi bật (trang
+              chủ)", same source as the VN homepage. */}
+          <div className="flex flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="text-center text-sm font-bold uppercase tracking-wide text-slate-500">
+              Featured Notices
+            </h3>
+            <div className="mt-3 flex flex-1 flex-col gap-3">
+              {siteNotices.length === 0 ? (
+                <p className="mt-2 text-center text-sm text-slate-400">No notices yet.</p>
+              ) : (
+                siteNotices.map((notice) => {
+                  const tone =
+                    notice.loai === "Khẩn cấp"
+                      ? "border-red-200 bg-red-50 text-red-700"
+                      : notice.loai === "Quan trọng"
+                        ? "border-amber-200 bg-amber-50 text-amber-700"
+                        : notice.loai === "Sự kiện"
+                          ? "border-sky-200 bg-sky-50 text-sky-700"
+                          : "border-slate-200 bg-slate-50 text-slate-700";
+                  const noticeTypeEn =
+                    notice.loai === "Khẩn cấp"
+                      ? "Urgent"
+                      : notice.loai === "Quan trọng"
+                        ? "Important"
+                        : notice.loai === "Sự kiện"
+                          ? "Event"
+                          : notice.loai
+                            ? "Notice"
+                            : "";
+                  const content = (
+                    <div
+                      className={`rounded-xl border px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone}`}
+                    >
+                      {noticeTypeEn && (
+                        <span className="text-[10px] font-bold uppercase tracking-wide">
+                          {noticeTypeEn}
+                        </span>
+                      )}
+                      <p className="mt-1 text-sm font-semibold leading-5 text-slate-900">
+                        {notice.tieu_de_en || notice.tieu_de}
+                      </p>
+                    </div>
+                  );
+                  // Prefer "Đường dẫn khi bấm vào" if the admin filled it in;
+                  // otherwise fall back to the uploaded attachment (PDF...).
+                  const href = notice.lien_ket || notice.file || "";
+                  return href ? (
+                    <a
+                      key={notice.id}
+                      href={href}
+                      target={notice.lien_ket ? undefined : "_blank"}
+                      rel={notice.lien_ket ? undefined : "noopener noreferrer"}
+                      className="block"
+                    >
+                      {content}
+                    </a>
+                  ) : (
+                    <div key={notice.id}>{content}</div>
+                  );
+                })
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -211,8 +281,8 @@ export default function EnglishHomePage() {
             Production Status
           </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            {/* Left: 5 output cards (Day/Week/Month/Quarter/Year) */}
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:col-span-2">
+            {/* Left: 4 output cards (Day/Month/Quarter/Year) */}
+            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
               {productionStatus.map(([value, label, period], index) => (
                 <div
                   key={`${period}-${index}`}

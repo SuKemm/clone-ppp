@@ -138,7 +138,6 @@ export default function Home() {
 
   const productionStatus: [string, string, string][] = [
     [formatVnNumber(productionTotals.day), "Sản lượng", productionPeriods.ngay],
-    [formatVnNumber(productionTotals.week), "Sản lượng", productionPeriods.tuan],
     [formatVnNumber(productionTotals.month), "Sản lượng", productionPeriods.thang],
     [formatVnNumber(productionTotals.quarter), "Sản lượng", productionPeriods.quy],
     [formatVnNumber(productionTotals.year), "Sản lượng", productionPeriods.nam],
@@ -288,8 +287,8 @@ export default function Home() {
       Thông tin sản xuất
     </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            {/* Bên trái: 5 thẻ sản lượng (Ngày/Tuần/Tháng/Quý/Năm) */}
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:col-span-2">
+            {/* Bên trái: 4 thẻ sản lượng (Ngày/Tháng/Quý/Năm) */}
+            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
               {productionStatus.map(([value, label, period], index) => (
                 <div
                   key={`${period}-${index}`}
