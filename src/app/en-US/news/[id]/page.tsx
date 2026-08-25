@@ -36,16 +36,18 @@ export default async function NewsDetailPageEn({ params }: Params) {
 
   return (
     <PtscShell title={title} description={excerpt}>
-      <section className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
-        <div className="flex items-center justify-between">
+      <section className="mx-auto max-w-3xl px-6 py-10 sm:py-16 lg:px-8">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <Link href="/en-US/news" className="text-sm font-semibold text-cyan-700 hover:underline">
             ← Back to news
           </Link>
-          <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" isEnglish />
+          <ArticleViewCount id={item.id} mode="increment" className="shrink-0 text-sm text-slate-500" isEnglish />
         </div>
 
         <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{category}</p>
-        <h1 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">{title}</h1>
+        <h1 className="mt-3 text-2xl font-bold leading-tight text-slate-900 sm:text-3xl lg:text-4xl">
+          {title}
+        </h1>
         <p className="mt-3 text-sm text-slate-500">{formatNewsDateTime(item.date, item.gio)}</p>
 
         {item.image && (
@@ -53,11 +55,15 @@ export default async function NewsDetailPageEn({ params }: Params) {
           <img
             src={item.image}
             alt=""
-            className="mt-8 h-72 w-full rounded-2xl object-cover sm:h-96"
+            className="mt-8 h-56 w-full rounded-2xl object-cover sm:h-72 lg:h-96"
           />
         )}
 
-        <div className="prose prose-slate mt-8 max-w-none">
+        <div
+          className="prose prose-slate mt-8 max-w-none break-words
+            [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto
+            [&_iframe]:h-auto [&_iframe]:w-full [&_iframe]:max-w-full [&_iframe]:aspect-video"
+        >
           {contentHtml ? (
             <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
           ) : excerpt ? (

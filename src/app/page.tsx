@@ -92,17 +92,19 @@ function parseAlbumDate(value: string | undefined): number {
 export default function Home() {
   const productionInfo = getCollection("production-info")[0];
 
-  // 3 tin mới nhất cho khối "Tin tức và sự kiện" — ưu tiên theo field "Ngày
+  // 2 tin mới nhất cho khối "Tin tức và sự kiện" — ưu tiên theo field "Ngày
   // đăng" (không phải theo thứ tự vừa tạo/sửa trong admin), để admin tạo bài
   // trước rồi hẹn ngày đăng sau vẫn lên đúng thứ tự mới → cũ ở trang chủ.
+  // (Trước đây lấy 3 tin, nay chỉ lấy 2 vì cột thứ 3 nhường chỗ cho khối
+  // "Thông báo nổi bật" theo yêu cầu gộp chung vào section này.)
   const latestNews = [...getCollection("news")]
     .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
-    .slice(0, 3);
+    .slice(0, 2);
 
-  // 4 ô "Thông báo nổi bật" ngay dưới dòng chữ chạy — luôn lấy 4 bản ghi mới
-  // nhất (Admin -> Khác -> "Thông báo nổi bật (trang chủ)"). Mới thêm ở
-  // admin sẽ tự lên đầu (createItem() dùng unshift), không cần sắp xếp theo
-  // ngày như Tin tức/Đấu thầu vì mục này không có field ngày.
+  // 4 ô "Thông báo nổi bật" — hiển thị gọn thành 1 cột ngay cạnh 2 tin mới
+  // nhất trong khối "Tin tức và sự kiện" ở trang chủ (Admin -> Khác ->
+  // "Thông báo nổi bật (trang chủ)"). Mới thêm ở admin sẽ tự lên đầu
+  // (createItem() dùng unshift), không cần sắp xếp theo ngày.
   const siteNotices = getCollection("site-notices").slice(0, 4);
 
   // Khối "Thư viện ảnh" / "Video tư liệu" ở trang chủ lấy trực tiếp từ 2
@@ -173,52 +175,11 @@ export default function Home() {
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
       <MarqueeBar isEnglish={false} />
 
-      {/* ===== Thông báo nổi bật — 4 ô ngay dưới dòng chữ chạy, quản lý ở
-          /admin -> Khác -> "Thông báo nổi bật (trang chủ)" ===== */}
-      {siteNotices.length > 0 && (
-        <section className="mx-auto max-w-7xl px-6 pt-10 lg:px-8">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {siteNotices.map((notice) => {
-              const tone =
-                notice.loai === "Khẩn cấp"
-                  ? "border-red-200 bg-red-50 text-red-700"
-                  : notice.loai === "Quan trọng"
-                    ? "border-amber-200 bg-amber-50 text-amber-700"
-                    : notice.loai === "Sự kiện"
-                      ? "border-sky-200 bg-sky-50 text-sky-700"
-                      : "border-slate-200 bg-slate-50 text-slate-700";
-              const content = (
-                <div
-                  className={`flex h-full flex-col rounded-2xl border p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md ${tone}`}
-                >
-                  {notice.loai && (
-                    <span className="text-[11px] font-bold uppercase tracking-wide">
-                      {notice.loai}
-                    </span>
-                  )}
-                  <h3 className="mt-2 text-base font-semibold leading-6 text-slate-900">
-                    {notice.tieu_de}
-                  </h3>
-                  {notice.mo_ta && (
-                    <p className="mt-2 text-sm leading-6 text-slate-600">{notice.mo_ta}</p>
-                  )}
-                </div>
-              );
-              return notice.lien_ket ? (
-                <a key={notice.id} href={notice.lien_ket} className="block h-full">
-                  {content}
-                </a>
-              ) : (
-                <div key={notice.id} className="h-full">
-                  {content}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-     {/* News */}
+     {/* News + Thông báo nổi bật — 2 tin mới nhất bên trái, cột thứ 3 là 4
+         thông báo nổi bật xếp gọn dọc theo (trước đây thông báo nằm riêng
+         thành 1 hàng 4 ô ngay dưới dòng chữ chạy, nay gộp vào đây cho đỡ
+         chiếm nhiều đất ở đầu trang). Quản lý nội dung thông báo vẫn ở
+         /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
 <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
   <div className="flex flex-col items-center text-center">
     <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
@@ -242,14 +203,14 @@ export default function Home() {
       >
         {item.image && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.image} alt="" className="h-44 w-full object-cover" />
+          <img src={item.image} alt="" className="h-36 w-full object-cover" />
         )}
-        <div className="flex flex-1 flex-col p-6">
-          <h3 className="text-lg font-semibold leading-7 text-slate-900">
+        <div className="flex flex-1 flex-col p-5">
+          <h3 className="text-base font-semibold leading-6 text-slate-900">
             {item.title}
           </h3>
 
-          <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+          <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
             <span>{formatNewsDateTime(item.date, item.gio)}</span>
             <span className="text-cyan-700 transition group-hover:translate-x-1">
               →
@@ -258,6 +219,52 @@ export default function Home() {
         </div>
       </a>
     ))}
+
+    {/* Thông báo nổi bật — chiếm cột thứ 3. Luôn hiện khung này (kể cả chưa
+        có thông báo nào) để bố cục 3 cột không bị lệch; nội dung bên trong
+        do admin tự thêm ở /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
+    <div className="flex flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <h3 className="text-center text-sm font-bold uppercase tracking-wide text-slate-500">
+        Thông báo nổi bật
+      </h3>
+      <div className="mt-3 flex flex-1 flex-col gap-3">
+        {siteNotices.length === 0 ? (
+          <p className="mt-2 text-center text-sm text-slate-400">Chưa có thông báo nào.</p>
+        ) : (
+          siteNotices.map((notice) => {
+            const tone =
+              notice.loai === "Khẩn cấp"
+                ? "border-red-200 bg-red-50 text-red-700"
+                : notice.loai === "Quan trọng"
+                  ? "border-amber-200 bg-amber-50 text-amber-700"
+                  : notice.loai === "Sự kiện"
+                    ? "border-sky-200 bg-sky-50 text-sky-700"
+                    : "border-slate-200 bg-slate-50 text-slate-700";
+            const content = (
+              <div
+                className={`rounded-xl border px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone}`}
+              >
+                {notice.loai && (
+                  <span className="text-[10px] font-bold uppercase tracking-wide">
+                    {notice.loai}
+                  </span>
+                )}
+                <p className="mt-1 text-sm font-semibold leading-5 text-slate-900">
+                  {notice.tieu_de}
+                </p>
+              </div>
+            );
+            return notice.lien_ket ? (
+              <a key={notice.id} href={notice.lien_ket} className="block">
+                {content}
+              </a>
+            ) : (
+              <div key={notice.id}>{content}</div>
+            );
+          })
+        )}
+      </div>
+    </div>
   </div>
 </section>
 

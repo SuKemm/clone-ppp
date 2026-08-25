@@ -604,40 +604,9 @@ export const COLLECTIONS: CollectionDef[] = [
       },
       { key: "lien_ket", label: "Đường dẫn khi bấm vào (tuỳ chọn)", type: "text", width: "half" },
     ],
-    seed: [
-      {
-        tieu_de: "Lịch tạm ngừng cấp điện bảo trì",
-        tieu_de_en: "Scheduled maintenance power outage",
-        mo_ta: "Xem lịch bảo trì định kỳ và các khung giờ tạm ngừng vận hành.",
-        mo_ta_en: "See the periodic maintenance schedule and planned downtime windows.",
-        loai: "Quan trọng",
-        lien_ket: "",
-      },
-      {
-        tieu_de: "Thông báo mời họp Đại hội cổ đông",
-        tieu_de_en: "Shareholders' meeting notice",
-        mo_ta: "Thông tin thời gian, địa điểm và tài liệu họp Đại hội đồng cổ đông.",
-        mo_ta_en: "Time, location and documents for the General Meeting of Shareholders.",
-        loai: "Sự kiện",
-        lien_ket: "/co-dong",
-      },
-      {
-        tieu_de: "Cảnh báo an toàn hồ chứa",
-        tieu_de_en: "Reservoir safety warning",
-        mo_ta: "Khuyến cáo an toàn khi mực nước hồ và lưu lượng xả thay đổi.",
-        mo_ta_en: "Safety advisory when reservoir level and discharge flow change.",
-        loai: "Khẩn cấp",
-        lien_ket: "",
-      },
-      {
-        tieu_de: "Tuyển dụng nhân sự",
-        tieu_de_en: "Recruitment notice",
-        mo_ta: "Các vị trí đang tuyển dụng tại Công ty Cổ phần Thủy điện Đakđrinh.",
-        mo_ta_en: "Open positions at Dakdrinh Hydropower Joint Stock Company.",
-        loai: "Thông thường",
-        lien_ket: "/tuyen-dung",
-      },
-    ],
+    // Để trống mặc định — anh tự thêm thông báo thật ở /admin, không seed
+    // sẵn nội dung mẫu nữa (khác với các collection khác luôn có seed).
+    seed: [],
   },
   {
     // CHỈ GIỮ 1 BẢN GHI DUY NHẤT: khối "Mực nước hiện tại" ở trang chủ luôn

@@ -63,20 +63,22 @@ export default async function NewsDetailPage({ params }: Params) {
 
   return (
     <PtscShell title={item.title} description={item.excerpt || ""}>
-      <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section className="mx-auto max-w-7xl px-6 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="max-w-3xl">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <Link href="/tin-tuc" className="text-sm font-semibold text-cyan-700 hover:underline">
                 ← Quay lại danh sách tin tức
               </Link>
-              <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" />
+              <ArticleViewCount id={item.id} mode="increment" className="shrink-0 text-sm text-slate-500" />
             </div>
 
             <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
               {item.category}
             </p>
-            <h1 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">{item.title}</h1>
+            <h1 className="mt-3 text-2xl font-bold leading-tight text-slate-900 sm:text-3xl lg:text-4xl">
+              {item.title}
+            </h1>
             <p className="mt-3 text-sm text-slate-500">{formatNewsDateTime(item.date, item.gio)}</p>
 
             {item.image && (
@@ -84,11 +86,19 @@ export default async function NewsDetailPage({ params }: Params) {
               <img
                 src={item.image}
                 alt=""
-                className="mt-8 h-72 w-full rounded-2xl object-cover sm:h-96"
+                className="mt-8 h-56 w-full rounded-2xl object-cover sm:h-72 lg:h-96"
               />
             )}
 
-            <div className="prose prose-slate mt-8 max-w-none">
+            {/* prose = @tailwindcss/typography, style cho nội dung HTML nhập
+                từ TinyMCE ở admin (đoạn văn, heading, danh sách, bảng...).
+                Thêm mấy class [&_table]/[&_iframe] để chặn tràn ngang trên
+                mobile nếu admin dán bảng/nhúng video có width cố định. */}
+            <div
+              className="prose prose-slate mt-8 max-w-none break-words
+                [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto
+                [&_iframe]:h-auto [&_iframe]:w-full [&_iframe]:max-w-full [&_iframe]:aspect-video"
+            >
               {contentHtml ? (
                 <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
               ) : item.excerpt ? (
