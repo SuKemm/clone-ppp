@@ -653,6 +653,11 @@ function buildFieldRows(fields: CollectionDef["fields"]) {
   return rows;
 }
 
+// Các collection có field "date" nhưng KHÔNG phải "ngày đăng bài" (mà là mốc
+// thời gian nội dung do admin tự nhập tay, ví dụ lịch sử hình thành công ty)
+// -> không tự động điền/ghi đè giờ hiện tại khi lưu.
+const AUTO_DATE_EXCLUDED_COLLECTIONS = new Set(["company-timeline"]);
+
 function ItemFormPage({
   def,
   item,
@@ -664,18 +669,23 @@ function ItemFormPage({
   onClose: () => void;
   onSaved: () => void;
 }) {
+  // Áp dụng cho mọi collection có field "date" (tin tức, quan hệ cổ đông,
+  // đấu thầu, ảnh, video...) trừ những collection nằm trong danh sách loại
+  // trừ ở trên. Field "gio" (nếu có, hiện chỉ "news" có) cũng được điền kèm.
+  const hasDateField =
+    def.fields.some((f) => f.key === "date") && !AUTO_DATE_EXCLUDED_COLLECTIONS.has(def.id);
+  const hasGioField = def.fields.some((f) => f.key === "gio");
+
   const [values, setValues] = useState<Record<string, string>>(() => {
     const init: Record<string, string> = {};
     for (const f of def.fields) init[f.key] = item?.[f.key] ?? "";
-    // Tạo bài tin tức mới (chưa có "item") -> tự động điền ngày + giờ đăng
-    // theo thời gian thực tại thời điểm mở form (giờ Việt Nam). Áp dụng cho
-    // cả 2 field "date" và "gio" vì trang EN dùng chung 2 field này với
-    // trang VN (xem src/lib/format-date.ts). Admin vẫn có thể sửa tay nếu
-    // muốn đăng lùi ngày / lên lịch cho bài viết.
-    if (!item && def.fields.some((f) => f.key === "date") && def.fields.some((f) => f.key === "gio")) {
+    // Tạo bài mới (chưa có "item") -> tự động điền ngày (+ giờ nếu có field
+    // "gio") theo thời gian thực tại thời điểm mở form (giờ Việt Nam). Admin
+    // vẫn có thể sửa tay nếu muốn đăng lùi ngày / lên lịch cho bài viết.
+    if (!item && hasDateField) {
       const { date, time } = getCurrentVietnamDateTime();
       init.date = date;
-      init.gio = time;
+      if (hasGioField) init.gio = time;
     }
     return init;
   });
@@ -683,7 +693,7 @@ function ItemFormPage({
   // vẫn còn false lúc bấm Lưu, ta tự lấy lại giờ hiện tại ngay tại thời điểm
   // lưu (chứ không dùng giá trị đã điền sẵn lúc mở form, có thể đã cũ nếu
   // admin soạn bài lâu) — xem handleSubmit bên dưới.
-  const dateTimeAutoRef = useRef(!item);
+  const dateTimeAutoRef = useRef(!item && hasDateField);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
@@ -799,9 +809,9 @@ function ItemFormPage({
       // Bài mới, chưa bị admin sửa tay ngày/giờ -> lấy đúng thời điểm bấm
       // Lưu (chứ không phải lúc mở form) để "Ngày đăng" luôn khớp thực tế.
       let payload = values;
-      if (!item && dateTimeAutoRef.current) {
+      if (!item && hasDateField && dateTimeAutoRef.current) {
         const { date, time } = getCurrentVietnamDateTime();
-        payload = { ...values, date, gio: time };
+        payload = { ...values, date, ...(hasGioField ? { gio: time } : {}) };
       }
       const res = await fetch(url, {
         method: item ? "PUT" : "POST",
@@ -840,24 +850,22 @@ function ItemFormPage({
               {translatingKey === targetKeyBySource.get(f.key) ? "Đang dịch..." : "Dịch tự động → EN"}
             </button>
           )}
-          {(f.key === "date" || f.key === "gio") &&
-            def.fields.some((x) => x.key === "date") &&
-            def.fields.some((x) => x.key === "gio") && (
-              <button
-                type="button"
-                onClick={() => {
-                  const { date, time } = getCurrentVietnamDateTime();
-                  setValues((v) => ({ ...v, date, gio: time }));
-                  // Bấm nút này = quay lại chế độ tự động -> lúc bấm Lưu sẽ
-                  // lấy lại giờ mới nhất một lần nữa thay vì giữ giá trị này.
-                  dateTimeAutoRef.current = true;
-                }}
-                className="shrink-0 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
-                title="Điền ngày + giờ hiện tại (giờ Việt Nam) vào lúc đăng bài"
-              >
-                Lấy giờ hiện tại
-              </button>
-            )}
+          {(f.key === "date" || f.key === "gio") && hasDateField && (
+            <button
+              type="button"
+              onClick={() => {
+                const { date, time } = getCurrentVietnamDateTime();
+                setValues((v) => ({ ...v, date, ...(hasGioField ? { gio: time } : {}) }));
+                // Bấm nút này = quay lại chế độ tự động -> lúc bấm Lưu sẽ
+                // lấy lại giờ mới nhất một lần nữa thay vì giữ giá trị này.
+                dateTimeAutoRef.current = true;
+              }}
+              className="shrink-0 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 hover:bg-emerald-100"
+              title={hasGioField ? "Điền ngày + giờ hiện tại (giờ Việt Nam) vào lúc đăng bài" : "Điền ngày hiện tại (giờ Việt Nam) vào lúc đăng bài"}
+            >
+              Lấy giờ hiện tại
+            </button>
+          )}
         </span>
 
         {f.type === "richtext" ? (
@@ -1033,7 +1041,7 @@ function ItemFormPage({
             value={values[f.key]}
             onChange={(e) => {
               setValues((v) => ({ ...v, [f.key]: e.target.value }));
-              if (f.key === "gio") dateTimeAutoRef.current = false;
+              if (f.key === "date" || f.key === "gio") dateTimeAutoRef.current = false;
             }}
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
           />

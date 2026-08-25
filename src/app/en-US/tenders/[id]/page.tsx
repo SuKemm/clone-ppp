@@ -9,8 +9,8 @@ import { getAllViews } from "@/lib/tender-views-store";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
-// Chuyển ngày admin nhập ("dd/mm/yyyy" hoặc "dd.mm.yyyy") thành mốc thời
-// gian để sắp xếp mới → cũ — dùng cho khối "Video nổi bật" ở sidebar.
+// Đồng bộ với bản tiếng Việt (src/app/dau-thau/[id]/page.tsx) — cùng đọc từ
+// "tenders", chỉ khác lấy các field "_en" (title_en, excerpt_en, content_en).
 function parseAlbumDate(value: string | undefined): number {
   if (!value) return -Infinity;
   const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
@@ -27,25 +27,30 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const item = getCollection("tenders").find((n) => n.id === id);
   if (!item) return {};
 
-  return { title: item.title, description: item.excerpt || undefined };
+  return {
+    title: item.title_en || item.title,
+    description: item.excerpt_en || item.excerpt || undefined,
+  };
 }
 
-export default async function TenderDetailPage({ params }: Params) {
+export default async function TenderDetailPageEn({ params }: Params) {
   const { id } = await params;
   const item = getCollection("tenders").find((n) => n.id === id);
 
   if (!item) notFound();
 
-  const contentHtml = item.content || "";
+  const title = item.title_en || item.title;
+  const excerpt = item.excerpt_en || item.excerpt || "";
+  const contentHtml = item.content_en || item.content || "";
 
-  // Các trường nghiệp vụ đấu thầu — chỉ hiện dòng nào admin có điền, giữ
-  // đúng thứ tự thường thấy trên thông báo mời thầu thật (bên mời thầu,
-  // nguồn vốn, hình thức lựa chọn, thời gian đóng thầu).
+  // Các trường nghiệp vụ đấu thầu — hiện tại data chưa có bản dịch riêng cho
+  // các trường này (bên mời thầu, nguồn vốn...) nên dùng chung giá trị gốc,
+  // chỉ đổi nhãn (label) sang tiếng Anh.
   const infoRows: { label: string; value: string }[] = [
-    { label: "Bên mời thầu", value: item.ben_moi_thau },
-    { label: "Nguồn vốn", value: item.nguon_von },
-    { label: "Hình thức lựa chọn nhà thầu", value: item.hinh_thuc },
-    { label: "Thời gian đóng thầu", value: item.thoi_gian_dong_thau },
+    { label: "Procuring entity", value: item.ben_moi_thau },
+    { label: "Funding source", value: item.nguon_von },
+    { label: "Contractor selection method", value: item.hinh_thuc },
+    { label: "Bid closing time", value: item.thoi_gian_dong_thau },
   ].filter((row) => row.value);
 
   const allViews = getAllViews();
@@ -54,7 +59,7 @@ export default async function TenderDetailPage({ params }: Params) {
     .filter((n) => n.id !== item.id)
     .sort((a, b) => (allViews[b.id] ?? 0) - (allViews[a.id] ?? 0))
     .slice(0, 5)
-    .map((n) => ({ id: n.id, image: n.image, title: n.title, date: n.date }));
+    .map((n) => ({ id: n.id, image: n.image, title: n.title_en || n.title, date: n.date }));
 
   const videoItems = [...getCollection("video-albums")]
     .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
@@ -62,26 +67,27 @@ export default async function TenderDetailPage({ params }: Params) {
     .map((v) => ({ title: v.title, image: v.image || undefined }));
 
   return (
-    <PtscShell title={item.title} description={item.excerpt || ""}>
+    <PtscShell title={title} description={excerpt}>
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="max-w-3xl">
             <div className="flex items-center justify-between">
-              <Link href="/dau-thau" className="text-sm font-semibold text-cyan-700 hover:underline">
-                ← Quay lại danh sách đấu thầu
+              <Link href="/en-US/tenders" className="text-sm font-semibold text-cyan-700 hover:underline">
+                ← Back to tenders
               </Link>
               <ArticleViewCount
                 id={item.id}
                 mode="increment"
                 className="text-sm text-slate-500"
                 endpoint="/api/tenders/view"
+                isEnglish
               />
             </div>
 
             <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
               {item.category}
             </p>
-            <h1 className="mt-3 text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">{item.title}</h1>
+            <h1 className="mt-3 text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">{title}</h1>
             <p className="mt-3 text-sm text-slate-500">{item.date}</p>
 
             {item.image && (
@@ -113,24 +119,24 @@ export default async function TenderDetailPage({ params }: Params) {
                 rel="noopener noreferrer"
                 className="mt-6 inline-flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-100"
               >
-                📄 Tải hồ sơ mời thầu (PDF)
+                📄 Download tender documents (PDF)
               </a>
             )}
 
             <div className="prose prose-slate mt-8 max-w-none">
               {contentHtml ? (
                 <div dangerouslySetInnerHTML={{ __html: contentHtml }} />
-              ) : item.excerpt ? (
-                <p className="text-lg leading-8 text-slate-700">{item.excerpt}</p>
+              ) : excerpt ? (
+                <p className="text-lg leading-8 text-slate-700">{excerpt}</p>
               ) : (
-                <p className="text-slate-500">Thông báo chưa có nội dung chi tiết.</p>
+                <p className="text-slate-500">This notice has no full content yet.</p>
               )}
             </div>
           </div>
 
           <MostViewedSidebar
             items={sidebarItems}
-            detailBasePath="/dau-thau"
+            detailBasePath="/en-US/tenders"
             videoItems={videoItems}
           />
         </div>

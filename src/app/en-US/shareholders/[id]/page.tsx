@@ -46,7 +46,7 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
           className="mx-auto mt-8 h-32 w-auto object-contain"
         />
 
-        <h1 className="mt-8 text-3xl font-bold text-slate-900 sm:text-4xl">
+        <h1 className="mt-8 text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">
           {item.title_en || item.title}
         </h1>
         <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-cyan-700">
