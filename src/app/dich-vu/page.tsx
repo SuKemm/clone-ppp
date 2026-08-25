@@ -29,13 +29,21 @@ function PlayIcon() {
 }
 
 export default function GalleryPage() {
-  const photoAlbums = getCollection("photo-albums").map((a) => ({
-    id: a.id,
-    title: a.title,
-    date: a.date,
-    image: a.image || FALLBACK_IMAGE,
-    images: parseGalleryImages(a.images),
-  }));
+  const photoAlbums = getCollection("photo-albums").map((a) => {
+    const cover = a.image || FALLBACK_IMAGE;
+    const extra = parseGalleryImages(a.images);
+    // Ảnh đại diện luôn hiện CHUNG với các ảnh thêm sau ở mục "Các ảnh
+    // trong album" (không còn bị thay thế/mất khi admin thêm ảnh khác) —
+    // ảnh đại diện đứng đầu, bỏ trùng nếu admin lỡ thêm lại chính ảnh đó.
+    const images = [cover, ...extra].filter((url, idx, arr) => arr.indexOf(url) === idx);
+    return {
+      id: a.id,
+      title: a.title,
+      date: a.date,
+      image: cover,
+      images,
+    };
+  });
   const videoAlbums = getCollection("video-albums").map(
     (v): CmsItem => ({
       ...v,

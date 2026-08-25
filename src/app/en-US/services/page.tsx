@@ -40,13 +40,20 @@ function PlayIcon() {
 }
 
 export default function GalleryPageEn() {
-  const photoAlbums = getCollection("photo-albums").map((a) => ({
-    id: a.id,
-    title: a.title_en || a.title,
-    date: a.date,
-    image: a.image || FALLBACK_IMAGE,
-    images: parseGalleryImages(a.images),
-  }));
+  const photoAlbums = getCollection("photo-albums").map((a) => {
+    const cover = a.image || FALLBACK_IMAGE;
+    const extra = parseGalleryImages(a.images);
+    // Đồng bộ với bản VN (src/app/dich-vu/page.tsx): ảnh đại diện luôn hiện
+    // chung với các ảnh thêm sau, đứng đầu, bỏ trùng nếu lỡ thêm lại.
+    const images = [cover, ...extra].filter((url, idx, arr) => arr.indexOf(url) === idx);
+    return {
+      id: a.id,
+      title: a.title_en || a.title,
+      date: a.date,
+      image: cover,
+      images,
+    };
+  });
   const videoAlbums = getCollection("video-albums").map(
     (v): CmsItem => ({
       ...v,

@@ -370,12 +370,20 @@ export default function Home() {
         </h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestPhotoAlbums.map((tab) => (
-                  <div key={tab.label} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-                    <img src={tab.image} alt={tab.label} className="h-36 w-full object-cover" />
-                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700">
+                  <Link
+                    key={tab.label}
+                    href="/dich-vu#thu-vien-anh"
+                    className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md"
+                  >
+                    <img
+                      src={tab.image}
+                      alt={tab.label}
+                      className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 group-hover:text-cyan-700">
                       {tab.label}
                     </p>
-                  </div>
+                  </Link>
                 ))}
               </div>
               <a
@@ -390,8 +398,9 @@ export default function Home() {
               <h2 className="text-center text-2xl font-semibold text-slate-900">Video tư liệu</h2>
               <div className="mt-6 grid grid-cols-2 gap-4">
                 {latestVideos.map((video) => (
-                  <div
+                  <Link
                     key={video.title}
+                    href="/dich-vu#thu-vien-video"
                     className="group relative flex h-32 items-end overflow-hidden rounded-xl border border-slate-200 bg-slate-800"
                   >
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-slate-900/10" />
@@ -401,7 +410,7 @@ export default function Home() {
                     <p className="relative z-10 p-3 text-xs font-semibold leading-5 text-white">
                       {video.title}
                     </p>
-                  </div>
+                  </Link>
                 ))}
               </div>
               <a

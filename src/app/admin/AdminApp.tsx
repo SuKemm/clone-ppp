@@ -994,17 +994,25 @@ function ItemFormPage({
                 ))}
               </div>
             )}
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={(e) => {
-                const files = e.target.files;
-                if (files && files.length > 0) handleGalleryUpload(f.key, files);
-                e.target.value = "";
-              }}
-              className="block w-full text-sm text-slate-600"
-            />
+            <label className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-600 transition hover:border-cyan-400 hover:bg-cyan-50">
+              <span className="truncate">
+                {parseGallery(values[f.key]).length > 0 ? "Thêm ảnh vào album" : "Chọn ảnh cho album"}
+              </span>
+              <span className="shrink-0 rounded-md bg-cyan-600 px-2.5 py-1 text-xs font-semibold text-white">
+                Tải lên
+              </span>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={(e) => {
+                  const files = e.target.files;
+                  if (files && files.length > 0) handleGalleryUpload(f.key, files);
+                  e.target.value = "";
+                }}
+                className="hidden"
+              />
+            </label>
             {uploadingKey === f.key && (
               <p className="text-xs text-slate-400">Đang tải ảnh lên...</p>
             )}
