@@ -45,7 +45,7 @@ export default async function NewsDetailPageEn({ params }: Params) {
         </div>
 
         <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{category}</p>
-        <h1 className="mt-3 text-2xl font-bold leading-tight text-slate-900 sm:text-3xl lg:text-4xl">
+        <h1 className="mt-3 text-xl font-bold leading-tight text-slate-900 sm:text-2xl lg:text-3xl">
           {title}
         </h1>
         <p className="mt-3 flex items-center gap-1.5 text-sm text-slate-500">
