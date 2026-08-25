@@ -260,7 +260,7 @@ export default async function NewsPageEn({
                   </Link>{" "}
 
                   <span className="italic text-slate-500">
-                    ({formatNewsDateTime(featured.date, featured.gio)})
+                    ({formatNewsDateTime(featured.date, featured.gio, "en")})
                   </span>
                 </p>
 
@@ -328,7 +328,7 @@ export default async function NewsPageEn({
                       </Link>{" "}
 
                       <span className="italic text-slate-500">
-                        ({formatNewsDateTime(item.date, item.gio)})
+                        ({formatNewsDateTime(item.date, item.gio, "en")})
                       </span>
                     </p>
 
@@ -465,7 +465,7 @@ export default async function NewsPageEn({
                     </p>
 
                     <p className="mt-1 text-xs text-slate-400">
-                      {formatNewsDateTime(item.date, item.gio)}
+                      {formatNewsDateTime(item.date, item.gio, "en")}
                     </p>
                   </div>
                 </Link>

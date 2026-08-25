@@ -222,10 +222,10 @@ export function PtscShell({
     </p>
 
     {/* VI / EN bên phải */}
-    <div className="flex shrink-0 items-center justify-self-end overflow-hidden rounded-sm text-xs font-semibold">
+    <div className="flex shrink-0 items-center justify-self-end overflow-hidden rounded-sm text-[10px] font-semibold sm:text-[11px]">
       <Link
         href={getLanguageSwitchHref(pathname, false)}
-        className={`px-2.5 py-1 transition ${
+        className={`px-2 py-0.5 transition sm:px-2.5 sm:py-1 ${
           !isEnglish
             ? "bg-[#FF6B00] text-white"
             : "bg-[#064B82] text-slate-200 hover:bg-[#0868AD] hover:text-white"
@@ -236,7 +236,7 @@ export function PtscShell({
 
       <Link
         href={getLanguageSwitchHref(pathname, true)}
-        className={`px-2.5 py-1 transition ${
+        className={`px-2 py-0.5 transition sm:px-2.5 sm:py-1 ${
           isEnglish
             ? "bg-[#FF6B00] text-white"
             : "bg-[#064B82] text-slate-200 hover:bg-[#0868AD] hover:text-white"

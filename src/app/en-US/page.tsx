@@ -195,7 +195,7 @@ export default function EnglishHomePage() {
                   {item.title_en || item.title}
                 </h3>
                 <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
-                  <span>{formatNewsDateTime(item.date, item.gio)}</span>
+                  <span>{formatNewsDateTime(item.date, item.gio, "en")}</span>
                   <span className="text-cyan-700 transition group-hover:translate-x-1">→</span>
                 </div>
               </div>

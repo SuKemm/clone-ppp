@@ -48,7 +48,20 @@ export default async function NewsDetailPageEn({ params }: Params) {
         <h1 className="mt-3 text-2xl font-bold leading-tight text-slate-900 sm:text-3xl lg:text-4xl">
           {title}
         </h1>
-        <p className="mt-3 text-sm text-slate-500">{formatNewsDateTime(item.date, item.gio)}</p>
+        <p className="mt-3 flex items-center gap-1.5 text-sm text-slate-500">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            className="h-4 w-4 shrink-0"
+          >
+            <circle cx="10" cy="10" r="7.25" />
+            <path d="M10 6v4l2.6 1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          {formatNewsDateTime(item.date, item.gio, "en")}
+        </p>
 
         {item.image && (
           // eslint-disable-next-line @next/next/no-img-element
