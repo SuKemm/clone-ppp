@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Newspaper, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
@@ -11,6 +12,13 @@ import { formatNewsDateTime } from "@/lib/format-date";
 // tiếng Việt dù URL trang là /en-US/news. Viết lại dùng field "_en"
 // (title_en, excerpt_en, category_en) và link đúng sang /en-US/news/{id}.
 export const dynamic = "force-dynamic"; // always read the latest admin data, no static caching
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc — nếu không, tiêu đề
+// tab trình duyệt + mô tả SEO của trang này vẫn hiện tiếng Việt.
+export const metadata: Metadata = {
+  title: "News & Events",
+  description: "Latest news and events from PV Power DHC / Dakdrinh Hydropower.",
+};
 
 const PAGE_SIZE = 9; // articles per page (page 1 = 1 featured + 8 grid articles)
 const ALL_TAB = "All";
