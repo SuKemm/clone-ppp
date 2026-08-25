@@ -36,7 +36,7 @@ export default function CareersPageEn() {
               const description = job.description_en || job.description;
               return (
                 <div key={job.id} className="rounded-xl border border-slate-200 p-5">
-                  <p className="text-lg font-semibold text-slate-900">{title}</p>
+                  <p className="break-words text-lg font-semibold text-slate-900">{title}</p>
                   <p className="mt-1 text-sm text-slate-500">
                     {[location, job.deadline && `Deadline: ${job.deadline}`].filter(Boolean).join(" • ")}
                   </p>

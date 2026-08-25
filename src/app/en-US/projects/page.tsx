@@ -32,7 +32,7 @@ export default function ProjectsPageEn() {
                   <img src={project.image} alt="" className="mb-6 h-48 w-full rounded-2xl object-cover" />
                 )}
                 <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{category}</p>
-                <h2 className="mt-4 text-2xl font-semibold text-slate-900">{title}</h2>
+                <h2 className="mt-4 break-words text-2xl font-semibold text-slate-900">{title}</h2>
                 <p className="mt-4 text-sm leading-7 text-slate-600">{description}</p>
               </article>
             );

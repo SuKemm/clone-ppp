@@ -111,7 +111,7 @@ export default function GalleryPage() {
                     </span>
                   </div>
                 </div>
-                <h3 className="mt-3 text-[15px] font-semibold leading-snug text-slate-800 transition group-hover:text-cyan-700">
+                <h3 className="mt-3 break-words text-[15px] font-semibold leading-snug text-slate-800 transition group-hover:text-cyan-700">
                   {video.title}
                 </h3>
                 <p className="mt-1 text-xs text-slate-400">{video.date}</p>

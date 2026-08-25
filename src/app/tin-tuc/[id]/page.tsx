@@ -65,7 +65,7 @@ export default async function NewsDetailPage({ params }: Params) {
     <PtscShell title={item.title} description={item.excerpt || ""}>
       <section className="mx-auto max-w-7xl px-6 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
-          <div className="max-w-3xl">
+          <div className="min-w-0 max-w-3xl">
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <Link href="/tin-tuc" className="text-sm font-semibold text-cyan-700 hover:underline">
                 ← Quay lại danh sách tin tức
@@ -73,13 +73,13 @@ export default async function NewsDetailPage({ params }: Params) {
               <ArticleViewCount id={item.id} mode="increment" className="shrink-0 text-sm text-slate-500" />
             </div>
 
-            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
+            <p className="mt-6 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
               {item.category}
             </p>
-            <h1 className="mt-3 text-xl font-bold leading-tight text-slate-900 sm:text-2xl lg:text-3xl">
+            <h1 className="mt-3 break-words text-xl font-bold leading-tight text-slate-900 sm:text-2xl lg:text-3xl">
               {item.title}
             </h1>
-            <p className="mt-3 flex items-center gap-1.5 text-sm text-slate-500">
+            <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
               <svg
                 aria-hidden="true"
                 viewBox="0 0 20 20"

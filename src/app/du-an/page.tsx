@@ -20,7 +20,7 @@ export default function ProjectsPage() {
                 <img src={project.image} alt="" className="mb-6 h-48 w-full rounded-2xl object-cover" />
               )}
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">{project.category}</p>
-              <h2 className="mt-4 text-2xl font-semibold text-slate-900">{project.title}</h2>
+              <h2 className="mt-4 break-words text-2xl font-semibold text-slate-900">{project.title}</h2>
               <p className="mt-4 text-lg leading-8 text-slate-600">{project.description}</p>
             </article>
           ))}

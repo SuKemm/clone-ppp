@@ -78,10 +78,10 @@ export default async function TenderDetailPage({ params }: Params) {
               />
             </div>
 
-            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
+            <p className="mt-6 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
               {item.category}
             </p>
-            <h1 className="mt-3 text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">{item.title}</h1>
+            <h1 className="mt-3 break-words text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">{item.title}</h1>
             <p className="mt-3 text-sm text-slate-500">{item.date}</p>
 
             {item.image && (

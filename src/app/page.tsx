@@ -205,7 +205,7 @@ export default function Home() {
           <img src={item.image} alt="" className="h-36 w-full object-cover" />
         )}
         <div className="flex flex-1 flex-col p-5">
-          <h3 className="text-base font-semibold leading-6 text-slate-900">
+          <h3 className="break-words text-base font-semibold leading-6 text-slate-900">
             {item.title}
           </h3>
 
@@ -248,7 +248,7 @@ export default function Home() {
                     {notice.loai}
                   </span>
                 )}
-                <p className="mt-1 text-sm font-semibold leading-5 text-slate-900">
+                <p className="mt-1 break-words text-sm font-semibold leading-5 text-slate-900">
                   {notice.tieu_de}
                 </p>
               </div>
@@ -379,7 +379,7 @@ export default function Home() {
                       alt={tab.label}
                       className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
                     />
-                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 group-hover:text-cyan-700">
+                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words group-hover:text-cyan-700">
                       {tab.label}
                     </p>
                   </Link>
@@ -406,7 +406,7 @@ export default function Home() {
                     <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
                       <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
                     </span>
-                    <p className="relative z-10 p-3 text-xs font-semibold leading-5 text-white">
+                    <p className="relative z-10 p-3 text-xs font-semibold leading-5 text-white break-words">
                       {video.title}
                     </p>
                   </Link>

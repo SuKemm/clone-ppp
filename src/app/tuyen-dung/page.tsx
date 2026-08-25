@@ -21,7 +21,7 @@ export default function CareersPage() {
           <div className="mt-8 space-y-4">
             {jobs.map((job) => (
               <div key={job.id} className="rounded-xl border border-slate-200 p-5">
-                <p className="text-lg font-semibold text-slate-900">{job.title}</p>
+                <p className="break-words text-lg font-semibold text-slate-900">{job.title}</p>
                 <p className="mt-1 text-sm text-slate-500">
                   {[job.location, job.deadline && `Hạn nộp: ${job.deadline}`].filter(Boolean).join(" • ")}
                 </p>

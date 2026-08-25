@@ -195,7 +195,7 @@ export default function EnglishHomePage() {
                 <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
                   {item.category_en || item.category}
                 </p>
-                <h3 className="mt-3 text-lg font-semibold leading-7 text-slate-900">
+                <h3 className="mt-3 break-words text-lg font-semibold leading-7 text-slate-900">
                   {item.title_en || item.title}
                 </h3>
                 <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
@@ -246,7 +246,7 @@ export default function EnglishHomePage() {
                           {noticeTypeEn}
                         </span>
                       )}
-                      <p className="mt-1 text-sm font-semibold leading-5 text-slate-900">
+                      <p className="mt-1 break-words text-sm font-semibold leading-5 text-slate-900">
                         {notice.tieu_de_en || notice.tieu_de}
                       </p>
                     </div>
@@ -371,7 +371,7 @@ export default function EnglishHomePage() {
                       alt={tab.label}
                       className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
                     />
-                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 group-hover:text-cyan-700">
+                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words group-hover:text-cyan-700">
                       {tab.label}
                     </p>
                   </Link>
@@ -398,7 +398,7 @@ export default function EnglishHomePage() {
                     <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
                       <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
                     </span>
-                    <p className="relative z-10 p-3 text-xs font-semibold leading-5 text-white">
+                    <p className="relative z-10 p-3 text-xs font-semibold leading-5 text-white break-words">
                       {video.title}
                     </p>
                   </Link>

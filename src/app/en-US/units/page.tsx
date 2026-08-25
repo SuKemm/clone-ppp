@@ -28,7 +28,7 @@ export default function UnitsPageEn() {
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
           <article className="rounded-[1.5rem] border border-slate-200 bg-white p-8 shadow-sm">
-            <h2 className="text-3xl font-semibold text-slate-900">
+            <h2 className="break-words text-3xl font-semibold text-slate-900">
               {content?.intro_title_en || content?.intro_title || "Member Units"}
             </h2>
             {(content?.intro_content_en || content?.intro_content) && (
@@ -41,7 +41,7 @@ export default function UnitsPageEn() {
             )}
           </article>
           <article className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
-            <h3 className="text-2xl font-semibold text-slate-900">
+            <h3 className="break-words text-2xl font-semibold text-slate-900">
               {content?.list_title_en || content?.list_title || "Units / Departments"}
             </h3>
             <ul className="mt-6 space-y-3 text-slate-600">

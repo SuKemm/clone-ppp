@@ -137,7 +137,7 @@ const activeTab =
                       <ImagePlaceholder className="h-full w-full" />
                     )}
                   </div>
-                  <h2 className="mt-5 text-2xl font-bold leading-snug text-slate-900 transition group-hover:text-cyan-700">
+                  <h2 className="mt-5 break-words text-2xl font-bold leading-snug text-slate-900 transition group-hover:text-cyan-700">
                     {featured.title}
                   </h2>
                 </Link>
@@ -177,7 +177,7 @@ const activeTab =
                           <ImagePlaceholder className="h-full w-full" />
                         )}
                       </div>
-                      <h3 className="mt-4 text-lg font-semibold leading-snug text-slate-900 transition group-hover:text-cyan-700">
+                      <h3 className="mt-4 break-words text-lg font-semibold leading-snug text-slate-900 transition group-hover:text-cyan-700">
                         {item.title}
                       </h3>
                     </Link>
