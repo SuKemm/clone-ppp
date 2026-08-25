@@ -6,8 +6,13 @@ import { ADMIN_SESSION_COOKIE, verifySessionToken } from "@/lib/cms/auth";
 // (xem src/app/layout.tsx) để set đúng <html lang="vi"|"en">. Logic kiểm
 // tra đăng nhập admin bên dưới vẫn CHỈ áp dụng cho /admin, /api/admin như
 // cũ — các route khác chỉ đi qua để được gắn thêm header pathname.
+// Loại trừ thêm các thư mục ảnh/video/upload tĩnh trong /public và các
+// đuôi file tĩnh thông dụng, để không chạy middleware một cách thừa thãi
+// trên hàng trăm request ảnh/video mỗi khi tải trang.
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|images/|videos/|uploads/|seo/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map|mp4|pdf)$).*)",
+  ],
 };
 
 export const runtime = "nodejs";
