@@ -33,7 +33,7 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
   return (
     <PtscShell title={item.title_en || item.title} description={item.excerpt_en || item.excerpt || ""}>
       <section className="mx-auto max-w-3xl px-6 py-16 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
           <Link href="/en-US/shareholders" className="text-sm font-semibold text-cyan-700 hover:underline">
             ← Back to Shareholder Relations
           </Link>

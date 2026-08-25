@@ -72,7 +72,7 @@ export default async function TenderDetailPageEn({ params }: Params) {
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="max-w-3xl">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <Link href="/en-US/tenders" className="text-sm font-semibold text-cyan-700 hover:underline">
                 ← Back to tenders
               </Link>
@@ -152,6 +152,10 @@ export default async function TenderDetailPageEn({ params }: Params) {
             items={sidebarItems}
             detailBasePath="/en-US/tenders"
             videoItems={videoItems}
+            sidebarTitle="Most read"
+            videoSectionTitle="Featured videos"
+            videoLinkHref="/en-US/services#videos"
+            emptyLabel="No tenders yet."
           />
         </div>
       </section>

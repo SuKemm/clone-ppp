@@ -32,6 +32,7 @@ export function MostViewedSidebar({
   videoSectionTitle = "Video nổi bật",
   videoItems = [],
   videoLinkHref = "/dich-vu#thu-vien-video",
+  emptyLabel = "Chưa có bài viết nào.",
   className = "",
 }: {
   sidebarTitle?: string;
@@ -40,6 +41,7 @@ export function MostViewedSidebar({
   videoSectionTitle?: string;
   videoItems?: SidebarVideoItem[];
   videoLinkHref?: string;
+  emptyLabel?: string;
   className?: string;
 }) {
   return (
@@ -49,7 +51,7 @@ export function MostViewedSidebar({
       <h3 className="text-sm font-bold uppercase tracking-wide text-slate-900">{sidebarTitle}</h3>
 
       {items.length === 0 ? (
-        <p className="mt-4 text-sm text-slate-500">Chưa có bài viết nào.</p>
+        <p className="mt-4 text-sm text-slate-500">{emptyLabel}</p>
       ) : (
         <ul className="mt-5 space-y-4">
           {items.map((item) => (

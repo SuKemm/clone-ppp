@@ -5,12 +5,18 @@ import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { formatNewsDateTime } from "@/lib/format-date";
 
-export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
+// Trang DANH SÁCH tin tức, bản tiếng Anh — trước đây file này bị dán nhầm
+// y nguyên nội dung của bản tiếng Việt (src/app/tin-tuc/page.tsx): toàn bộ
+// chữ hiển thị, tên chuyên mục, và cả link bài viết (/tin-tuc/{id}) đều là
+// tiếng Việt dù URL trang là /en-US/news. Viết lại dùng field "_en"
+// (title_en, excerpt_en, category_en) và link đúng sang /en-US/news/{id}.
+export const dynamic = "force-dynamic"; // always read the latest admin data, no static caching
 
-const PAGE_SIZE = 9; // số bài / trang (trang 1 gồm 1 bài nổi bật + 8 bài lưới)
+const PAGE_SIZE = 9; // articles per page (page 1 = 1 featured + 8 grid articles)
+const ALL_TAB = "All";
 
-// Ảnh placeholder khi bài viết chưa có ảnh minh hoạ — dùng gradient + icon
-// thay vì để trống, giữ layout đều và đẹp hơn.
+// Placeholder shown when an article has no image yet — gradient + icon
+// instead of leaving it blank, keeps the layout even and tidy.
 function ImagePlaceholder({ className = "" }: { className?: string }) {
   return (
     <div
@@ -21,8 +27,8 @@ function ImagePlaceholder({ className = "" }: { className?: string }) {
   );
 }
 
-// Sinh danh sách số trang kiểu "1 2 3 ... 10", ẩn bớt số ở giữa khi có
-// nhiều trang để thanh phân trang không bị quá dài.
+// Builds the "1 2 3 ... 10" page number list, collapsing the middle
+// numbers once there are many pages so the pager doesn't get too long.
 function getPageNumbers(current: number, total: number): (number | "...")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const pages = new Set<number>([1, 2, total - 1, total, current - 1, current, current + 1]);
@@ -39,40 +45,38 @@ function getPageNumbers(current: number, total: number): (number | "...")[] {
 
 function buildHref(category: string, page: number) {
   const params = new URLSearchParams();
-  if (category !== "Tất cả") params.set("category", category);
+  if (category !== ALL_TAB) params.set("category", category);
   if (page > 1) params.set("page", String(page));
   const qs = params.toString();
-  return qs ? `/tin-tuc?${qs}` : "/tin-tuc";
+  return qs ? `/en-US/news?${qs}` : "/en-US/news";
 }
 
-export default async function NewsPage({
+export default async function NewsPageEn({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string; page?: string }>;
 }) {
   const { category, page: pageParam } = await searchParams;
-  const news = getCollection("news");
+  // Cùng đọc từ collection "news" như bản tiếng Việt — chỉ khác cách hiển
+  // thị: ưu tiên field "_en", nếu admin chưa dịch thì tạm hiện bản tiếng
+  // Việt để không bị trống nội dung.
+  const rawNews = getCollection("news");
+  const news = rawNews.map((item) => ({
+    ...item,
+    title: item.title_en || item.title,
+    excerpt: item.excerpt_en || item.excerpt || "",
+    category: item.category_en || item.category,
+  })) as typeof rawNews;
 
-  // Danh sách chuyên mục (tab) — lấy từ chính dữ liệu bài viết, giữ đúng thứ
-  // tự xuất hiện lần đầu, không cần khai báo cứng ở đâu khác.
-  // Danh mục cố định (hiển thị luôn dù chưa có bài trong danh mục đó), theo
-  // đúng thứ tự chuẩn của trang PV Power DHC gốc. Nếu admin thêm chuyên mục
-  // khác ngoài danh sách này, nó sẽ được nối thêm vào cuối tự động.
-  // Danh sách chuyên mục lấy trực tiếp từ dữ liệu bài viết do Admin tạo
-const categories = Array.from(
-  new Set(news.map((item) => item.category).filter(Boolean))
-);
+  // Category tabs — taken straight from the article data, in first-seen order.
+  const categories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
+  const tabs = [ALL_TAB, ...categories];
 
-const tabs = categories;
+  const activeTab = category && categories.includes(category) ? category : ALL_TAB;
 
-const activeTab =
-  category && categories.includes(category)
-    ? category
-    : "Tất cả";
+  const filtered = activeTab === ALL_TAB ? news : news.filter((item) => item.category === activeTab);
 
-  const filtered = activeTab === "Tất cả" ? news : news.filter((item) => item.category === activeTab);
-
-  // Phân trang
+  // Pagination
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const requestedPage = Number(pageParam) || 1;
   const page = Math.min(Math.max(1, requestedPage), totalPages);
@@ -81,8 +85,8 @@ const activeTab =
   const featured = page === 1 ? pageItems[0] : undefined;
   const rest = page === 1 ? pageItems.slice(1) : pageItems;
 
-  // Sidebar "Tin nổi bật" — 5 bài mới nhất trong toàn bộ danh sách (không lọc
-  // theo tab/trang) để luôn có nội dung điều hướng sang các bài khác.
+  // "Most read" sidebar — 5 most recent articles across the whole list
+  // (not filtered by tab/page), so there's always somewhere else to go.
   const sidebarItems = news.slice(0, 5);
 
   const pageNumbers = getPageNumbers(page, totalPages);
@@ -91,10 +95,10 @@ const activeTab =
     <PtscShell>
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
         <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
-          Tin tức &ndash; Sự kiện
+          News &amp; Events
         </h1>
 
-        {/* Tabs chuyên mục */}
+        {/* Category tabs */}
         <div className="mt-6 flex gap-8 overflow-x-auto border-b border-slate-200">
           {tabs.map((tab) => {
             const isActive = tab === activeTab;
@@ -116,15 +120,15 @@ const activeTab =
         </div>
 
         {filtered.length === 0 && (
-          <p className="mt-10 text-center text-slate-500">Chưa có tin tức nào trong chuyên mục này.</p>
+          <p className="mt-10 text-center text-slate-500">No articles in this category yet.</p>
         )}
 
         <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_320px]">
-          {/* Cột nội dung chính */}
+          {/* Main column */}
           <div>
             {featured && (
               <article className="group">
-                <Link href={`/tin-tuc/${featured.id}`}>
+                <Link href={`/en-US/news/${featured.id}`}>
                   <div className="aspect-[16/9] w-full overflow-hidden rounded-2xl">
                     {featured.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -148,23 +152,25 @@ const activeTab =
                   >
                     {featured.category}
                   </Link>{" "}
-                  <span className="italic text-slate-500">({formatNewsDateTime(featured.date, featured.gio)})</span>
+                  <span className="italic text-slate-500">
+                    ({formatNewsDateTime(featured.date, featured.gio, "en")})
+                  </span>
                 </p>
                 {featured.excerpt && <p className="mt-3 text-slate-600">{featured.excerpt}</p>}
                 <div className="mt-3">
-                  <ArticleViewCount id={featured.id} mode="display" className="text-xs text-slate-400" />
+                  <ArticleViewCount id={featured.id} mode="display" className="text-xs text-slate-400" isEnglish />
                 </div>
               </article>
             )}
 
-            {/* Lưới các bài còn lại */}
+            {/* Remaining articles grid */}
             {rest.length > 0 && (
               <div
                 className={`grid gap-x-8 gap-y-10 sm:grid-cols-2 ${featured ? "mt-10" : ""}`}
               >
                 {rest.map((item) => (
                   <article key={item.id} className="group">
-                    <Link href={`/tin-tuc/${item.id}`}>
+                    <Link href={`/en-US/news/${item.id}`}>
                       <div className="aspect-[16/10] w-full overflow-hidden rounded-2xl">
                         {item.image ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -188,7 +194,9 @@ const activeTab =
                       >
                         {item.category}
                       </Link>{" "}
-                      <span className="italic text-slate-500">({formatNewsDateTime(item.date, item.gio)})</span>
+                      <span className="italic text-slate-500">
+                        ({formatNewsDateTime(item.date, item.gio, "en")})
+                      </span>
                     </p>
                     {item.excerpt && (
                       <p className="mt-2 line-clamp-2 text-sm text-slate-600">{item.excerpt}</p>
@@ -198,10 +206,10 @@ const activeTab =
               </div>
             )}
 
-            {/* Phân trang */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <nav
-                aria-label="Phân trang tin tức"
+                aria-label="News pagination"
                 className="mt-14 flex flex-wrap items-center justify-center gap-2"
               >
                 <Link
@@ -214,7 +222,7 @@ const activeTab =
                   }`}
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  <span className="sr-only">Trang trước</span>
+                  <span className="sr-only">Previous page</span>
                 </Link>
 
                 {pageNumbers.map((p, i) =>
@@ -251,7 +259,7 @@ const activeTab =
                   }`}
                 >
                   <ChevronRight className="h-4 w-4" />
-                  <span className="sr-only">Trang sau</span>
+                  <span className="sr-only">Next page</span>
                 </Link>
               </nav>
             )}
@@ -260,14 +268,14 @@ const activeTab =
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <h2 className="border-b border-slate-200 pb-3 text-base font-bold uppercase tracking-wide text-slate-900">
-              Xem nhiều nhất
+              Most read
             </h2>
             <div className="mt-5 space-y-5">
               {sidebarItems.length === 0 && (
-                <p className="text-sm text-slate-500">Chưa có bài viết nào.</p>
+                <p className="text-sm text-slate-500">No articles yet.</p>
               )}
               {sidebarItems.map((item) => (
-                <Link key={item.id} href={`/tin-tuc/${item.id}`} className="group flex gap-3">
+                <Link key={item.id} href={`/en-US/news/${item.id}`} className="group flex gap-3">
                   <div className="h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg">
                     {item.image ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -284,17 +292,19 @@ const activeTab =
                     <p className="line-clamp-3 text-sm font-semibold leading-snug text-slate-800 transition group-hover:text-cyan-700">
                       {item.title}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{formatNewsDateTime(item.date, item.gio)}</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {formatNewsDateTime(item.date, item.gio, "en")}
+                    </p>
                   </div>
                 </Link>
               ))}
             </div>
 
             <Link
-              href="/tin-tuc"
+              href="/en-US/news"
               className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-700 hover:underline"
             >
-              Xem tất cả tin tức
+              View all news
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </aside>

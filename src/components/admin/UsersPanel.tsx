@@ -217,7 +217,7 @@ export function UsersPanel() {
 
   return (
     <div>
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold text-slate-900">Người dùng quản trị</h2>
           {users && <p className="text-sm text-slate-500">{users.length} tài khoản</p>}
@@ -282,14 +282,14 @@ export function UsersPanel() {
         {users?.map((u, idx) => (
           <div
             key={u.id}
-            className={`flex items-center gap-3 px-5 py-4 ${
+            className={`flex flex-wrap items-center gap-3 px-4 py-4 sm:px-5 ${
               idx !== users.length - 1 ? "border-b border-slate-100" : ""
             }`}
           >
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cyan-50">
               <UserRound className="h-4 w-4 text-cyan-700" />
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 basis-40">
               <div className="flex items-center gap-2">
                 <p className="truncate font-medium text-slate-900">{u.username}</p>
                 <span

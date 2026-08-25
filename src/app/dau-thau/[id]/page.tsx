@@ -67,7 +67,7 @@ export default async function TenderDetailPage({ params }: Params) {
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="max-w-3xl">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <Link href="/dau-thau" className="text-sm font-semibold text-cyan-700 hover:underline">
                 ← Quay lại danh sách đấu thầu
               </Link>

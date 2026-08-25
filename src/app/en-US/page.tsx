@@ -377,12 +377,12 @@ export default function EnglishHomePage() {
                   </Link>
                 ))}
               </div>
-              <a
+              <Link
                 href="/en-US/services#photos"
                 className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
               >
                 View all
-              </a>
+              </Link>
             </div>
 
             <div>
@@ -416,12 +416,12 @@ export default function EnglishHomePage() {
                   </Link>
                 ))}
               </div>
-              <a
+              <Link
                 href="/en-US/services#videos"
                 className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
               >
                 View all
-              </a>
+              </Link>
             </div>
           </div>
         </div>

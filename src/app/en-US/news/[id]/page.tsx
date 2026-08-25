@@ -146,6 +146,10 @@ export default async function NewsDetailPageEn({ params }: Params) {
             items={sidebarItems}
             detailBasePath="/en-US/news"
             videoItems={videoItems}
+            sidebarTitle="Most read"
+            videoSectionTitle="Featured videos"
+            videoLinkHref="/en-US/services#videos"
+            emptyLabel="No articles yet."
           />
         </div>
       </section>
