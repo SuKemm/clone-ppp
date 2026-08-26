@@ -171,6 +171,16 @@
     max-width: 100%;
   }
 
+  /* Ảnh chèn bên trong nội dung bài viết (Đấu thầu, Cổ đông, Tin tức, Giới
+     thiệu, Đơn vị...) do admin soạn qua TinyMCE ở /admin — luôn ép chiều
+     cao tự tính theo đúng tỉ lệ ảnh gốc. Phòng trường hợp admin lỡ kéo tay
+     chỉnh cả 2 chiều (rộng/cao) không đúng tỉ lệ trong lúc soạn bài, khiến
+     ảnh hiển thị bị kéo dãn/méo/"vỡ" khi xem trên web thật. */
+  .prose img {
+    height: auto !important;
+    max-width: 100% !important;
+  }
+
   ::selection {
     background: rgba(6, 182, 212, 0.25);
     color: #0f172a;
