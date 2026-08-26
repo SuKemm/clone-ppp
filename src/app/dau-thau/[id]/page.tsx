@@ -10,6 +10,11 @@ import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
+// Khi thông báo mời thầu chưa có ảnh riêng, dùng logo công ty làm ảnh banner
+// mặc định — đồng bộ với trang tin tức (banner full-width) và trang cổ đông
+// (logo công ty khi không có ảnh).
+const LOGO = "/images/ptsc/logo-ptsc.png";
+
 // Chuyển ngày admin nhập ("dd/mm/yyyy" hoặc "dd.mm.yyyy") thành mốc thời
 // gian để sắp xếp mới → cũ — dùng cho khối "Video nổi bật" ở sidebar.
 function parseAlbumDate(value: string | undefined): number {
@@ -98,14 +103,10 @@ export default async function TenderDetailPage({ params }: Params) {
               {formatNewsDateTime(item.date)}
             </p>
 
-            {item.image && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.image}
-                alt=""
-                className="mt-8 h-72 w-full rounded-2xl object-cover sm:h-96"
-              />
-            )}
+            <div className="mt-8 flex h-72 w-full items-center justify-center rounded-2xl bg-white sm:h-96">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={LOGO} alt={item.title} className="h-full w-full object-contain p-6" />
+            </div>
 
             {infoRows.length > 0 && (
               <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50/70 p-6">

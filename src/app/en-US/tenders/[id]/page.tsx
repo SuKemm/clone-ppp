@@ -12,6 +12,9 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 
 // Đồng bộ với bản tiếng Việt (src/app/dau-thau/[id]/page.tsx) — cùng đọc từ
 // "tenders", chỉ khác lấy các field "_en" (title_en, excerpt_en, content_en).
+// Khi thông báo chưa có ảnh riêng, dùng logo công ty làm ảnh banner mặc định.
+const LOGO = "/images/ptsc/logo-ptsc.png";
+
 function parseAlbumDate(value: string | undefined): number {
   if (!value) return -Infinity;
   const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
@@ -104,14 +107,10 @@ export default async function TenderDetailPageEn({ params }: Params) {
               {formatNewsDateTime(item.date, undefined, "en")}
             </p>
 
-            {item.image && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.image}
-                alt=""
-                className="mt-8 h-72 w-full rounded-2xl object-cover sm:h-96"
-              />
-            )}
+            <div className="mt-8 flex h-72 w-full items-center justify-center rounded-2xl bg-white sm:h-96">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={LOGO} alt={title} className="h-full w-full object-contain p-6" />
+            </div>
 
             {infoRows.length > 0 && (
               <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50/70 p-6">

@@ -74,13 +74,6 @@ export default async function ShareholderRelationDetailPage({ params }: Params) 
               <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" />
             </div>
 
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={item.image || LOGO}
-              alt={item.title}
-              className="mx-auto mt-8 h-32 w-auto object-contain"
-            />
-
             <h1 className="mt-8 break-words text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">
               {item.title}
             </h1>
@@ -101,6 +94,11 @@ export default async function ShareholderRelationDetailPage({ params }: Params) 
               </svg>
               {formatNewsDateTime(item.date) || "cập nhật mới nhất"}
             </p>
+
+            <div className="mt-8 flex h-72 w-full items-center justify-center rounded-2xl bg-white sm:h-96">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={LOGO} alt={item.title} className="h-full w-full object-contain p-6" />
+            </div>
 
             {item.attachment && (
               <a

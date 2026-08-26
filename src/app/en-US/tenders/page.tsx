@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
@@ -11,6 +11,11 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 // Đồng bộ với bản tiếng Việt (src/app/dau-thau/page.tsx) — cùng đọc từ
 // "tenders", chỉ khác lấy các field "_en" (title_en, excerpt_en) và các
 // nhãn/đường link đổi sang bản EN (/en-US/tenders).
+//
+// Ảnh mặc định khi thông báo chưa có ảnh riêng: dùng logo công ty, đồng bộ
+// với cách trang chi tiết /en-US/tenders/[id] đang hiển thị (xem
+// src/app/en-US/tenders/[id]/page.tsx), thay vì icon FileText trên nền gradient.
+const LOGO = "/images/ptsc/logo-ptsc.png";
 
 export const metadata: Metadata = {
   title: "Tenders",
@@ -21,10 +26,9 @@ const PAGE_SIZE = 9;
 
 function ImagePlaceholder({ className = "" }: { className?: string }) {
   return (
-    <div
-      className={`flex items-center justify-center bg-gradient-to-br from-cyan-600 via-sky-700 to-slate-900 ${className}`}
-    >
-      <FileText className="h-8 w-8 text-white/70" strokeWidth={1.25} />
+    <div className={`flex items-center justify-center bg-white ${className}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={LOGO} alt="" className="h-full w-full object-contain p-4" />
     </div>
   );
 }
