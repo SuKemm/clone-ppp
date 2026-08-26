@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
+import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
@@ -9,21 +10,12 @@ import { formatNewsDateTime } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin (sản lượng, mực nước, dòng chữ chạy)
 
-const heroSlides = [
+// Ảnh dự phòng — chỉ dùng khi admin lỡ xoá hết ảnh trong "Banner trang chủ"
+// (Admin -> Trang chủ), để trang không bao giờ hiện banner trống trơn.
+const FALLBACK_HERO_SLIDES = [
   {
     title: "Công ty Cổ phần Thủy điện Đakđrinh — Chất lượng - An toàn - Hiệu quả - Phát triển",
-    // Ảnh panorama toàn cảnh nhà máy — đặt file tại
-    // public/images/ptsc/banner-panorama.jpg (đã đổi tên từ
-    // "Untitled_Panorama-00.jpg" cho gọn, không dấu/khoảng trắng).
     image: "/images/ptsc/banner-panorama.jpg",
-  },
-  {
-    title: "Công ty Cổ phần Thủy điện Đakđrinh — Chất lượng - An toàn - Hiệu quả - Phát triển",
-    image: "/images/ptsc/service-co-khi.jpg",
-  },
-  {
-    title: "Công ty Cổ phần Thủy điện Đakđrinh — Chất lượng - An toàn - Hiệu quả - Phát triển",
-    image: "/images/ptsc/service-bien.jpg",
   },
 ];
 
@@ -92,6 +84,15 @@ function parseAlbumDate(value: string | undefined): number {
 export default function Home() {
   const productionInfo = getCollection("production-info")[0];
 
+  // Banner trượt trang chủ — lấy từ Admin -> Trang chủ -> "Banner trang chủ
+  // (Slider)". Giữ đúng thứ tự admin đã thêm (mục mới thêm hiện lên đầu,
+  // xem createItem() trong src/lib/cms/store.ts).
+  const heroSlidesFromCms = getCollection("hero-slides").map((s) => ({
+    title: s.title || "Công ty Cổ phần Thủy điện Đakđrinh",
+    image: s.image,
+  }));
+  const heroSlides = heroSlidesFromCms.length > 0 ? heroSlidesFromCms : FALLBACK_HERO_SLIDES;
+
   // 2 tin mới nhất cho khối "Tin tức và sự kiện" — ưu tiên theo field "Ngày
   // đăng" (không phải theo thứ tự vừa tạo/sửa trong admin), để admin tạo bài
   // trước rồi hẹn ngày đăng sau vẫn lên đúng thứ tự mới → cũ ở trang chủ.
@@ -155,21 +156,7 @@ export default function Home() {
 
   return (
     <PtscShell>
-      <section className="relative overflow-hidden bg-slate-950">
-        <img
-          src={heroSlides[0].image}
-          alt={heroSlides[0].title}
-          fetchPriority="high"
-          loading="eager"
-          decoding="async"
-          className="h-[260px] w-full object-cover sm:h-[380px] md:h-[480px] lg:h-[620px]"
-        />
-        {/* Lớp phủ gradient + khẩu hiệu — hiện chữ ngay cả khi ảnh còn đang tải
-            (nhất là trên mạng di động chậm), tránh trang trông như "trống/đen"
-            trước khi ảnh nền load xong. Cỡ chữ co theo từng breakpoint để vẫn
-            đọc tốt trên điện thoại và máy tính bảng. */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-slate-950/10" />
-      </section>
+      <HeroSlider slides={heroSlides} />
 
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
       <MarqueeBar isEnglish={false} />

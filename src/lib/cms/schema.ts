@@ -30,6 +30,7 @@ export type CollectionId =
   | "news-categories"
   | "projects"
   | "jobs"
+  | "hero-slides"
   | "photo-albums"
   | "video-albums"
   | "site-marquee"
@@ -506,6 +507,44 @@ export const COLLECTIONS: CollectionDef[] = [
         location_en: "",
         deadline: "",
         description: "",
+      },
+    ],
+  },
+  {
+    // Banner trượt (slider) đầu trang chủ — trước đây khai báo cứng trong
+    // src/app/page.tsx, giờ chuyển vào đây để admin tự thêm/xoá/đổi thứ tự
+    // ảnh mà không cần sửa code hay build lại thủ công mỗi lần đổi ảnh.
+    // Trang chủ (VN + EN) đọc collection này qua getCollection("hero-slides").
+    id: "hero-slides",
+    label: "Banner trang chủ (Slider)",
+    fields: [
+      { key: "image", label: "Ảnh banner", type: "image", required: true },
+      {
+        key: "title",
+        label: "Chú thích ảnh (alt text, không hiện trên banner)",
+        type: "text",
+      },
+    ],
+    seed: [
+      {
+        title: "Toàn cảnh nhà máy thủy điện Đakđrinh",
+        image: "/images/ptsc/banner-panorama.jpg",
+      },
+      {
+        title: "Đập tràn nhà máy thủy điện Đakđrinh xả lũ",
+        image: "/images/ptsc/1742368770-single_banner26-hinh1.jpg",
+      },
+      {
+        title: "Toàn cảnh đập và hồ chứa thủy điện Đakđrinh nhìn từ trên cao",
+        image: "/images/ptsc/1dakdrinh20230620140748.jpg",
+      },
+      {
+        title: "Hồ chứa nước thủy điện Đakđrinh",
+        image: "/images/ptsc/Anh_2_thuy_dein_Dakdrinh.webp",
+      },
+      {
+        title: "Trạm biến áp nhà máy thủy điện Đakđrinh",
+        image: "/images/ptsc/1701236044-single_news2-2.dakdrinh.jpg",
       },
     ],
   },

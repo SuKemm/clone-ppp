@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
+import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
@@ -18,19 +19,12 @@ export const metadata: Metadata = {
   description: "Official information page of Dakdrinh Hydropower Joint Stock Company.",
 };
 
-const heroSlides = [
+// Ảnh dự phòng — chỉ dùng khi admin lỡ xoá hết ảnh trong "Banner trang chủ"
+// (Admin -> Trang chủ), để trang không bao giờ hiện banner trống trơn.
+const FALLBACK_HERO_SLIDES = [
   {
     title: "General Contractor for Offshore Oil & Gas and Renewable Energy Projects",
-    // Same panorama file as the Vietnamese homepage.
     image: "/images/ptsc/banner-panorama.jpg",
-  },
-  {
-    title: "General Contractor for Offshore Oil & Gas and Renewable Energy Projects",
-    image: "/images/ptsc/service-co-khi.jpg",
-  },
-  {
-    title: "General Contractor for Offshore Oil & Gas and Renewable Energy Projects",
-    image: "/images/ptsc/service-bien.jpg",
   },
 ];
 
@@ -98,6 +92,14 @@ export const dynamic = "force-dynamic";
 export default function EnglishHomePage() {
   const productionInfo = getCollection("production-info")[0];
 
+  // Homepage hero slider — same collection as the Vietnamese page
+  // (src/app/page.tsx), just with an English fallback caption.
+  const heroSlidesFromCms = getCollection("hero-slides").map((s) => ({
+    title: s.title || "Dakdrinh Hydropower Joint Stock Company",
+    image: s.image,
+  }));
+  const heroSlides = heroSlidesFromCms.length > 0 ? heroSlidesFromCms : FALLBACK_HERO_SLIDES;
+
   // 3 most recent articles for the "News & Events" block — ranked by the
   // "Ngày đăng" field (not creation/edit order), same rule as the VN page.
   const latestNews = [...getCollection("news")]
@@ -156,13 +158,7 @@ export default function EnglishHomePage() {
 
   return (
     <PtscShell>
-      <section className="relative overflow-hidden bg-slate-950">
-        <img
-          src={heroSlides[0].image}
-          alt={heroSlides[0].title}
-          className="h-[260px] w-full object-cover sm:h-[380px] md:h-[480px] lg:h-[620px]"
-        />
-      </section>
+      <HeroSlider slides={heroSlides} />
 
       {/* ===== Running text (replaces the old investor logo block) ===== */}
       <MarqueeBar isEnglish={true} />

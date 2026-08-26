@@ -8,6 +8,7 @@ import {
   Tags,
   FolderKanban,
   Briefcase,
+  GalleryHorizontal,
   Images,
   Video,
   Megaphone,
@@ -71,6 +72,7 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   news: Newspaper,
   projects: FolderKanban,
   jobs: Briefcase,
+  "hero-slides": GalleryHorizontal,
   "photo-albums": Images,
   "video-albums": Video,
   "site-marquee": Megaphone,
@@ -99,6 +101,7 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
 // Collection nào không thuộc mục nào trên menu chính (chỉ hiện ở trang chủ
 // hoặc là trang độc lập) thì gom vào nhóm "Khác" ở cuối.
 const SIDEBAR_GROUPS: { label: string; ids: CollectionId[] }[] = [
+  { label: "Trang chủ", ids: ["hero-slides", "site-marquee"] },
   {
     label: "Giới thiệu DHC",
     ids: [
@@ -118,7 +121,7 @@ const SIDEBAR_GROUPS: { label: string; ids: CollectionId[] }[] = [
   { label: "Tin tức – Sự kiện", ids: ["news-categories", "news"] },
   { label: "Thư viện", ids: ["photo-albums", "video-albums", "culture-handbook-pages"] },
   { label: "Liên hệ", ids: ["contacts"] },
-  { label: "Khác", ids: ["jobs", "site-marquee", "site-notices", "production-info", "production-daily"] },
+  { label: "Khác", ids: ["jobs", "site-notices", "production-info", "production-daily"] },
 ];
 
 // "list": danh sách các mục của 1 collection.
