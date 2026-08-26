@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Slide = { title: string; image: string };
 
-const AUTO_PLAY_MS = 6000;
+const AUTO_PLAY_MS = 10_000; // 10 giây/lần, theo đúng yêu cầu
 
 export function HeroSlider({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
