@@ -13,78 +13,64 @@ export type RichTextEditorHandle = {
 };
 
 /**
- * Chuẩn hóa URL ảnh upload.
+ * Chuẩn hóa URL ảnh về duy nhất:
  *
- * api/uploads/a.jpg
- * /api/uploads/a.jpg
- * uploads/a.jpg
- * /uploads/a.jpg
- * http://domain.com/api/uploads/a.jpg
- *
- * => /uploads/a.jpg
+ * /api/uploads/filename.jpg
+ */
+function normalizeUploadUrl(url: string): string {
+  if (!url) return "";
+
+  // Không đụng vào URL không phải ảnh upload của hệ thống
+  if (
+    !/(^|\/)uploads\//i.test(url) &&
+    !/(^|\/)api\/uploads\//i.test(url)
+  ) {
+    return url;
+  }
+
+  // https://domain.com/api/uploads/file.jpg
+  // https://domain.com/uploads/file.jpg
+  url = url.replace(
+    /^https?:\/\/[^/]+\/(?:api\/)?uploads\//i,
+    "/api/uploads/"
+  );
+
+  // /api/uploads/file.jpg
+  // api/uploads/file.jpg
+  url = url.replace(
+    /^\/?api\/uploads\//i,
+    "/api/uploads/"
+  );
+
+  // /uploads/file.jpg
+  // uploads/file.jpg
+  url = url.replace(
+    /^\/?uploads\//i,
+    "/api/uploads/"
+  );
+
+  return url;
+}
+
+/**
+ * Chuẩn hóa tất cả src ảnh trong HTML.
  */
 function normalizeUploadUrls(html: string): string {
   if (!html) return html;
 
-  return html
-    // URL đầy đủ: https://domain.com/api/uploads/...
-    .replace(
-      /(["'])https?:\/\/[^/"']+\/api\/uploads\//gi,
-      '$1/uploads/'
-    )
+  return html.replace(
+    /\bsrc=(["'])([^"']+)\1/gi,
+    (_match, quote, url: string) => {
+      const normalized = normalizeUploadUrl(url);
 
-    // URL đầy đủ: https://domain.com/uploads/...
-    .replace(
-      /(["'])https?:\/\/[^/"']+\/uploads\//gi,
-      '$1/uploads/'
-    )
-
-    // /api/uploads/... hoặc api/uploads/...
-    .replace(
-      /(["'])\/?api\/uploads\//gi,
-      '$1/uploads/'
-    )
-
-    // uploads/... không có dấu /
-    .replace(
-      /(["'])uploads\//gi,
-      '$1/uploads/'
-    );
+      return `src=${quote}${normalized}${quote}`;
+    }
+  );
 }
 
 /**
- * Chuẩn hóa URL trả về từ API upload.
+ * Upload ảnh lên server.
  */
-function normalizeUploadUrl(url: string): string {
-  if (!url) return url;
-
-  return url
-    // https://domain.com/api/uploads/abc.jpg
-    .replace(
-      /^https?:\/\/[^/]+\/api\/uploads\//i,
-      "/uploads/"
-    )
-
-    // https://domain.com/uploads/abc.jpg
-    .replace(
-      /^https?:\/\/[^/]+\/uploads\//i,
-      "/uploads/"
-    )
-
-    // /api/uploads/abc.jpg
-    .replace(
-      /^\/?api\/uploads\//i,
-      "/uploads/"
-    )
-
-    // uploads/abc.jpg
-    .replace(
-      /^uploads\//i,
-      "/uploads/"
-    );
-}
-
-// Upload ảnh lên server
 async function uploadImageFile(
   file: File | Blob
 ): Promise<string> {
@@ -135,9 +121,17 @@ async function uploadImageFile(
     );
   }
 
-  return normalizeUploadUrl(
+  const url = normalizeUploadUrl(
     String(body.url ?? "")
   );
+
+  if (!url) {
+    throw new Error(
+      "Server không trả về URL ảnh"
+    );
+  }
+
+  return url;
 }
 
 export const RichTextEditor = forwardRef<
@@ -168,23 +162,20 @@ export const RichTextEditor = forwardRef<
     ref,
     () => ({
       flushImages: async () => {
-        const editor =
-          editorRef.current;
+        const editor = editorRef.current;
 
         if (!editor) {
-          return normalizeUploadUrls(
-            value
-          );
+          return normalizeUploadUrls(value);
         }
 
         try {
-          // Upload tất cả ảnh blob còn lại
+          // Upload toàn bộ blob: còn lại
           await editor.uploadImages();
         } catch {
-          // Không chặn việc lưu bài
+          // Không chặn việc lưu bài nếu một ảnh lỗi
         }
 
-        // Luôn chuẩn hóa ảnh trước khi lưu
+        // Lấy HTML mới nhất và chuẩn hóa URL
         return normalizeUploadUrls(
           editor.getContent()
         );
@@ -245,24 +236,10 @@ export const RichTextEditor = forwardRef<
 
           branding: false,
 
-          /*
-           * Giữ nguyên URL tuyệt đối tính từ domain.
-           *
-           * /uploads/abc.jpg
-           *
-           * Không biến thành:
-           *
-           * uploads/abc.jpg
-           *
-           * Nếu không, khi đang ở:
-           * /tin-tuc/abc
-           *
-           * browser có thể gọi sai:
-           * /tin-tuc/uploads/abc.jpg
-           */
+          // Không cho TinyMCE tự đổi URL
+          convert_urls: false,
           relative_urls: false,
           remove_script_host: false,
-          convert_urls: false,
 
           automatic_uploads: true,
 
@@ -271,7 +248,7 @@ export const RichTextEditor = forwardRef<
               blob: () => Blob;
             }
           ) => {
-            return await uploadImageFile(
+            return uploadImageFile(
               blobInfo.blob()
             );
           },
@@ -300,16 +277,16 @@ export const RichTextEditor = forwardRef<
 
               try {
                 const url =
-                  await uploadImageFile(
-                    file
-                  );
+                  await uploadImageFile(file);
 
                 callback(url, {
                   alt: file.name,
                 });
-              } catch (e) {
+              } catch (error) {
                 alert(
-                  (e as Error).message
+                  error instanceof Error
+                    ? error.message
+                    : "Tải ảnh lên thất bại"
                 );
               }
             };
