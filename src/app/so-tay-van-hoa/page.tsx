@@ -10,6 +10,8 @@ export default function CultureHandbookPage() {
     image: p.image,
     caption: p.caption ?? "",
     captionEn: p.caption_en ?? "",
+    content: p.content ?? "",
+    contentEn: p.content_en ?? "",
   }));
 
   return (

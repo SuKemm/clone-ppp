@@ -6,6 +6,8 @@ export type HandbookPage = {
   image: string;
   caption: string;
   captionEn: string;
+  content?: string;
+  contentEn?: string;
 };
 
 export const cultureHandbookPages: HandbookPage[] = [

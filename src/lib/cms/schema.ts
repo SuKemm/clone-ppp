@@ -931,12 +931,14 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "image", label: "Ảnh trang sổ tay", type: "image", required: true },
       { key: "caption", label: "Chú thích", type: "text", width: "half" },
       { key: "caption_en", label: "Chú thích (EN)", type: "text", width: "half" },
+      { key: "content", label: "Ghi chú văn hóa công ty", type: "richtext" },
+      { key: "content_en", label: "Ghi chú văn hóa công ty (EN)", type: "richtext" },
     ],
     seed: [
-      { image: "/images/ptsc/service-nang-luong.jpg", caption: "Trang bìa — Sổ tay văn hóa PV Power DHC", caption_en: "Cover — PV Power DHC Culture Handbook" },
-      { image: "/images/ptsc/service-tau.jpg", caption: "Tầm nhìn — Sứ mệnh", caption_en: "Vision — Mission" },
-      { image: "/images/ptsc/service-cong-nghiep.jpg", caption: "Giá trị cốt lõi", caption_en: "Core values" },
-      { image: "/images/ptsc/service-khao-sat.jpg", caption: "Chuẩn mực ứng xử", caption_en: "Code of conduct" },
+      { image: "/images/ptsc/service-nang-luong.jpg", caption: "Trang bìa — Sổ tay văn hóa PV Power DHC", caption_en: "Cover — PV Power DHC Culture Handbook", content: "", content_en: "" },
+      { image: "/images/ptsc/service-tau.jpg", caption: "Tầm nhìn — Sứ mệnh", caption_en: "Vision — Mission", content: "", content_en: "" },
+      { image: "/images/ptsc/service-cong-nghiep.jpg", caption: "Giá trị cốt lõi", caption_en: "Core values", content: "", content_en: "" },
+      { image: "/images/ptsc/service-khao-sat.jpg", caption: "Chuẩn mực ứng xử", caption_en: "Code of conduct", content: "", content_en: "" },
     ],
   },
 ];

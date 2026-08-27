@@ -83,7 +83,7 @@ export function CultureHandbookViewer({
             ‹
           </button>
           <div
-            className="flex max-h-[85vh] max-w-3xl flex-col items-center gap-3"
+            className="flex max-h-[85vh] max-w-3xl flex-col items-center gap-3 overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <img
@@ -97,6 +97,14 @@ export function CultureHandbookViewer({
                 ({index + 1}/{pages.length})
               </span>
             </p>
+            {(isEnglish ? pages[index].contentEn : pages[index].content) ? (
+              <div
+                className="prose prose-invert prose-sm max-w-2xl rounded-lg bg-white/5 px-5 py-4 text-slate-100"
+                dangerouslySetInnerHTML={{
+                  __html: (isEnglish ? pages[index].contentEn : pages[index].content) as string,
+                }}
+              />
+            ) : null}
           </div>
           <button
             type="button"
