@@ -6,8 +6,8 @@ import { getUploadsDir } from "@/lib/storage-paths";
 
 const ALLOWED_IMAGES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const ALLOWED_DOCS = new Set(["application/pdf"]);
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024; // 8MB
-const MAX_DOC_BYTES = 20 * 1024 * 1024; // 20MB — file cổ đông/báo cáo thường dày hơn ảnh
+const MAX_IMAGE_BYTES = 60 * 1024 * 1024; // 60MB
+const MAX_DOC_BYTES = 60 * 1024 * 1024; // 60MB
 
 export async function POST(req: NextRequest) {
   const form = await req.formData();
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   const maxBytes = isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
   if (file.size > maxBytes) {
     return NextResponse.json(
-      { error: isDoc ? "File PDF vượt quá 20MB" : "Ảnh vượt quá 8MB" },
+      { error: isDoc ? "File PDF vượt quá 60MB" : "Ảnh vượt quá 60MB" },
       { status: 400 }
     );
   }
