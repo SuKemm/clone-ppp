@@ -12,64 +12,132 @@ export type RichTextEditorHandle = {
   flushImages: () => Promise<string>;
 };
 
-// Chuẩn hóa URL ảnh upload.
-// Ví dụ:
-// api/uploads/abc.jpg  -> /api/uploads/abc.jpg
-// http://domain/api/uploads/abc.jpg -> /api/uploads/abc.jpg
+/**
+ * Chuẩn hóa URL ảnh upload.
+ *
+ * api/uploads/a.jpg
+ * /api/uploads/a.jpg
+ * uploads/a.jpg
+ * /uploads/a.jpg
+ * http://domain.com/api/uploads/a.jpg
+ *
+ * => /uploads/a.jpg
+ */
 function normalizeUploadUrls(html: string): string {
   if (!html) return html;
 
   return html
-    // URL bị mất dấu "/" đầu
-    .replace(
-      /(["'])api\/uploads\//gi,
-      '$1/api/uploads/'
-    )
-    // URL đầy đủ domain -> giữ lại path để dùng đúng domain hiện tại
+    // URL đầy đủ: https://domain.com/api/uploads/...
     .replace(
       /(["'])https?:\/\/[^/"']+\/api\/uploads\//gi,
-      '$1/api/uploads/'
+      '$1/uploads/'
+    )
+
+    // URL đầy đủ: https://domain.com/uploads/...
+    .replace(
+      /(["'])https?:\/\/[^/"']+\/uploads\//gi,
+      '$1/uploads/'
+    )
+
+    // /api/uploads/... hoặc api/uploads/...
+    .replace(
+      /(["'])\/?api\/uploads\//gi,
+      '$1/uploads/'
+    )
+
+    // uploads/... không có dấu /
+    .replace(
+      /(["'])uploads\//gi,
+      '$1/uploads/'
+    );
+}
+
+/**
+ * Chuẩn hóa URL trả về từ API upload.
+ */
+function normalizeUploadUrl(url: string): string {
+  if (!url) return url;
+
+  return url
+    // https://domain.com/api/uploads/abc.jpg
+    .replace(
+      /^https?:\/\/[^/]+\/api\/uploads\//i,
+      "/uploads/"
+    )
+
+    // https://domain.com/uploads/abc.jpg
+    .replace(
+      /^https?:\/\/[^/]+\/uploads\//i,
+      "/uploads/"
+    )
+
+    // /api/uploads/abc.jpg
+    .replace(
+      /^\/?api\/uploads\//i,
+      "/uploads/"
+    )
+
+    // uploads/abc.jpg
+    .replace(
+      /^uploads\//i,
+      "/uploads/"
     );
 }
 
 // Upload ảnh lên server
-async function uploadImageFile(file: File | Blob): Promise<string> {
+async function uploadImageFile(
+  file: File | Blob
+): Promise<string> {
   const fd = new FormData();
 
-  const rawName = file instanceof File ? file.name : "";
-  const dotIndex = rawName.lastIndexOf(".");
-  const rawExt =
-    dotIndex >= 0 ? rawName.slice(dotIndex + 1) : "";
+  const rawName =
+    file instanceof File ? file.name : "";
 
-  const safeExt = /^[a-zA-Z0-9]{1,10}$/.test(rawExt)
-    ? rawExt
-    : "png";
+  const dotIndex =
+    rawName.lastIndexOf(".");
+
+  const rawExt =
+    dotIndex >= 0
+      ? rawName.slice(dotIndex + 1)
+      : "";
+
+  const safeExt =
+    /^[a-zA-Z0-9]{1,10}$/.test(rawExt)
+      ? rawExt
+      : "png";
 
   const safeName =
     `upload-${Date.now()}-` +
-    `${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
+    `${Math.random()
+      .toString(36)
+      .slice(2, 8)}.${safeExt}`;
 
-  fd.append("file", file, safeName);
+  fd.append(
+    "file",
+    file,
+    safeName
+  );
 
-  const res = await fetch("/api/admin/upload", {
-    method: "POST",
-    body: fd,
-  });
+  const res = await fetch(
+    "/api/admin/upload",
+    {
+      method: "POST",
+      body: fd,
+    }
+  );
 
   const body = await res.json();
 
   if (!res.ok) {
     throw new Error(
-      body.error ?? "Tải ảnh lên thất bại"
+      body.error ??
+        "Tải ảnh lên thất bại"
     );
   }
 
-  // Đảm bảo URL luôn bắt đầu bằng /
-  const url = String(body.url ?? "");
-
-  return url.startsWith("/")
-    ? url
-    : `/${url}`;
+  return normalizeUploadUrl(
+    String(body.url ?? "")
+  );
 }
 
 export const RichTextEditor = forwardRef<
@@ -92,26 +160,38 @@ export const RichTextEditor = forwardRef<
     "no-api-key";
 
   const editorRef =
-    useRef<TinyMCEEditorInstance | null>(null);
+    useRef<TinyMCEEditorInstance | null>(
+      null
+    );
 
-  useImperativeHandle(ref, () => ({
-    flushImages: async () => {
-      const editor = editorRef.current;
+  useImperativeHandle(
+    ref,
+    () => ({
+      flushImages: async () => {
+        const editor =
+          editorRef.current;
 
-      if (!editor) {
-        return normalizeUploadUrls(value);
-      }
+        if (!editor) {
+          return normalizeUploadUrls(
+            value
+          );
+        }
 
-      try {
-        await editor.uploadImages();
-      } catch {
-        // Không chặn việc lưu bài nếu có 1 ảnh upload lỗi
-      }
+        try {
+          // Upload tất cả ảnh blob còn lại
+          await editor.uploadImages();
+        } catch {
+          // Không chặn việc lưu bài
+        }
 
-      // Chuẩn hóa toàn bộ ảnh trước khi lưu
-      return normalizeUploadUrls(editor.getContent());
-    },
-  }));
+        // Luôn chuẩn hóa ảnh trước khi lưu
+        return normalizeUploadUrls(
+          editor.getContent()
+        );
+      },
+    }),
+    [value]
+  );
 
   return (
     <div className="mt-1 overflow-hidden rounded-lg border border-slate-300 focus-within:border-cyan-600 focus-within:ring-2 focus-within:ring-cyan-100">
@@ -123,8 +203,9 @@ export const RichTextEditor = forwardRef<
             editor as unknown as TinyMCEEditorInstance;
         }}
         onEditorChange={(html) => {
-          // Chuẩn hóa ngay khi nội dung thay đổi
-          onChange(normalizeUploadUrls(html));
+          onChange(
+            normalizeUploadUrls(html)
+          );
         }}
         init={{
           height: rows * 28,
@@ -165,22 +246,19 @@ export const RichTextEditor = forwardRef<
           branding: false,
 
           /*
-           * QUAN TRỌNG:
-           * Không cho TinyMCE biến:
+           * Giữ nguyên URL tuyệt đối tính từ domain.
            *
-           * /api/uploads/abc.jpg
+           * /uploads/abc.jpg
            *
-           * thành:
+           * Không biến thành:
            *
-           * api/uploads/abc.jpg
+           * uploads/abc.jpg
            *
-           * Nếu mất dấu "/" đầu thì khi đang ở:
+           * Nếu không, khi đang ở:
            * /tin-tuc/abc
            *
-           * browser sẽ request sai:
-           * /tin-tuc/api/uploads/abc.jpg
-           *
-           * và server trả HTML/404 thay vì image/jpeg.
+           * browser có thể gọi sai:
+           * /tin-tuc/uploads/abc.jpg
            */
           relative_urls: false,
           remove_script_host: false,
@@ -189,13 +267,13 @@ export const RichTextEditor = forwardRef<
           automatic_uploads: true,
 
           images_upload_handler: async (
-            blobInfo: { blob: () => Blob }
+            blobInfo: {
+              blob: () => Blob;
+            }
           ) => {
-            const url = await uploadImageFile(
+            return await uploadImageFile(
               blobInfo.blob()
             );
-
-            return url;
           },
 
           file_picker_types: "image",
@@ -203,7 +281,9 @@ export const RichTextEditor = forwardRef<
           file_picker_callback: (
             callback: (
               url: string,
-              meta?: { alt?: string }
+              meta?: {
+                alt?: string;
+              }
             ) => void
           ) => {
             const input =
@@ -213,13 +293,16 @@ export const RichTextEditor = forwardRef<
             input.accept = "image/*";
 
             input.onchange = async () => {
-              const file = input.files?.[0];
+              const file =
+                input.files?.[0];
 
               if (!file) return;
 
               try {
                 const url =
-                  await uploadImageFile(file);
+                  await uploadImageFile(
+                    file
+                  );
 
                 callback(url, {
                   alt: file.name,

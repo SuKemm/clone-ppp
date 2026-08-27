@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
       fs.writeFileSync(destPath, bytes);
     }
 
-    const url = `/api/uploads/${filename}`;
+    const url = `/uploads/${filename}`;
 
     return NextResponse.json({
       success: true,
