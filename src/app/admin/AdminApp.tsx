@@ -1020,6 +1020,64 @@ function ItemFormPage({
               Chỉ tải lên server khi chưa có link công khai. Nếu tải lên, giới hạn 20MB.
             </p>
           </div>
+        ) : f.type === "video" ? (
+          <div className="mt-1 space-y-2">
+            {values[f.key] && (
+              <video
+                key={values[f.key]}
+                src={values[f.key]}
+                controls
+                className="h-40 w-auto max-w-full rounded-lg border border-slate-200 bg-black"
+              />
+            )}
+
+            {/* Cách 1: dán link YouTube/Vimeo có sẵn — không tốn dung lượng
+                server, phát nhanh nhất. */}
+            <input
+              type="url"
+              placeholder="Dán link YouTube có sẵn (https://...)"
+              value={values[f.key]?.startsWith("http") ? values[f.key] : ""}
+              onChange={(e) => setValues((v) => ({ ...v, [f.key]: e.target.value }))}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+            />
+
+            <div className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="h-px flex-1 bg-slate-200" />
+              hoặc
+              <span className="h-px flex-1 bg-slate-200" />
+            </div>
+
+            {/* Cách 2: tải file video lên thẳng server, tối đa 100MB. */}
+            <label className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-600 transition hover:border-cyan-400 hover:bg-cyan-50">
+              <span className="truncate">
+                {values[f.key] && !values[f.key]?.startsWith("http")
+                  ? "Đổi video khác"
+                  : "Tải video lên server (tối đa 100MB)"}
+              </span>
+              <span className="shrink-0 rounded-md bg-cyan-600 px-2.5 py-1 text-xs font-semibold text-white">
+                Tải lên
+              </span>
+              <input
+                type="file"
+                accept="video/mp4,video/webm,video/quicktime"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleUpload(f.key, file);
+                  e.target.value = "";
+                }}
+                className="hidden"
+              />
+            </label>
+            {uploadingKey === f.key && (
+              <p className="text-xs text-slate-400">
+                Đang tải video lên, file lớn có thể mất vài phút, đừng tắt trang...
+              </p>
+            )}
+            <p className="text-xs text-slate-400">
+              Định dạng nhận: MP4, WebM, MOV. Video lớn (100MB) nên ưu tiên dán link YouTube nếu có,
+              vừa tải nhanh hơn vừa không tốn dung lượng server.
+            </p>
+          </div>
         ) : f.type === "gallery" ? (
           <div className="mt-1 space-y-2">
             {parseGallery(values[f.key]).length > 0 && (

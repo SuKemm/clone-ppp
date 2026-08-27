@@ -5,7 +5,7 @@
 // Khi thêm 1 loại nội dung mới cần quản lý qua /admin, chỉ cần thêm 1 entry
 // vào COLLECTIONS bên dưới rồi dùng `getCollection(id)` ở trang hiển thị.
 
-export type FieldType = "text" | "textarea" | "richtext" | "date" | "image" | "gallery" | "file" | "select";
+export type FieldType = "text" | "textarea" | "richtext" | "date" | "image" | "gallery" | "file" | "video" | "select";
 
 export type FieldDef = {
   key: string;
@@ -591,6 +591,9 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "title_en", label: "Tên video (EN)", type: "text" },
       { key: "date", label: "Ngày đăng", type: "date" },
       { key: "image", label: "Ảnh đại diện", type: "image" },
+      // File video thật (tải lên tối đa 100MB, xem
+      // src/app/api/admin/upload/route.ts) hoặc dán link YouTube có sẵn.
+      { key: "video", label: "Video", type: "video" },
     ],
     seed: [
       {
@@ -598,12 +601,14 @@ export const COLLECTIONS: CollectionDef[] = [
         title_en: "Plant Inauguration Ceremony",
         date: "15.09.2023",
         image: "/images/ptsc/project-lng.jpg",
+        video: "",
       },
       {
         title: "Phóng sự hoạt động sản xuất",
         title_en: "Production Activities Documentary",
         date: "02.06.2023",
         image: "/images/ptsc/service-bien.jpg",
+        video: "",
       },
     ],
   },

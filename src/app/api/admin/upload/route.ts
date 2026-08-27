@@ -6,8 +6,17 @@ import { getUploadsDir } from "@/lib/storage-paths";
 
 const ALLOWED_IMAGES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const ALLOWED_DOCS = new Set(["application/pdf"]);
+// mp4/webm/quicktime(.mov) — 3 định dạng phổ biến nhất, trình duyệt phát
+// được trực tiếp bằng thẻ <video> không cần chuyển mã.
+const ALLOWED_VIDEOS = new Set(["video/mp4", "video/webm", "video/quicktime"]);
 const MAX_IMAGE_BYTES = 60 * 1024 * 1024; // 60MB
 const MAX_DOC_BYTES = 60 * 1024 * 1024; // 60MB
+const MAX_VIDEO_BYTES = 100 * 1024 * 1024; // 100MB — theo yêu cầu
+
+// App Router route handler: không có giới hạn bodyParser kiểu Pages API,
+// nhưng vẫn cần khai báo rõ runtime Node (không phải Edge) vì ta dùng
+// node:fs để ghi file lớn thẳng ra ổ đĩa.
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   const form = await req.formData();
@@ -19,23 +28,73 @@ export async function POST(req: NextRequest) {
 
   const isImage = ALLOWED_IMAGES.has(file.type);
   const isDoc = ALLOWED_DOCS.has(file.type);
-  if (!isImage && !isDoc) {
-    return NextResponse.json({ error: "Chỉ nhận ảnh jpg/png/webp/gif hoặc file PDF" }, { status: 400 });
+  const isVideo = ALLOWED_VIDEOS.has(file.type);
+  if (!isImage && !isDoc && !isVideo) {
+    return NextResponse.json(
+      { error: "Chỉ nhận ảnh jpg/png/webp/gif, file PDF, hoặc video mp4/webm/mov" },
+      { status: 400 }
+    );
   }
-  const maxBytes = isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
+  const maxBytes = isVideo ? MAX_VIDEO_BYTES : isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
   if (file.size > maxBytes) {
     return NextResponse.json(
-      { error: isDoc ? "File PDF vượt quá 60MB" : "Ảnh vượt quá 60MB" },
+      {
+        error: isVideo
+          ? "Video vượt quá 100MB"
+          : isDoc
+          ? "File PDF vượt quá 60MB"
+          : "Ảnh vượt quá 60MB",
+      },
       { status: 400 }
     );
   }
 
   const uploadDir = getUploadsDir();
   fs.mkdirSync(uploadDir, { recursive: true });
-  const ext = isDoc ? "pdf" : file.type.split("/")[1] === "jpeg" ? "jpg" : file.type.split("/")[1];
+  const ext = isVideo
+    ? file.type.split("/")[1] === "quicktime"
+      ? "mov"
+      : file.type.split("/")[1]
+    : isDoc
+    ? "pdf"
+    : file.type.split("/")[1] === "jpeg"
+    ? "jpg"
+    : file.type.split("/")[1];
   const filename = `${Date.now()}-${randomUUID().slice(0, 8)}.${ext}`;
-  const bytes = Buffer.from(await file.arrayBuffer());
-  fs.writeFileSync(path.join(uploadDir, filename), bytes);
+
+  // Video có thể tới 100MB — ghi thẳng ra đĩa bằng stream thay vì dồn hết
+  // vào 1 Buffer trong RAM (Buffer.from(await file.arrayBuffer()) vẫn ok
+  // với ảnh/PDF nhỏ, nhưng với video lớn nên tránh giữ toàn bộ file 2 lần
+  // trong bộ nhớ cùng lúc).
+  const destPath = path.join(uploadDir, filename);
+  if (isVideo) {
+    const nodeStream = fs.createWriteStream(destPath);
+    const webStream = file.stream();
+    await new Promise<void>((resolve, reject) => {
+      const reader = webStream.getReader();
+      nodeStream.on("error", reject);
+      nodeStream.on("finish", resolve);
+      (async function pump() {
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              nodeStream.end();
+              return;
+            }
+            if (!nodeStream.write(value)) {
+              await new Promise<void>((r) => nodeStream.once("drain", () => r()));
+            }
+          }
+        } catch (err) {
+          reject(err);
+        }
+      })();
+    });
+  } else {
+    const bytes = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(destPath, bytes);
+  }
 
   // Luôn trả về đường dẫn qua route /api/uploads/... (đọc file trực tiếp từ
   // ổ đĩa mỗi lần có request — xem src/app/api/uploads/[filename]/route.ts),
