@@ -116,14 +116,8 @@ export default async function NewsDetailPageEn({ params }: Params) {
               {formatNewsDateTime(item.date, item.gio, "en")}
             </p>
 
-            {item.image && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.image}
-                alt=""
-                className="mt-8 h-56 w-full rounded-2xl object-cover sm:h-72 lg:h-96"
-              />
-            )}
+            {/* Đã bỏ khối tự chèn cover image (item.image) ngay dưới tiêu đề —
+                đồng bộ với bản VN, ảnh đại diện giờ chỉ dùng cho thumbnail. */}
 
             {/* prose = @tailwindcss/typography, style cho nội dung HTML nhập
                 từ TinyMCE ở admin (đoạn văn, heading, danh sách, bảng...). */}

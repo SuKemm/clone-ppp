@@ -94,14 +94,11 @@ export default async function NewsDetailPage({ params }: Params) {
               {formatNewsDateTime(item.date, item.gio)}
             </p>
 
-            {item.image && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={item.image}
-                alt=""
-                className="mt-8 h-56 w-full rounded-2xl object-cover sm:h-72 lg:h-96"
-              />
-            )}
+            {/* Đã bỏ khối tự chèn "Ảnh đại diện" ngay dưới tiêu đề — ảnh này
+                giờ CHỈ dùng làm ảnh thu nhỏ ở trang danh sách tin tức và các
+                khối "Tin mới nhất"/"Xem nhiều nhất", không tự động lặp lại
+                trong bài viết nữa. Nếu muốn có ảnh minh hoạ trong bài, admin
+                tự chèn qua nút ảnh trong trình soạn thảo TinyMCE. */}
 
             {/* prose = @tailwindcss/typography, style cho nội dung HTML nhập
                 từ TinyMCE ở admin (đoạn văn, heading, danh sách, bảng...).
