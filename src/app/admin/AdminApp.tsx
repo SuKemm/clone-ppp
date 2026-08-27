@@ -38,7 +38,7 @@ import {
 import { COLLECTIONS, translationPairs, type CollectionDef, type CollectionId } from "@/lib/cms/schema";
 import type { CmsItem } from "@/lib/cms/store";
 import type { AdminRole } from "@/lib/cms/users";
-import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { RichTextEditor, type RichTextEditorHandle } from "@/components/admin/RichTextEditor";
 import { SelectField, type SelectOption } from "@/components/admin/SelectField";
 import { UsersPanel } from "@/components/admin/UsersPanel";
 
@@ -763,6 +763,11 @@ function ItemFormPage({
   // lưu (chứ không dùng giá trị đã điền sẵn lúc mở form, có thể đã cũ nếu
   // admin soạn bài lâu) — xem handleSubmit bên dưới.
   const dateTimeAutoRef = useRef(!item && hasDateField);
+  // Lưu instance của từng ô soạn thảo richtext đang render (key = field.key)
+  // để handleSubmit gọi flushImages() trước khi lưu — xem giải thích đầy đủ
+  // trong RichTextEditor.tsx (tránh lưu nhầm link ảnh tạm "blob:" khi bấm
+  // Lưu quá nhanh ngay sau lúc vừa dán/kéo-thả ảnh vào bài).
+  const richTextRefs = useRef<Record<string, RichTextEditorHandle | null>>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
@@ -892,6 +897,24 @@ function ItemFormPage({
         const { date, time } = getCurrentVietnamDateTime();
         payload = { ...values, date, ...(hasGioField ? { gio: time } : {}) };
       }
+
+      // Với mọi ô richtext: đảm bảo ảnh vừa dán/kéo-thả (nếu có, đang chờ
+      // upload nền) đã upload xong lên server và thay bằng URL thật, rồi
+      // mới lấy nội dung mới nhất để lưu — tránh lưu nhầm link ảnh tạm
+      // "blob:" khiến ảnh không hiện khi đọc lại bài (xem RichTextEditor.tsx).
+      const richTextKeys = def.fields.filter((f) => f.type === "richtext").map((f) => f.key);
+      if (richTextKeys.length > 0) {
+        const flushed = { ...payload };
+        await Promise.all(
+          richTextKeys.map(async (key) => {
+            const handle = richTextRefs.current[key];
+            if (handle) flushed[key] = await handle.flushImages();
+          })
+        );
+        payload = flushed;
+        setValues((v) => ({ ...v, ...flushed }));
+      }
+
       const res = await fetch(url, {
         method: item ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
@@ -949,6 +972,9 @@ function ItemFormPage({
 
         {f.type === "richtext" ? (
           <RichTextEditor
+            ref={(el) => {
+              richTextRefs.current[f.key] = el;
+            }}
             value={values[f.key]}
             onChange={(html) => setValues((v) => ({ ...v, [f.key]: html }))}
           />

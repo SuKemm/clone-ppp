@@ -9,7 +9,29 @@
 // miễn phí trong README-admin.md. Nếu chưa cấu hình, editor vẫn chạy được ở
 // chế độ dùng thử (Evaluation) nhưng sẽ có 1 dòng cảnh báo nhỏ của TinyMCE.
 
+import { forwardRef, useImperativeHandle, useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
+
+// Kiểu tối thiểu cho instance editor TinyMCE — chỉ khai 2 hàm thực sự dùng
+// tới, tránh phải cài thêm gói "tinymce" chỉ để lấy type đầy đủ.
+type TinyMCEEditorInstance = {
+  uploadImages: () => Promise<unknown>;
+  getContent: () => string;
+};
+
+export type RichTextEditorHandle = {
+  /**
+   * Đảm bảo mọi ảnh vừa dán/kéo-thả vào bài (đang ở dạng "blob:" tạm trong
+   * trình duyệt, chưa upload xong lên server) được upload xong và thay
+   * bằng URL thật, rồi trả về nội dung HTML mới nhất. BẮT BUỘC gọi hàm
+   * này và chờ xong (await) TRƯỚC khi lưu bài — nếu bấm "Lưu" ngay sau
+   * khi vừa dán/kéo-thả ảnh (trước khi ảnh kịp upload xong, nhất là ảnh
+   * dung lượng lớn/mạng chậm), nội dung lưu xuống server sẽ chứa link ảnh
+   * tạm "blob:..." — link này CHỈ có giá trị trong đúng phiên trình duyệt
+   * vừa dán, tải lại trang hoặc người khác mở bài sẽ không thấy ảnh đâu.
+   */
+  flushImages: () => Promise<string>;
+};
 
 // Upload 1 file ảnh lên API sẵn có của trang quản trị (dùng chung với ô ảnh
 // đại diện) — trả về URL đã lưu trên server.
@@ -32,22 +54,43 @@ async function uploadImageFile(file: File | Blob): Promise<string> {
   return body.url as string;
 }
 
-export function RichTextEditor({
-  value,
-  onChange,
-  rows = 12,
-}: {
-  value: string;
-  onChange: (html: string) => void;
-  rows?: number;
-}) {
+export const RichTextEditor = forwardRef<
+  RichTextEditorHandle,
+  {
+    value: string;
+    onChange: (html: string) => void;
+    rows?: number;
+  }
+>(function RichTextEditor({ value, onChange, rows = 12 }, ref) {
   const apiKey = process.env.NEXT_PUBLIC_TINYMCE_API_KEY || "no-api-key";
+  const editorRef = useRef<TinyMCEEditorInstance | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    flushImages: async () => {
+      const editor = editorRef.current;
+      if (!editor) return value;
+      try {
+        // uploadImages() của TinyMCE tự tìm mọi ảnh còn đang ở dạng blob:
+        // trong nội dung, upload từng cái (gọi lại đúng images_upload_handler
+        // bên dưới) và tự thay src bằng URL thật khi xong.
+        await editor.uploadImages();
+      } catch {
+        // Nếu 1 ảnh lỡ upload lỗi (mất mạng giữa chừng...), vẫn cho lưu
+        // tiếp phần nội dung còn lại thay vì chặn đứng việc lưu cả bài —
+        // admin có thể sửa/chèn lại đúng ảnh đó sau.
+      }
+      return editor.getContent();
+    },
+  }));
 
   return (
     <div className="mt-1 overflow-hidden rounded-lg border border-slate-300 focus-within:border-cyan-600 focus-within:ring-2 focus-within:ring-cyan-100">
       <Editor
         apiKey={apiKey}
         value={value}
+        onInit={(_evt, editor) => {
+          editorRef.current = editor as unknown as TinyMCEEditorInstance;
+        }}
         onEditorChange={(html) => onChange(html)}
         init={{
           height: rows * 28,
@@ -78,7 +121,8 @@ export function RichTextEditor({
             "link image media table charmap | " +
             "removeformat code | searchreplace fullscreen preview | help",
           content_style:
-            "body { font-family: system-ui, sans-serif; font-size: 14px; }",
+            "body { font-family: system-ui, sans-serif; font-size: 14px; } " +
+            "img { max-width: 100%; height: auto !important; }",
           branding: false,
 
           // Kéo-thả ảnh hoặc dán ảnh (Ctrl+V) vào bài viết sẽ tự upload lên
@@ -112,4 +156,4 @@ export function RichTextEditor({
       />
     </div>
   );
-}
+});
