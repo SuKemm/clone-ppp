@@ -64,6 +64,25 @@ function getCurrentVietnamDateTime(): { date: string; time: string } {
   };
 }
 
+// Parse response thành JSON một cách an toàn. Nếu server (hoặc hạ tầng
+// hosting phía trước Next.js) trả về HTML thay vì JSON — ví dụ: phiên đăng
+// nhập hết hạn bị redirect sang trang lỗi, request bị chặn vì vượt giới hạn
+// dung lượng của hosting, hay lỗi gateway 502/504 — thì res.json() sẽ ném
+// lỗi khó hiểu kiểu "Unexpected token '<', "<!DOCTYPE "... is not valid
+// JSON". Hàm này bắt lỗi đó và trả về thông báo tiếng Việt dễ hiểu hơn,
+// dùng chung cho mọi lời gọi API trong trang Admin.
+async function parseJsonResponse(res: Response): Promise<any> {
+  try {
+    return await res.json();
+  } catch {
+    throw new Error(
+      res.ok
+        ? "Máy chủ trả về dữ liệu không hợp lệ. Vui lòng thử lại."
+        : `Máy chủ từ chối yêu cầu (mã lỗi ${res.status}). Có thể do file vượt quá dung lượng cho phép của hosting, phiên đăng nhập đã hết hạn, hoặc mất kết nối — hãy đăng nhập lại và thử lại.`
+    );
+  }
+}
+
 type CurrentUser = { id: string; username: string; role: AdminRole; permissions: CollectionId[] };
 
 // Icon riêng cho từng collection để sidebar dễ quét mắt hơn là chỉ có chữ.
@@ -783,7 +802,7 @@ function ItemFormPage({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: sourceText }),
       });
-      const body = await res.json();
+      const body = await parseJsonResponse(res);
       if (!res.ok) throw new Error(body.error ?? "Dịch thất bại");
       setValues((v) => ({ ...v, [targetKey]: body.translated }));
     } catch (e) {
@@ -807,7 +826,7 @@ function ItemFormPage({
     const safeName = `upload-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
     fd.append("file", file, safeName);
     const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-    const body = await res.json();
+    const body = await parseJsonResponse(res);
     if (!res.ok) throw new Error(body.error ?? "Upload lỗi");
     return body.url as string;
   }
@@ -878,7 +897,7 @@ function ItemFormPage({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const body = await res.json();
+      const body = await parseJsonResponse(res);
       if (!res.ok) throw new Error(body.error ?? "Lưu thất bại");
       onSaved();
     } catch (e) {

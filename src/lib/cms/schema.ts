@@ -610,6 +610,13 @@ export const COLLECTIONS: CollectionDef[] = [
         image: "/images/ptsc/service-bien.jpg",
         video: "",
       },
+      {
+        title: "Xuân nghĩa tình dầu khí",
+        title_en: "Oil and Gas Spring Solidarity",
+        date: "20.01.2023",
+        image: "/images/ptsc/project-gallaf.jpg",
+        video: "",
+      },
     ],
   },
   {

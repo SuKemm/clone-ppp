@@ -122,7 +122,7 @@ export default function EnglishHomePage() {
 
   const latestVideos = [...getCollection("video-albums")]
     .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
-    .slice(0, 4)
+    .slice(0, 3)
     .map((v) => ({ title: v.title_en || v.title, image: v.image || undefined }));
 
   // Update date always shows today's date (Vietnam time zone) — same
@@ -165,7 +165,7 @@ export default function EnglishHomePage() {
 
       <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
             News and Events
           </h2>
 
@@ -176,12 +176,12 @@ export default function EnglishHomePage() {
             View more →
           </Link>
         </div>
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
           {latestNews.map((item) => (
             <a
               key={item.id}
               href={`/en-US/news/${item.id}`}
-              className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
             >
               {item.image && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -205,11 +205,22 @@ export default function EnglishHomePage() {
           {/* Featured Notices — third column, always rendered (even when
               empty) so the 3-column layout doesn't shift. Content is
               managed from /admin -> Other -> "Thông báo nổi bật (trang
-              chủ)", same source as the VN homepage. */}
-          <div className="flex flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <h3 className="text-center text-sm font-bold uppercase tracking-wide text-slate-500">
-              Featured Notices
-            </h3>
+              chủ)", same source as the VN homepage. Homepage only shows the
+              4 most recent notices — "View all" links to /en-US/notice
+              for the full list. */}
+          <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">
+                Featured Notices
+              </h3>
+              <Link
+                href="/en-US/notice"
+                className="group flex items-center gap-1 text-xs font-semibold text-cyan-700 transition hover:text-cyan-800"
+              >
+                View all
+                <span className="transition group-hover:translate-x-1">→</span>
+              </Link>
+            </div>
             <div className="mt-3 flex flex-1 flex-col gap-3">
               {siteNotices.length === 0 ? (
                 <p className="mt-2 text-center text-sm text-slate-400">No notices yet.</p>
@@ -273,7 +284,7 @@ export default function EnglishHomePage() {
       <section id="production" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <AutoRefresh intervalMs={60_000} />
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
             Production Status
           </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -354,7 +365,7 @@ export default function EnglishHomePage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
             <div>
-              <h2 className="text-center text-2xl font-semibold text-slate-900">Photo Gallery</h2>
+              <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">Photo Gallery</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestPhotoAlbums.map((tab) => (
                   <Link
@@ -373,17 +384,19 @@ export default function EnglishHomePage() {
                   </Link>
                 ))}
               </div>
-              <Link
-                href="/en-US/services#photos"
-                className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-              >
-                View all
-              </Link>
+              <div className="mt-6 text-center">
+                <Link
+                  href="/en-US/services#photos"
+                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
+                >
+                  View all
+                </Link>
+              </div>
             </div>
 
             <div>
-              <h2 className="text-center text-2xl font-semibold text-slate-900">Video Library</h2>
-              <div className="mt-6 grid grid-cols-2 gap-4">
+              <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">Video Library</h2>
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestVideos.map((video) => (
                   <Link
                     key={video.title}
@@ -412,12 +425,14 @@ export default function EnglishHomePage() {
                   </Link>
                 ))}
               </div>
-              <Link
-                href="/en-US/services#videos"
-                className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-              >
-                View all
-              </Link>
+              <div className="mt-6 text-center">
+                <Link
+                  href="/en-US/services#videos"
+                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
+                >
+                  View all
+                </Link>
+              </div>
             </div>
           </div>
         </div>

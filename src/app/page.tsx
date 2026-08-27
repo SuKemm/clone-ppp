@@ -110,8 +110,8 @@ export default function Home() {
 
   // Khối "Thư viện ảnh" / "Video tư liệu" ở trang chủ lấy trực tiếp từ 2
   // collection "photo-albums" / "video-albums" (Admin -> Thư viện), luôn
-  // hiện 3 album ảnh và 4 video mới nhất theo "Ngày đăng" — không còn
-  // hardcode như trước, admin đăng thêm là trang chủ tự cập nhật.
+  // hiện 3 album ảnh và 3 video mới nhất theo "Ngày đăng" (cân đối 3-3) —
+  // không còn hardcode như trước, admin đăng thêm là trang chủ tự cập nhật.
   const latestPhotoAlbums = [...getCollection("photo-albums")]
     .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
     .slice(0, 3)
@@ -119,7 +119,7 @@ export default function Home() {
 
   const latestVideos = [...getCollection("video-albums")]
     .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
-    .slice(0, 4)
+    .slice(0, 3)
     .map((v) => ({ title: v.title, image: v.image || undefined }));
 
   // Ngày cập nhật hiển thị luôn là ngày hiện tại (giờ Việt Nam) — không cần
@@ -168,7 +168,7 @@ export default function Home() {
          /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
 <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
   <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
+    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
       TIN TỨC VÀ SỰ KIỆN
     </h2>
 
@@ -180,12 +180,12 @@ export default function Home() {
     </Link>
   </div>
 
-  <div className="mt-10 grid gap-6 lg:grid-cols-3">
+  <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
     {latestNews.map((item) => (
       <a
         key={item.id}
         href={`/tin-tuc/${item.id}`}
-        className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+        className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
       >
         {item.image && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -208,11 +208,22 @@ export default function Home() {
 
     {/* Thông báo nổi bật — chiếm cột thứ 3. Luôn hiện khung này (kể cả chưa
         có thông báo nào) để bố cục 3 cột không bị lệch; nội dung bên trong
-        do admin tự thêm ở /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
-    <div className="flex flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <h3 className="text-center text-sm font-bold uppercase tracking-wide text-slate-500">
-        Thông báo nổi bật
-      </h3>
+        do admin tự thêm ở /admin -> Khác -> "Thông báo nổi bật (trang chủ)".
+        Trang chủ chỉ hiện tối đa 4 thông báo mới nhất — nút "Xem tất cả"
+        dẫn sang /thong-bao để xem đầy đủ khi admin đăng nhiều hơn 4. */}
+    <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between">
+        <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">
+          Thông báo nổi bật
+        </h3>
+        <Link
+          href="/thong-bao"
+          className="group flex items-center gap-1 text-xs font-semibold text-cyan-700 transition hover:text-cyan-800"
+        >
+          Xem tất cả
+          <span className="transition group-hover:translate-x-1">→</span>
+        </Link>
+      </div>
       <div className="mt-3 flex flex-1 flex-col gap-3">
         {siteNotices.length === 0 ? (
           <p className="mt-2 text-center text-sm text-slate-400">Chưa có thông báo nào.</p>
@@ -270,7 +281,7 @@ export default function Home() {
       định kỳ để khối này luôn "sống", tự cập nhật theo thời gian thực. */}
   <AutoRefresh intervalMs={60_000} />
   <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold uppercase tracking-tight text-slate-900 md:text-3xl">
+    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
       Thông tin sản xuất
     </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -351,7 +362,7 @@ export default function Home() {
   <div className="mx-auto max-w-7xl px-6 lg:px-8">
     <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
       <div>
-        <h2 className="text-center text-2xl font-semibold text-slate-900">
+        <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">
           Thư viện ảnh
         </h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -372,17 +383,19 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
-              <a
-                href="/dich-vu#thu-vien-anh"
-                className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-              >
-                Xem tất cả
-              </a>
+              <div className="mt-6 text-center">
+                <a
+                  href="/dich-vu#thu-vien-anh"
+                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
+                >
+                  Xem tất cả
+                </a>
+              </div>
             </div>
 
             <div>
-              <h2 className="text-center text-2xl font-semibold text-slate-900">Video tư liệu</h2>
-              <div className="mt-6 grid grid-cols-2 gap-4">
+              <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">Video tư liệu</h2>
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestVideos.map((video) => (
                   <Link
                     key={video.title}
@@ -411,12 +424,14 @@ export default function Home() {
                   </Link>
                 ))}
               </div>
-              <a
-                href="/dich-vu#thu-vien-video"
-                className="mt-6 inline-block rounded-full bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-              >
-                Xem tất cả
-              </a>
+              <div className="mt-6 text-center">
+                <a
+                  href="/dich-vu#thu-vien-video"
+                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
+                >
+                  Xem tất cả
+                </a>
+              </div>
             </div>
           </div>
         </div>
