@@ -377,7 +377,7 @@ export default function Home() {
                       alt={tab.label}
                       className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
                     />
-                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words group-hover:text-cyan-700">
+                    <p className="flex h-11 items-center justify-center p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words line-clamp-2 group-hover:text-cyan-700">
                       {tab.label}
                     </p>
                   </Link>
@@ -418,7 +418,7 @@ export default function Home() {
                         <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
                       </span>
                     </div>
-                    <p className="p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words group-hover:text-cyan-700">
+                    <p className="flex h-11 items-center justify-center p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words line-clamp-2 group-hover:text-cyan-700">
                       {video.title}
                     </p>
                   </Link>
