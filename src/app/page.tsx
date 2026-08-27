@@ -360,7 +360,7 @@ export default function Home() {
 
       <section id="thu-vien" className="bg-slate-50 py-16">
   <div className="mx-auto max-w-7xl px-6 lg:px-8">
-    <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
+    <div className="grid gap-8 lg:grid-cols-2">
       <div>
         <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">
           Thư viện ảnh
