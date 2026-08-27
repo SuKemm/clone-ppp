@@ -27,7 +27,7 @@ import path from "node:path";
 // `content/data/` và `public/uploads/` là ổ đĩa thật nên hoạt động bình
 // thường, không bị giới hạn này.
 
-function tryMkdir(dir: string): boolean {
+function tryMkdir(dir: string, label: string): { ok: boolean; reason?: string } {
   try {
     fs.mkdirSync(dir, { recursive: true });
     // Xác nhận thực sự ghi được (mkdirSync có thể "thành công" trên vài
@@ -35,15 +35,31 @@ function tryMkdir(dir: string): boolean {
     const probe = path.join(dir, ".write-test");
     fs.writeFileSync(probe, "");
     fs.unlinkSync(probe);
-    return true;
-  } catch {
-    return false;
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, reason: err instanceof Error ? err.message : String(err) };
   }
 }
 
-function resolveWritableDir(preferred: string, tmpSubdir: string): string {
-  if (tryMkdir(preferred)) return preferred;
+function resolveWritableDir(preferred: string, tmpSubdir: string, label: string): string {
+  const attempt = tryMkdir(preferred, label);
+  if (attempt.ok) return preferred;
+
+  // QUAN TRỌNG: in cảnh báo thật to ra log server (xem bằng `pm2 logs`) mỗi
+  // khi phải fallback sang /tmp — nếu không in gì, admin lưu bài/upload ảnh
+  // vẫn "thành công" bình thường trên giao diện (vì ghi vào /tmp cũng ghi
+  // được), nhưng dữ liệu không hề nằm trong content/data hay public/uploads
+  // của project, và MẤT SẠCH mỗi khi server restart — y hệt lỗi "lưu bài
+  // không thấy vô file nào, ảnh mới upload tự nhiên biến mất" đã gặp.
+  // Nguyên nhân phổ biến nhất trên VPS: thư mục preferred chưa tồn tại hoặc
+  // sai quyền ghi (owner/permission) cho user đang chạy tiến trình Node.
   const fallback = path.join(os.tmpdir(), tmpSubdir);
+  console.error(
+    `[storage-paths] KHÔNG GHI ĐƯỢC vào "${preferred}" (${label}) — lý do: ${attempt.reason}. ` +
+      `Đang dùng tạm "${fallback}" (KHÔNG bền vững, mất dữ liệu khi restart server). ` +
+      `Trên VPS: kiểm tra thư mục đã tồn tại và đúng quyền ghi cho user chạy PM2 chưa — ` +
+      `chạy "mkdir -p ${preferred} && chown -R \\$(whoami) ${path.dirname(preferred)}" rồi restart lại.`
+  );
   fs.mkdirSync(fallback, { recursive: true });
   return fallback;
 }
@@ -56,7 +72,8 @@ export function getContentDataDir(): string {
   if (cachedDataDir) return cachedDataDir;
   cachedDataDir = resolveWritableDir(
     path.join(process.cwd(), "content", "data"),
-    "ptsc-content-data"
+    "ptsc-content-data",
+    "content/data"
   );
   return cachedDataDir;
 }
@@ -66,7 +83,8 @@ export function getUploadsDir(): string {
   if (cachedUploadsDir) return cachedUploadsDir;
   cachedUploadsDir = resolveWritableDir(
     path.join(process.cwd(), "public", "uploads"),
-    "ptsc-uploads"
+    "ptsc-uploads",
+    "public/uploads"
   );
   return cachedUploadsDir;
 }
