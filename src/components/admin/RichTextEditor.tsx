@@ -15,7 +15,17 @@ import { Editor } from "@tinymce/tinymce-react";
 // đại diện) — trả về URL đã lưu trên server.
 async function uploadImageFile(file: File | Blob): Promise<string> {
   const fd = new FormData();
-  fd.append("file", file, file instanceof File ? file.name : "image.png");
+  // Next.js (undici) hiện có bug parse multipart/form-data khi tên file
+  // chứa ký tự có dấu/Unicode trong header Content-Disposition, gây lỗi
+  // "Failed to parse body as FormData." — đổi sang tên ASCII an toàn
+  // trước khi gửi. Server xác định đuôi file dựa vào file.type (mime),
+  // không dựa vào tên file, nên đổi tên ở đây không ảnh hưởng gì.
+  const rawName = file instanceof File ? file.name : "";
+  const dotIndex = rawName.lastIndexOf(".");
+  const rawExt = dotIndex >= 0 ? rawName.slice(dotIndex + 1) : "";
+  const safeExt = /^[a-zA-Z0-9]{1,10}$/.test(rawExt) ? rawExt : "png";
+  const safeName = `upload-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
+  fd.append("file", file, safeName);
   const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
   const body = await res.json();
   if (!res.ok) throw new Error(body.error ?? "Tải ảnh lên thất bại");

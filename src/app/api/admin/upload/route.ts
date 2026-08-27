@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
 import { getUploadsDir } from "@/lib/storage-paths";
+import { ADMIN_SESSION_COOKIE, verifySessionToken } from "@/lib/cms/auth";
 
 const ALLOWED_IMAGES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const ALLOWED_DOCS = new Set(["application/pdf"]);
@@ -19,6 +20,16 @@ const MAX_VIDEO_BYTES = 100 * 1024 * 1024; // 100MB — theo yêu cầu
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
+  // Route này bị loại khỏi middleware (xem src/middleware.ts) để tránh
+  // race condition đã biết của Next.js (15 & 16): middleware Node.js chạy
+  // trước route có body có thể khiến req.formData() phía sau đọc phải
+  // body chưa hoàn tất/rỗng, gây lỗi "Failed to parse body as FormData."
+  // Vì vậy phải tự kiểm tra đăng nhập admin ngay tại đây.
+  const token = req.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+  if (!verifySessionToken(token)) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
   try {
     const form = await req.formData();
     const file = form.get("file");
