@@ -19,90 +19,129 @@ const MAX_VIDEO_BYTES = 100 * 1024 * 1024; // 100MB — theo yêu cầu
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
-  const form = await req.formData();
-  const file = form.get("file");
+  try {
+    const form = await req.formData();
+    const file = form.get("file");
 
-  if (!(file instanceof File)) {
-    return NextResponse.json({ error: "Thiếu file" }, { status: 400 });
-  }
+    if (!(file instanceof File)) {
+      return NextResponse.json(
+        { error: "Thiếu file" },
+        { status: 400 }
+      );
+    }
 
-  const isImage = ALLOWED_IMAGES.has(file.type);
-  const isDoc = ALLOWED_DOCS.has(file.type);
-  const isVideo = ALLOWED_VIDEOS.has(file.type);
-  if (!isImage && !isDoc && !isVideo) {
-    return NextResponse.json(
-      { error: "Chỉ nhận ảnh jpg/png/webp/gif, file PDF, hoặc video mp4/webm/mov" },
-      { status: 400 }
-    );
-  }
-  const maxBytes = isVideo ? MAX_VIDEO_BYTES : isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES;
-  if (file.size > maxBytes) {
+    const isImage = ALLOWED_IMAGES.has(file.type);
+    const isDoc = ALLOWED_DOCS.has(file.type);
+    const isVideo = ALLOWED_VIDEOS.has(file.type);
+
+    if (!isImage && !isDoc && !isVideo) {
+      return NextResponse.json(
+        {
+          error:
+            "Chỉ nhận ảnh jpg/png/webp/gif, file PDF, hoặc video mp4/webm/mov",
+        },
+        { status: 400 }
+      );
+    }
+
+    const maxBytes = isVideo
+      ? MAX_VIDEO_BYTES
+      : isDoc
+      ? MAX_DOC_BYTES
+      : MAX_IMAGE_BYTES;
+
+    if (file.size > maxBytes) {
+      return NextResponse.json(
+        {
+          error: isVideo
+            ? "Video vượt quá 100MB"
+            : isDoc
+            ? "File PDF vượt quá 60MB"
+            : "Ảnh vượt quá 60MB",
+        },
+        { status: 400 }
+      );
+    }
+
+    const uploadDir = getUploadsDir();
+
+    console.log("Upload directory:", uploadDir);
+    console.log("File:", {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+    });
+
+    fs.mkdirSync(uploadDir, { recursive: true });
+
+    const ext = isVideo
+      ? file.type.split("/")[1] === "quicktime"
+        ? "mov"
+        : file.type.split("/")[1]
+      : isDoc
+      ? "pdf"
+      : file.type.split("/")[1] === "jpeg"
+      ? "jpg"
+      : file.type.split("/")[1];
+
+    const filename = `${Date.now()}-${randomUUID().slice(0, 8)}.${ext}`;
+    const destPath = path.join(uploadDir, filename);
+
+    if (isVideo) {
+      const nodeStream = fs.createWriteStream(destPath);
+      const webStream = file.stream();
+
+      await new Promise<void>((resolve, reject) => {
+        const reader = webStream.getReader();
+
+        nodeStream.on("error", reject);
+        nodeStream.on("finish", resolve);
+
+        (async function pump() {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+
+              if (done) {
+                nodeStream.end();
+                return;
+              }
+
+              if (!nodeStream.write(value)) {
+                await new Promise<void>((resolveDrain) => {
+                  nodeStream.once("drain", resolveDrain);
+                });
+              }
+            }
+          } catch (err) {
+            nodeStream.destroy();
+            reject(err);
+          }
+        })();
+      });
+    } else {
+      const bytes = Buffer.from(await file.arrayBuffer());
+      fs.writeFileSync(destPath, bytes);
+    }
+
+    const url = `/api/uploads/${filename}`;
+
+    return NextResponse.json({
+      success: true,
+      url,
+    });
+  } catch (error) {
+    console.error("UPLOAD ERROR:", error);
+
     return NextResponse.json(
       {
-        error: isVideo
-          ? "Video vượt quá 100MB"
-          : isDoc
-          ? "File PDF vượt quá 60MB"
-          : "Ảnh vượt quá 60MB",
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Lỗi không xác định khi upload file",
       },
-      { status: 400 }
+      { status: 500 }
     );
   }
-
-  const uploadDir = getUploadsDir();
-  fs.mkdirSync(uploadDir, { recursive: true });
-  const ext = isVideo
-    ? file.type.split("/")[1] === "quicktime"
-      ? "mov"
-      : file.type.split("/")[1]
-    : isDoc
-    ? "pdf"
-    : file.type.split("/")[1] === "jpeg"
-    ? "jpg"
-    : file.type.split("/")[1];
-  const filename = `${Date.now()}-${randomUUID().slice(0, 8)}.${ext}`;
-
-  // Video có thể tới 100MB — ghi thẳng ra đĩa bằng stream thay vì dồn hết
-  // vào 1 Buffer trong RAM (Buffer.from(await file.arrayBuffer()) vẫn ok
-  // với ảnh/PDF nhỏ, nhưng với video lớn nên tránh giữ toàn bộ file 2 lần
-  // trong bộ nhớ cùng lúc).
-  const destPath = path.join(uploadDir, filename);
-  if (isVideo) {
-    const nodeStream = fs.createWriteStream(destPath);
-    const webStream = file.stream();
-    await new Promise<void>((resolve, reject) => {
-      const reader = webStream.getReader();
-      nodeStream.on("error", reject);
-      nodeStream.on("finish", resolve);
-      (async function pump() {
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) {
-              nodeStream.end();
-              return;
-            }
-            if (!nodeStream.write(value)) {
-              await new Promise<void>((r) => nodeStream.once("drain", () => r()));
-            }
-          }
-        } catch (err) {
-          reject(err);
-        }
-      })();
-    });
-  } else {
-    const bytes = Buffer.from(await file.arrayBuffer());
-    fs.writeFileSync(destPath, bytes);
-  }
-
-  // Luôn trả về đường dẫn qua route /api/uploads/... (đọc file trực tiếp từ
-  // ổ đĩa mỗi lần có request — xem src/app/api/uploads/[filename]/route.ts),
-  // KHÔNG dùng /uploads/... (Next serve tĩnh) nữa. Lý do: ở chế độ dev của
-  // Next 16 (Turbopack), file mới thêm vào thư mục public/ SAU khi server đã
-  // chạy thường bị 404 cho tới khi restart server — Turbopack không tự nhận
-  // diện file mới. Đi qua route API tránh hẳn lỗi này, và vẫn hoạt động bình
-  // thường trên VPS lẫn Vercel (fallback /tmp).
-  const url = `/api/uploads/${filename}`;
-  return NextResponse.json({ url });
 }
