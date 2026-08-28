@@ -219,6 +219,19 @@ export default function ContactPage() {
                 </p>
               </div>
             </div>
+
+            <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
+              <iframe
+                src="https://www.google.com/maps?q=15.0174299,108.3908357&z=17&output=embed"
+                width="100%"
+                height="320"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Vị trí Công ty Cổ phần Thủy điện Đakđrinh"
+              />
+            </div>
           </div>
         </div>
       </section>
