@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
-import { getCollection, type CmsItem } from "@/lib/cms/store";
+import { getCollection } from "@/lib/cms/store";
 import { PhotoGalleryGrid } from "@/components/PhotoGalleryGrid";
+import { VideoGalleryGrid } from "@/components/VideoGalleryGrid";
 
 // Đọc cùng dữ liệu với trang tiếng Việt (/dich-vu) để hai ngôn ngữ luôn đồng
 // bộ — không còn mảng viết cứng riêng cho tiếng Anh. Field "<key>_en" (nhập
@@ -31,14 +32,6 @@ function parseGalleryImages(raw: string | undefined): string[] {
   }
 }
 
-function PlayIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current" aria-hidden="true">
-      <path d="M8 5.5v13l11-6.5-11-6.5Z" />
-    </svg>
-  );
-}
-
 export default function GalleryPageEn() {
   const photoAlbums = getCollection("photo-albums").map((a) => {
     const cover = a.image || FALLBACK_IMAGE;
@@ -54,13 +47,13 @@ export default function GalleryPageEn() {
       images,
     };
   });
-  const videoAlbums = getCollection("video-albums").map(
-    (v): CmsItem => ({
-      ...v,
-      title: v.title_en || v.title,
-      image: v.image || FALLBACK_IMAGE,
-    })
-  );
+  const videoAlbums = getCollection("video-albums").map((v) => ({
+    id: v.id,
+    title: v.title_en || v.title,
+    date: v.date,
+    image: v.image || FALLBACK_IMAGE,
+    video: v.video,
+  }));
 
   return (
     <PtscShell
@@ -105,30 +98,7 @@ export default function GalleryPageEn() {
             <div className="hidden h-[3px] flex-1 max-w-xs bg-gradient-to-r from-cyan-500/70 to-transparent sm:block" />
           </div>
 
-          <div className="mt-8 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
-            {videoAlbums.map((video) => (
-              <div key={video.id} className="group block cursor-pointer">
-                <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">
-                  <div className="aspect-[4/3] w-full overflow-hidden">
-                    <img
-                      src={video.image}
-                      alt={video.title}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                    />
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/25 transition group-hover:bg-slate-900/40">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-cyan-700 shadow-md transition group-hover:scale-110">
-                      <PlayIcon />
-                    </span>
-                  </div>
-                </div>
-                <h3 className="mt-3 break-words text-[15px] font-semibold leading-snug text-slate-800 transition group-hover:text-cyan-700">
-                  {video.title}
-                </h3>
-                <p className="mt-1 text-xs text-slate-400">{video.date}</p>
-              </div>
-            ))}
-          </div>
+          <VideoGalleryGrid videos={videoAlbums} isEnglish />
         </div>
       </section>
     </PtscShell>

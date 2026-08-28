@@ -166,7 +166,7 @@ export default function Home() {
          thành 1 hàng 4 ô ngay dưới dòng chữ chạy, nay gộp vào đây cho đỡ
          chiếm nhiều đất ở đầu trang). Quản lý nội dung thông báo vẫn ở
          /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
-<section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+<section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
   <div className="flex flex-col items-center text-center">
     <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
       TIN TỨC VÀ SỰ KIỆN
@@ -189,7 +189,7 @@ export default function Home() {
       >
         {item.image && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.image} alt="" className="h-36 w-full object-cover" />
+          <img src={item.image} alt="" className="h-44 w-full object-cover" />
         )}
         <div className="flex flex-1 flex-col p-5">
           <h3 className="break-words text-base font-semibold leading-6 text-slate-900">
@@ -276,7 +276,7 @@ export default function Home() {
 
 
 {/* Production */}
-<section id="production" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+<section id="production" className="mx-auto max-w-7xl px-6 pt-6 pb-16 lg:px-8">
   {/* Không hiện gì cả — âm thầm refresh dữ liệu + nhãn ngày/tháng/quý/năm
       định kỳ để khối này luôn "sống", tự cập nhật theo thời gian thực. */}
   <AutoRefresh intervalMs={60_000} />

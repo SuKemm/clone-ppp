@@ -92,7 +92,7 @@ export default async function TendersPageEn({
       description="Tender information and cooperation opportunities with PTSC."
     >
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-        <h1 className="text-xl font-bold uppercase tracking-wide text-slate-900 sm:text-2xl lg:text-3xl">
+        <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
           Tenders
         </h1>
 

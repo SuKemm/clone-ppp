@@ -163,7 +163,7 @@ export default function EnglishHomePage() {
       {/* ===== Running text (replaces the old investor logo block) ===== */}
       <MarqueeBar isEnglish={true} />
 
-      <section id="news" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
             News and Events
@@ -187,14 +187,12 @@ export default function EnglishHomePage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={item.image} alt="" className="h-44 w-full object-cover" />
               )}
-              <div className="flex flex-1 flex-col p-6">
-                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
-                  {item.category_en || item.category}
-                </p>
-                <h3 className="mt-3 break-words text-lg font-semibold leading-7 text-slate-900">
+              <div className="flex flex-1 flex-col p-5">
+                <h3 className="break-words text-base font-semibold leading-6 text-slate-900">
                   {item.title_en || item.title}
                 </h3>
-                <div className="mt-5 flex items-center justify-between text-sm text-slate-500">
+
+                <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
                   <span>{formatNewsDateTime(item.date, item.gio, "en")}</span>
                   <span className="text-cyan-700 transition group-hover:translate-x-1">→</span>
                 </div>
@@ -281,7 +279,7 @@ export default function EnglishHomePage() {
         </div>
       </section>
 
-      <section id="production" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <section id="production" className="mx-auto max-w-7xl px-6 pt-6 pb-16 lg:px-8">
         <AutoRefresh intervalMs={60_000} />
         <div className="flex flex-col items-center text-center">
           <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
