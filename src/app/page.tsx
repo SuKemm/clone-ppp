@@ -50,19 +50,19 @@ const shareholderRelations = [
     label: "Thông tin/Tài liệu cổ đông",
     icon: FileText,
     href: "/co-dong",
-    tone: "bg-sky-500",
+    tone: "bg-[#069DD8]",
   },
   {
     label: "Đại hội cổ đông",
     icon: Users2,
     href: "/co-dong",
-    tone: "bg-blue-700",
+    tone: "bg-[#0063AF]",
   },
   {
     label: "Báo cáo tài chính/Báo cáo thường niên",
     icon: BarChart3,
     href: "/co-dong",
-    tone: "bg-slate-900",
+    tone: "bg-[#151F41]",
   },
 ];
 
@@ -168,7 +168,7 @@ export default function Home() {
          /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
 <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
   <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
+    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
       TIN TỨC VÀ SỰ KIỆN
     </h2>
 
@@ -281,7 +281,7 @@ export default function Home() {
       định kỳ để khối này luôn "sống", tự cập nhật theo thời gian thực. */}
   <AutoRefresh intervalMs={60_000} />
   <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
+    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
       Thông tin sản xuất
     </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -330,7 +330,7 @@ export default function Home() {
 
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-center gap-3 bg-slate-400/80 py-5">
+          <div className="flex items-center justify-center gap-3 bg-[#898FA3] py-5">
             <BarChart3 className="h-6 w-6 text-white" />
             <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
               Quan hệ cổ đông
@@ -362,7 +362,7 @@ export default function Home() {
   <div className="mx-auto max-w-7xl px-6 lg:px-8">
     <div className="grid gap-8 lg:grid-cols-2">
       <div>
-        <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">
+        <h2 className="text-center text-2xl font-semibold text-[#075B9F]">
           Thư viện ảnh
         </h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -384,17 +384,17 @@ export default function Home() {
                 ))}
               </div>
               <div className="mt-6 text-center">
-                <a
+                <Link
                   href="/dich-vu#thu-vien-anh"
                   className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
                 >
                   Xem tất cả
-                </a>
+                </Link>
               </div>
             </div>
 
             <div>
-              <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">Video tư liệu</h2>
+              <h2 className="text-center text-2xl font-semibold text-[#075B9F]">Video tư liệu</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestVideos.map((video) => (
                   <Link
@@ -425,12 +425,12 @@ export default function Home() {
                 ))}
               </div>
               <div className="mt-6 text-center">
-                <a
+                <Link
                   href="/dich-vu#thu-vien-video"
                   className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
                 >
                   Xem tất cả
-                </a>
+                </Link>
               </div>
             </div>
           </div>

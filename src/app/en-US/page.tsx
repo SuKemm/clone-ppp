@@ -55,19 +55,19 @@ const shareholderRelations = [
     label: "Shareholder Information / Documents",
     icon: FileText,
     href: "/en-US/shareholders",
-    tone: "bg-sky-500",
+    tone: "bg-[#069DD8]",
   },
   {
     label: "General Meeting of Shareholders",
     icon: Users2,
     href: "/en-US/shareholders",
-    tone: "bg-blue-700",
+    tone: "bg-[#0063AF]",
   },
   {
     label: "Financial Statements / Annual Report",
     icon: BarChart3,
     href: "/en-US/shareholders",
-    tone: "bg-slate-900",
+    tone: "bg-[#151F41]",
   },
 ];
 
@@ -165,7 +165,7 @@ export default function EnglishHomePage() {
 
       <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
             News and Events
           </h2>
 
@@ -282,7 +282,7 @@ export default function EnglishHomePage() {
       <section id="production" className="mx-auto max-w-7xl px-6 pt-6 pb-16 lg:px-8">
         <AutoRefresh intervalMs={60_000} />
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#4E98B8] md:text-3xl">
+          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
             Production Status
           </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -331,7 +331,7 @@ export default function EnglishHomePage() {
 
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-center gap-3 bg-slate-400/80 py-5">
+          <div className="flex items-center justify-center gap-3 bg-[#898FA3] py-5">
             <BarChart3 className="h-6 w-6 text-white" />
             <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
               Investor Relations
@@ -363,7 +363,7 @@ export default function EnglishHomePage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-2">
             <div>
-              <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">Photo Gallery</h2>
+              <h2 className="text-center text-2xl font-semibold text-[#075B9F]">Photo Gallery</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestPhotoAlbums.map((tab) => (
                   <Link
@@ -393,7 +393,7 @@ export default function EnglishHomePage() {
             </div>
 
             <div>
-              <h2 className="text-center text-2xl font-semibold text-[#4E98B8]">Video Library</h2>
+              <h2 className="text-center text-2xl font-semibold text-[#075B9F]">Video Library</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestVideos.map((video) => (
                   <Link
