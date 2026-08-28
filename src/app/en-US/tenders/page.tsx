@@ -97,16 +97,6 @@ export default async function TendersPageEn({
         </h1>
 
         <div className="mt-6 flex gap-8 overflow-x-auto border-b border-slate-200">
-          <Link
-            href={buildHref("All", 1)}
-            className={`-mb-px whitespace-nowrap border-b-2 pb-3 text-sm font-semibold transition ${
-              activeTab === "All"
-                ? "border-cyan-600 text-cyan-700"
-                : "border-transparent text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            All
-          </Link>
           {tabs.map((tab) => {
             const isActive = tab === activeTab;
             const href = buildHref(tab, 1);

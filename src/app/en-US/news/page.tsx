@@ -78,7 +78,7 @@ export default async function NewsPageEn({
 
   // Category tabs — taken straight from the article data, in first-seen order.
   const categories = Array.from(new Set(news.map((item) => item.category).filter(Boolean)));
-  const tabs = [ALL_TAB, ...categories];
+  const tabs = categories;
 
   const activeTab = category && categories.includes(category) ? category : ALL_TAB;
 
