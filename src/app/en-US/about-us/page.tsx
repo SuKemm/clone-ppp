@@ -55,7 +55,7 @@ export default function AboutUsPage() {
           <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
             PV Power DHC
           </span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="mt-3 text-3xl text-[#075B9F]">
             Corporate Overview
           </h2>
 
@@ -70,7 +70,7 @@ export default function AboutUsPage() {
 
       <section className="mx-auto max-w-7xl px-6 pb-14 pt-6 lg:px-8">
         <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-slate-900">
+          <h2 className="text-3xl text-[#075B9F]">
             Vision &amp; Mission
           </h2>
         </div>
@@ -90,7 +90,7 @@ export default function AboutUsPage() {
       <section className="bg-slate-50 py-14">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mb-8 text-center">
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            <h2 className="mt-2 text-3xl text-[#075B9F]">
               SHAREHOLDERS
             </h2>
           </div>
@@ -124,7 +124,7 @@ export default function AboutUsPage() {
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
           <div>
-            <h2 className="mt-2 text-2xl font-bold text-slate-900">Leadership</h2>
+            <h2 className="mt-2 text-2xl text-[#075B9F]">Leadership</h2>
             <p className="mt-3 max-w-2xl leading-7 text-slate-600">
               The Board of Directors, Board of Management, and Supervisory
               Board of Dakdrinh Hydropower Joint Stock Company (PV Power
@@ -142,7 +142,7 @@ export default function AboutUsPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8">
-          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+          <h2 className="mt-2 text-3xl text-[#075B9F]">
             Project Specifications
           </h2>
         </div>
@@ -176,7 +176,7 @@ export default function AboutUsPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8 text-center">
-          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+          <h2 className="mt-2 text-3xl text-[#075B9F]">
             Key Project Milestones
           </h2>
         </div>
@@ -187,7 +187,7 @@ export default function AboutUsPage() {
               key={t.id}
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
             >
-              <div className="text-xl font-bold text-cyan-700">{t.date}</div>
+              <div className="text-xl text-slate-900">{t.date}</div>
               <p className="mt-3 text-sm leading-7 text-slate-600">{t.summary_en || t.summary}</p>
             </article>
           ))}
@@ -210,7 +210,7 @@ export default function AboutUsPage() {
                 <tbody>
                   {emulationTitles.map((a) => (
                     <tr key={a.id} className="border-b border-slate-100 last:border-0">
-                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-700">{a.year}</td>
                       <td className="px-5 py-3 text-slate-700">{a.title_en || a.title}</td>
                       <td className="px-5 py-3 leading-6 text-slate-500">{a.decision_en || a.decision}</td>
                     </tr>
@@ -234,7 +234,7 @@ export default function AboutUsPage() {
                 <tbody>
                   {commendations.map((a) => (
                     <tr key={a.id} className="border-b border-slate-100 last:border-0">
-                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-700">{a.year}</td>
                       <td className="px-5 py-3 text-slate-700">{a.title_en || a.title}</td>
                       <td className="px-5 py-3 leading-6 text-slate-500">{a.decision_en || a.decision}</td>
                     </tr>
