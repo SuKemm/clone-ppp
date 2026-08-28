@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
+import { PageHeader } from "@/components/PageHeader";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
@@ -80,6 +81,16 @@ export default async function NewsDetailPageEn({ params }: Params) {
 
   return (
     <PtscShell title={title} description={excerpt}>
+      {/* Breadcrumb: Home / News & Events / <article category> — mirrors
+          the Vietnamese detail page (src/app/tin-tuc/[id]/page.tsx). */}
+      <PageHeader
+        title={category || "News & Events"}
+        crumbs={[
+          { label: "News & Events", href: "/en-US/news" },
+          ...(category ? [{ label: category }] : []),
+        ]}
+        homeHref="/en-US"
+      />
       <section className="mx-auto max-w-7xl px-6 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="min-w-0 max-w-3xl">

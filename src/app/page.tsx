@@ -214,7 +214,7 @@ export default function Home() {
     <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">
-          Thông báo nổi bật
+          Thông báo
         </h3>
         <Link
           href="/thong-bao"
