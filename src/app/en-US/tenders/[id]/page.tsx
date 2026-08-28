@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
-import { PageHeader } from "@/components/PageHeader";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
@@ -73,15 +72,6 @@ export default async function TenderDetailPageEn({ params }: Params) {
 
   return (
     <PtscShell title={title} description={excerpt}>
-      {/* Breadcrumb: Home / Tenders / <category> */}
-      <PageHeader
-        title={item.category || "Tenders"}
-        crumbs={[
-          { label: "Tenders", href: "/en-US/tenders" },
-          ...(item.category ? [{ label: item.category }] : []),
-        ]}
-        homeHref="/en-US"
-      />
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="max-w-3xl">

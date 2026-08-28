@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
-import { PageHeader } from "@/components/PageHeader";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
@@ -63,15 +62,6 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
 
   return (
     <PtscShell title={item.title_en || item.title} description={item.excerpt_en || item.excerpt || ""}>
-      {/* Breadcrumb: Home / Shareholder Relations / <category> */}
-      <PageHeader
-        title={item.category || "Shareholder Relations"}
-        crumbs={[
-          { label: "Shareholder Relations", href: "/en-US/shareholders" },
-          ...(item.category ? [{ label: item.category }] : []),
-        ]}
-        homeHref="/en-US"
-      />
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="max-w-3xl">

@@ -1,0 +1,21 @@
+--- a/src/components/admin/RichTextEditor.tsx
++++ b/src/components/admin/RichTextEditor.tsx
+@@ -71,6 +71,18 @@
+             "body { font-family: system-ui, sans-serif; font-size: 14px; }",
+           branding: false,
+ 
++          // QUAN TRỌNG: mặc định TinyMCE tự cắt URL ảnh/link tuyệt đối
++          // (/api/uploads/xxx.png) thành URL tương đối (api/uploads/xxx.png)
++          // để "tối ưu" — nhưng nội dung này sẽ hiển thị ở NHIỀU trang khác
++          // nhau (vd /tin-tuc/[id]), không phải ở đúng trang /admin nơi
++          // soạn thảo, nên URL tương đối bị trình duyệt tính sai đường dẫn
++          // (thành /tin-tuc/api/uploads/xxx.png) và ảnh bị vỡ (404). Tắt hẳn
++          // 2 cờ này để TinyMCE luôn giữ nguyên URL tuyệt đối (có dấu / đầu)
++          // y hệt như server trả về.
++          relative_urls: false,
++          remove_script_host: false,
++          convert_urls: true,
++
+           // Kéo-thả ảnh hoặc dán ảnh (Ctrl+V) vào bài viết sẽ tự upload lên
+           // server rồi chèn URL — không cần thao tác thủ công.
+           automatic_uploads: true,

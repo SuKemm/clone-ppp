@@ -224,9 +224,35 @@
   }
 }
 
+/* Viền chữ phát sáng (glow) đỏ, sáng mờ dần đều — không chớp tắt. */
+@keyframes glow-pulse {
+  0%,
+  100% {
+    text-shadow:
+      0 0 4px rgba(220, 38, 38, 0.7),
+      0 0 10px rgba(220, 38, 38, 0.5),
+      0 0 16px rgba(220, 38, 38, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 8px rgba(220, 38, 38, 1),
+      0 0 20px rgba(220, 38, 38, 0.85),
+      0 0 32px rgba(220, 38, 38, 0.6);
+  }
+}
+
+.glow-text {
+  text-shadow:
+    0 0 4px rgba(220, 38, 38, 0.7),
+    0 0 10px rgba(220, 38, 38, 0.5),
+    0 0 16px rgba(220, 38, 38, 0.3);
+}
+
 .marquee-once {
-  animation: run-once linear 1;
-  animation-fill-mode: forwards;
+  animation-name: run-once, glow-pulse;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: forwards, none;
 }
 
 /* Sao lấp lánh (twinkle) hai bên dòng chữ — nhấp nhô độ sáng + kích thước,

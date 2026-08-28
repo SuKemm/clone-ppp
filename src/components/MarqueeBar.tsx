@@ -56,8 +56,8 @@ export function MarqueeBar({ isEnglish = false }: { isEnglish?: boolean }) {
         <span
           key={cycle}
           onAnimationEnd={() => setCycle((c) => c + 1)}
-          style={{ animationDuration: `${duration}s` }}
-          className="marquee-once inline-block whitespace-nowrap px-6 text-[18px] font-semibold uppercase tracking-[0.15em] text-red-600"
+          style={{ animationDuration: `${duration}s, 1.8s` }}
+          className="marquee-once glow-text inline-block whitespace-nowrap px-6 text-[18px] font-semibold uppercase tracking-[0.15em] text-red-600"
         >
           <span className="sparkle" aria-hidden="true">
             ✦

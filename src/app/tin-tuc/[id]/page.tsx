@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
-import { PageHeader } from "@/components/PageHeader";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
@@ -64,17 +63,6 @@ export default async function NewsDetailPage({ params }: Params) {
 
   return (
     <PtscShell title={item.title} description={item.excerpt || ""}>
-      {/* Breadcrumb: Trang chủ / Tin tức – Sự kiện / <chuyên mục bài viết> —
-          đồng bộ kiểu hiển thị với trang danh sách (src/app/tin-tuc/page.tsx). */}
-      <PageHeader
-        title={item.category || "Tin tức \u2013 Sự kiện"}
-        crumbs={[
-          { label: "Tin tức \u2013 Sự kiện", href: "/tin-tuc" },
-          ...(item.category ? [{ label: item.category }] : []),
-        ]}
-        homeHref="/"
-      />
-
       <section className="mx-auto max-w-7xl px-6 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="min-w-0 max-w-3xl">

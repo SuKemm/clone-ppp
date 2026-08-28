@@ -215,22 +215,9 @@ export default function ContactPage() {
                 <Mail className="mt-0.5 h-5 w-5 shrink-0 text-[#FF6B00]" />
                 <p>
                   <span className="font-bold text-slate-900">Email: </span>
-                  vanthudhc@gmail.com
+                  info@dakdrinhhydropower.vn
                 </p>
               </div>
-            </div>
-
-            <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
-              <iframe
-                src="https://www.google.com/maps?q=15.0174299,108.3908357&z=17&output=embed"
-                width="100%"
-                height="320"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Vị trí Công ty Cổ phần Thủy điện Đakđrinh"
-              />
             </div>
           </div>
         </div>

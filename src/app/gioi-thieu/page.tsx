@@ -6,16 +6,15 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 
 export default function AboutPage() {
   const overview = getCollection("company-overview")[0];
+  const allStats = getCollection("company-stats");
+  const stats = allStats.filter((s) => s.section === "Tổng quan doanh nghiệp");
+  const operatingResults = allStats.filter((s) => s.section === "Lũy kế phát điện");
   const shareholders = getCollection("shareholders-list");
   const projectSpecs = getCollection("company-specs");
   const timeline = getCollection("company-timeline");
   const allAwards = getCollection("company-awards");
   const emulationTitles = allAwards.filter((a) => a.award_type === "Danh hiệu thi đua");
   const commendations = allAwards.filter((a) => a.award_type === "Hình thức khen thưởng");
-
-  // Ngày hiện tại (tự động chạy theo ngày server, không cần admin nhập tay)
-  const now = new Date();
-  const todayVn = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
 
   return (
     <PtscShell
@@ -35,37 +34,54 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-        <div>
-          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-            PV Power DHC
-          </span>
-          <h2 className="mt-3 text-3xl text-[#075B9F]">
-            Tổng quan doanh nghiệp
-          </h2>
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
+          <div>
+            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+              PV Power DHC
+            </span>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Tổng quan doanh nghiệp
+            </h2>
 
-          {overview?.overview_intro && (
-            <div
-              className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:text-slate-800"
-              dangerouslySetInnerHTML={{ __html: overview.overview_intro }}
-            />
-          )}
+            {overview?.overview_intro && (
+              <div
+                className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:text-slate-800"
+                dangerouslySetInnerHTML={{ __html: overview.overview_intro }}
+              />
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            {stats.map((s) => (
+              <div
+                key={s.id}
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              >
+                <div className="text-3xl font-bold text-cyan-700">{s.value}</div>
+                <div className="mt-2 text-sm leading-6 text-slate-500">{s.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-14 pt-6 lg:px-8">
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl text-[#075B9F]">
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="mb-8">
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            Chiến lược 2015 - 2020, tầm nhìn 2030
+          </span>
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
             Tầm nhìn &amp; Sứ mệnh
           </h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-            <h3 className="text-center text-xl font-bold text-slate-900">Tầm nhìn</h3>
+            <h3 className="text-xl font-bold text-slate-900">Tầm nhìn</h3>
             <p className="mt-4 leading-7 text-slate-600">{overview?.vision}</p>
           </article>
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-            <h3 className="text-center text-xl font-bold text-slate-900">Sứ mệnh</h3>
+            <h3 className="text-xl font-bold text-slate-900">Sứ mệnh</h3>
             <p className="mt-4 leading-7 text-slate-600">{overview?.mission}</p>
           </article>
         </div>
@@ -73,15 +89,18 @@ export default function AboutPage() {
 
       <section className="bg-slate-50 py-14">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-8 text-center">
-            <h2 className="mt-2 text-3xl text-[#075B9F]">
-              CÁC CỔ ĐÔNG
+          <div className="mb-8">
+            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+              Cơ cấu sở hữu
+            </span>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">
+              Cổ đông Công ty
             </h2>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
             <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-              <h3 className="text-center text-2xl font-bold text-slate-900">Danh sách các cổ đông</h3>
+              <h3 className="text-2xl font-bold text-slate-900">Danh sách cổ đông</h3>
               <ul className="mt-5 space-y-3">
                 {shareholders.map((s) => (
                   <li key={s.id} className="flex gap-3 leading-7 text-slate-600">
@@ -93,7 +112,7 @@ export default function AboutPage() {
             </article>
 
             <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-              <h3 className="text-center text-2xl font-bold text-slate-900">Tổng mức đầu tư</h3>
+              <h3 className="text-2xl font-bold text-slate-900">Tổng mức đầu tư</h3>
               {overview?.investment_note && (
                 <div
                   className="prose prose-slate mt-4 max-w-none leading-7 text-slate-600 prose-p:my-4 prose-strong:text-slate-800"
@@ -108,7 +127,10 @@ export default function AboutPage() {
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
           <div>
-            <h2 className="mt-2 text-2xl text-[#075B9F]">Ban lãnh đạo</h2>
+            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+              Nhân sự chủ chốt
+            </span>
+            <h2 className="mt-2 text-2xl font-bold text-slate-900">Ban lãnh đạo</h2>
             <p className="mt-3 max-w-2xl leading-7 text-slate-600">
               Hội đồng Quản trị, Ban Giám đốc và Ban Kiểm soát Công ty cổ
               phần Thủy điện Đakđrinh (PV Power DHC).
@@ -125,8 +147,11 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8">
-          <h2 className="mt-2 text-3xl text-[#075B9F]">
-            Thông số về dự án
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            Dự án
+          </span>
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Thông số Dự án thủy điện Đakđrinh
           </h2>
         </div>
 
@@ -140,27 +165,41 @@ export default function AboutPage() {
               <div className="mt-2 text-lg font-bold text-cyan-700">{spec.value}</div>
             </div>
           ))}
+        </div>
+      </section>
 
-          {/* Hai ô này lấy ngày hiện tại tự động (không cần admin cập nhật tay) */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="text-sm font-semibold text-slate-500">Sản lượng điện</div>
-            <div className="mt-2 text-lg font-bold text-cyan-700">
-              ~7 tỷ kWh <span className="text-sm font-normal text-slate-500">(tính đến: {todayVn})</span>
-            </div>
+      <section className="bg-slate-50 py-14">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-8">
+            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+              Kết quả vận hành
+            </span>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">
+              Lũy kế phát điện (29/05/2014 - hết tháng 05/2026)
+            </h2>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="text-sm font-semibold text-slate-500">Vận hành từ năm 2014</div>
-            <div className="mt-2 text-lg font-bold text-cyan-700">
-              12 năm <span className="text-sm font-normal text-slate-500">(tính đến nay: {todayVn})</span>
-            </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {operatingResults.map((r) => (
+              <div
+                key={r.id}
+                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+              >
+                <div className="text-2xl font-bold text-cyan-700">{r.value}</div>
+                <div className="mt-2 text-sm leading-6 text-slate-500">{r.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-        <div className="mb-8 text-center">
-          <h2 className="mt-2 text-3xl text-[#075B9F]">
-            Các mốc tiến độ chính của dự án
+        <div className="mb-8">
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            Hành trình phát triển
+          </span>
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Lịch sử hình thành và phát triển
           </h2>
         </div>
 
@@ -170,7 +209,7 @@ export default function AboutPage() {
               key={t.id}
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
             >
-              <div className="text-xl text-slate-900">{t.date}</div>
+              <div className="text-xl font-bold text-cyan-700">{t.date}</div>
               <p className="mt-3 text-sm leading-7 text-slate-600">{t.summary}</p>
             </article>
           ))}
@@ -178,6 +217,15 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="mb-8">
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            Ghi nhận
+          </span>
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Hình thức khen thưởng đã đạt được
+          </h2>
+        </div>
+
         <div className="space-y-10">
           <div>
             <h3 className="mb-4 text-xl font-bold text-slate-900">Danh hiệu thi đua</h3>
@@ -193,7 +241,7 @@ export default function AboutPage() {
                 <tbody>
                   {emulationTitles.map((a) => (
                     <tr key={a.id} className="border-b border-slate-100 last:border-0">
-                      <td className="px-5 py-3 text-slate-700">{a.year}</td>
+                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
                       <td className="px-5 py-3 text-slate-700">{a.title}</td>
                       <td className="px-5 py-3 leading-6 text-slate-500">{a.decision}</td>
                     </tr>
@@ -217,7 +265,7 @@ export default function AboutPage() {
                 <tbody>
                   {commendations.map((a) => (
                     <tr key={a.id} className="border-b border-slate-100 last:border-0">
-                      <td className="px-5 py-3 text-slate-700">{a.year}</td>
+                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
                       <td className="px-5 py-3 text-slate-700">{a.title}</td>
                       <td className="px-5 py-3 leading-6 text-slate-500">{a.decision}</td>
                     </tr>
@@ -231,9 +279,12 @@ export default function AboutPage() {
 
       <section className="bg-slate-50 py-14">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-8 text-center">
-            <h2 className="mt-2 text-2xl uppercase tracking-tight text-[#075B9F] md:text-3xl">
-              PV Power DHC
+          <div className="mb-8">
+            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+              Khẳng định thương hiệu
+            </span>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">
+              PV Power DHC không ngừng lớn mạnh
             </h2>
           </div>
           {overview?.closing_content && (
