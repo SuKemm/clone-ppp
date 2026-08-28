@@ -1,438 +1,277 @@
 import Link from "next/link";
-import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
-import { HeroSlider } from "@/components/HeroSlider";
-import { MarqueeBar } from "@/components/MarqueeBar";
-import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
-import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
-import { formatNewsDateTime } from "@/lib/format-date";
 
-export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin (sản lượng, mực nước, dòng chữ chạy)
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
-// Ảnh dự phòng — chỉ dùng khi admin lỡ xoá hết ảnh trong "Banner trang chủ"
-// (Admin -> Trang chủ), để trang không bao giờ hiện banner trống trơn.
-const FALLBACK_HERO_SLIDES = [
-  {
-    title: "Công ty Cổ phần Thủy điện Đakđrinh — Chất lượng - An toàn - Hiệu quả - Phát triển",
-    image: "/images/ptsc/banner-panorama.jpg",
-  },
-];
+export default function AboutPage() {
+  const overview = getCollection("company-overview")[0];
+  const shareholders = getCollection("shareholders-list");
+  const projectSpecs = getCollection("company-specs");
+  const timeline = getCollection("company-timeline");
+  const allAwards = getCollection("company-awards");
+  const emulationTitles = allAwards.filter((a) => a.award_type === "Danh hiệu thi đua");
+  const commendations = allAwards.filter((a) => a.award_type === "Hình thức khen thưởng");
 
-// Logo cổ đông / nhà đầu tư đã chuyển xuống chân trang — xem
-// src/components/ptsc-shell.tsx. Vị trí cũ ngay dưới banner giờ là
-// <MarqueeBar /> (dòng chữ chạy, sửa được ở /admin -> "Dòng chữ chạy").
-
-// Khối "Tin tức và sự kiện" ở trang chủ lấy trực tiếp từ collection "news"
-// (Admin -> Nội dung -> Tin tức), KHÔNG còn hardcode 3 bài cứng như trước —
-// xem hàm getLatestNews() bên dưới.
-
-// Chuyển "24/06/2026" (dd/mm/yyyy, định dạng admin đang nhập ở field "Ngày
-// đăng") thành mốc thời gian để so sánh mới/cũ. Bài không nhập ngày hoặc
-// nhập sai định dạng bị coi là cũ nhất (NaN -> luôn xếp sau các bài có ngày
-// hợp lệ) thay vì làm hỏng thứ tự của các bài còn lại.
-function parseVnDate(value: string | undefined): number {
-  if (!value) return -Infinity;
-  const m = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!m) return -Infinity;
-  const [, d, mo, y] = m;
-  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
-  return Number.isNaN(t) ? -Infinity : t;
-}
-
-// Sản lượng Ngày/Tuần/Tháng/Quý/Năm được TỰ CỘNG DỒN từ collection
-// "production-daily" (mỗi bản ghi = sản lượng của đúng 1 ngày, admin nhập ở
-// /admin) — xem computeProductionTotals() và getProductionPeriodLabels()
-// trong src/lib/production.ts. Mực nước hồ vẫn lấy từ "production-info" như
-// cũ (đây là số liệu tức thời, không phải số cộng dồn).
-const shareholderRelations = [
-  {
-    label: "Thông tin/Tài liệu cổ đông",
-    icon: FileText,
-    href: "/co-dong",
-    tone: "bg-[#069DD8]",
-  },
-  {
-    label: "Đại hội cổ đông",
-    icon: Users2,
-    href: "/co-dong",
-    tone: "bg-[#0063AF]",
-  },
-  {
-    label: "Báo cáo tài chính/Báo cáo thường niên",
-    icon: BarChart3,
-    href: "/co-dong",
-    tone: "bg-[#151F41]",
-  },
-];
-
-// Ảnh mặc định nếu album/video chưa được gán ảnh đại diện trong /admin.
-const GALLERY_FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";
-
-// Chuyển ngày admin nhập ở field "Ngày đăng" (chấp nhận cả "dd/mm/yyyy" và
-// "dd.mm.yyyy" — 2 collection Thư viện ảnh/Video đang seed theo kiểu dấu
-// chấm) thành mốc thời gian để sắp xếp mới → cũ.
-function parseAlbumDate(value: string | undefined): number {
-  if (!value) return -Infinity;
-  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
-  if (!m) return -Infinity;
-  const [, d, mo, y] = m;
-  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
-  return Number.isNaN(t) ? -Infinity : t;
-}
-
-export default function Home() {
-  const productionInfo = getCollection("production-info")[0];
-
-  // Banner trượt trang chủ — lấy từ Admin -> Trang chủ -> "Banner trang chủ
-  // (Slider)". Giữ đúng thứ tự admin đã thêm (mục mới thêm hiện lên đầu,
-  // xem createItem() trong src/lib/cms/store.ts).
-  const heroSlidesFromCms = getCollection("hero-slides").map((s) => ({
-    title: s.title || "Công ty Cổ phần Thủy điện Đakđrinh",
-    image: s.image,
-  }));
-  const heroSlides = heroSlidesFromCms.length > 0 ? heroSlidesFromCms : FALLBACK_HERO_SLIDES;
-
-  // 2 tin mới nhất cho khối "Tin tức và sự kiện" — ưu tiên theo field "Ngày
-  // đăng" (không phải theo thứ tự vừa tạo/sửa trong admin), để admin tạo bài
-  // trước rồi hẹn ngày đăng sau vẫn lên đúng thứ tự mới → cũ ở trang chủ.
-  // (Trước đây lấy 3 tin, nay chỉ lấy 2 vì cột thứ 3 nhường chỗ cho khối
-  // "Thông báo nổi bật" theo yêu cầu gộp chung vào section này.)
-  const latestNews = [...getCollection("news")]
-    .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
-    .slice(0, 2);
-
-  // 4 ô "Thông báo nổi bật" — hiển thị gọn thành 1 cột ngay cạnh 2 tin mới
-  // nhất trong khối "Tin tức và sự kiện" ở trang chủ (Admin -> Khác ->
-  // "Thông báo nổi bật (trang chủ)"). Mới thêm ở admin sẽ tự lên đầu
-  // (createItem() dùng unshift), không cần sắp xếp theo ngày.
-  const siteNotices = getCollection("site-notices").slice(0, 4);
-
-  // Khối "Thư viện ảnh" / "Video tư liệu" ở trang chủ lấy trực tiếp từ 2
-  // collection "photo-albums" / "video-albums" (Admin -> Thư viện), luôn
-  // hiện 3 album ảnh và 3 video mới nhất theo "Ngày đăng" (cân đối 3-3) —
-  // không còn hardcode như trước, admin đăng thêm là trang chủ tự cập nhật.
-  const latestPhotoAlbums = [...getCollection("photo-albums")]
-    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
-    .slice(0, 3)
-    .map((a) => ({ label: a.title, image: a.image || GALLERY_FALLBACK_IMAGE }));
-
-  const latestVideos = [...getCollection("video-albums")]
-    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
-    .slice(0, 3)
-    .map((v) => ({ title: v.title, image: v.image || undefined }));
-
-  // Ngày cập nhật hiển thị luôn là ngày hiện tại (giờ Việt Nam) — không cần
-  // vào admin sửa tay mỗi ngày. Nếu sau này muốn cho phép ghi đè bằng tay,
-  // có thể ưu tiên productionInfo?.ngay_cap_nhat khi trường đó có giá trị.
-  const ngayCapNhat = new Date().toLocaleDateString("vi-VN", {
-    timeZone: "Asia/Ho_Chi_Minh",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-
+  // Ngày hiện tại (tự động chạy theo ngày server, không cần admin nhập tay)
   const now = new Date();
-  const dailyEntries = getCollection("production-daily");
-  const productionTotals = computeProductionTotals(dailyEntries, now);
-  const productionPeriods = getProductionPeriodLabels(now, "vi");
-
-  const productionStatus: [string, string, string][] = [
-    [formatVnNumber(productionTotals.day), "Sản lượng", productionPeriods.ngay],
-    [formatVnNumber(productionTotals.month), "Sản lượng", productionPeriods.thang],
-    [formatVnNumber(productionTotals.quarter), "Sản lượng", productionPeriods.quy],
-    [formatVnNumber(productionTotals.year), "Sản lượng", productionPeriods.nam],
-  ];
-
-  const waterLevels = [
-    { label: "Mực nước hồ hiện tại", value: productionInfo?.muc_nuoc_ho ?? "", unit: "m" },
-    { label: "Lưu lượng về hồ trung binh ngày", value: productionInfo?.luu_luong_ve_ho ?? "", unit: "m³/s" },
-    {
-      label: "Lưu lượng phát điện trung bình ngày",
-      value: productionInfo?.luu_luong_phat_dien ?? "",
-      unit: "m³/s",
-    },
-  ];
+  const todayVn = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
 
   return (
-    <PtscShell>
-      <HeroSlider slides={heroSlides} />
-
-      {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
-      <MarqueeBar isEnglish={false} />
-
-     {/* News + Thông báo nổi bật — 2 tin mới nhất bên trái, cột thứ 3 là 4
-         thông báo nổi bật xếp gọn dọc theo (trước đây thông báo nằm riêng
-         thành 1 hàng 4 ô ngay dưới dòng chữ chạy, nay gộp vào đây cho đỡ
-         chiếm nhiều đất ở đầu trang). Quản lý nội dung thông báo vẫn ở
-         /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
-<section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
-  <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
-      TIN TỨC VÀ SỰ KIỆN
-    </h2>
-
-    <Link
-      href="/tin-tuc"
-      className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
+    <PtscShell
+      title="Giới thiệu"
+      description="Công ty cổ phần Thủy điện Đakđrinh (PV Power DHC) - chủ đầu tư và vận hành Nhà máy thủy điện Đakđrinh, công suất 125 MW, tại huyện Sơn Tây (Quảng Ngãi) và huyện Kon Plông (Kon Tum)."
     >
-      Xem thêm →
-    </Link>
-  </div>
-
-  <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
-    {latestNews.map((item) => (
-      <a
-        key={item.id}
-        href={`/tin-tuc/${item.id}`}
-        className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-      >
-        {item.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.image} alt="" className="h-44 w-full object-cover" />
-        )}
-        <div className="flex flex-1 flex-col p-5">
-          <h3 className="break-words text-base font-semibold leading-6 text-slate-900">
-            {item.title}
-          </h3>
-
-          <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
-            <span>{formatNewsDateTime(item.date, item.gio)}</span>
-            <span className="text-cyan-700 transition group-hover:translate-x-1">
-              →
-            </span>
-          </div>
-        </div>
-      </a>
-    ))}
-
-    {/* Thông báo nổi bật — chiếm cột thứ 3. Luôn hiện khung này (kể cả chưa
-        có thông báo nào) để bố cục 3 cột không bị lệch; nội dung bên trong
-        do admin tự thêm ở /admin -> Khác -> "Thông báo nổi bật (trang chủ)".
-        Trang chủ chỉ hiện tối đa 4 thông báo mới nhất — nút "Xem tất cả"
-        dẫn sang /thong-bao để xem đầy đủ khi admin đăng nhiều hơn 4. */}
-    <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">
-          Thông báo
-        </h3>
-        <Link
-          href="/thong-bao"
-          className="group flex items-center gap-1 text-xs font-semibold text-cyan-700 transition hover:text-cyan-800"
-        >
-          Xem tất cả
-          <span className="transition group-hover:translate-x-1">→</span>
-        </Link>
-      </div>
-      <div className="mt-3 flex flex-1 flex-col gap-3">
-        {siteNotices.length === 0 ? (
-          <p className="mt-2 text-center text-sm text-slate-400">Chưa có thông báo nào.</p>
-        ) : (
-          siteNotices.map((notice) => {
-            const tone =
-              notice.loai === "Khẩn cấp"
-                ? "border-red-200 bg-red-50 text-red-700"
-                : notice.loai === "Quan trọng"
-                  ? "border-amber-200 bg-amber-50 text-amber-700"
-                  : notice.loai === "Sự kiện"
-                    ? "border-sky-200 bg-sky-50 text-sky-700"
-                    : "border-slate-200 bg-slate-50 text-slate-700";
-            const content = (
-              <div
-                className={`rounded-xl border px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone}`}
-              >
-                {notice.loai && (
-                  <span className="text-[10px] font-bold uppercase tracking-wide">
-                    {notice.loai}
-                  </span>
-                )}
-                <p className="mt-1 break-words text-sm font-semibold leading-5 text-slate-900">
-                  {notice.tieu_de}
-                </p>
-              </div>
-            );
-            // Ưu tiên "Đường dẫn khi bấm vào" nếu admin có điền; nếu không
-            // thì dùng file đính kèm (PDF...) đã tải lên làm đích bấm vào.
-            const href = notice.lien_ket || notice.file || "";
-            return href ? (
-              <a
-                key={notice.id}
-                href={href}
-                target={notice.lien_ket ? undefined : "_blank"}
-                rel={notice.lien_ket ? undefined : "noopener noreferrer"}
-                className="block"
-              >
-                {content}
-              </a>
-            ) : (
-              <div key={notice.id}>{content}</div>
-            );
-          })
-        )}
-      </div>
-    </div>
-  </div>
-</section>
-
-
-{/* Production */}
-<section id="production" className="mx-auto max-w-7xl px-6 pt-6 pb-16 lg:px-8">
-  {/* Không hiện gì cả — âm thầm refresh dữ liệu + nhãn ngày/tháng/quý/năm
-      định kỳ để khối này luôn "sống", tự cập nhật theo thời gian thực. */}
-  <AutoRefresh intervalMs={60_000} />
-  <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
-      Thông tin sản xuất
-    </h2>
-          <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            {/* Bên trái: 4 thẻ sản lượng (Ngày/Tháng/Quý/Năm) */}
-            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
-              {productionStatus.map(([value, label, period], index) => (
-                <div
-                  key={`${period}-${index}`}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-                >
-                  <div className="text-3xl font-bold text-cyan-700">{value}</div>
-                  <div className="mx-auto mt-4 h-px w-8 bg-slate-300" />
-                  <div className="mt-4 text-sm leading-6 text-slate-600">
-                    {label}
-                    <br />
-                    {period}
-                  </div>
-                  <div className="mt-1 text-sm font-bold text-cyan-700">(MWh)</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Bên phải: Mực nước hiện tại */}
-            <div className="relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-              <h3 className="text-center text-3xl font-bold uppercase text-cyan-700">
-                Mực nước hiện tại
-              </h3>
-              <div className="mt-6 space-y-5">
-                {waterLevels.map((row) => (
-                  <div key={row.label} className="flex items-end gap-2 text-sm text-slate-600">
-                    <span className="shrink-0">{row.label}</span>
-                    <span className="mb-1 flex-1 border-b border-dotted border-slate-300" />
-                    <span className="shrink-0 font-bold text-cyan-700">
-                      {row.value} {row.unit}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-auto pt-8 text-center text-sm font-semibold text-slate-600">
-                Cập nhật ngày: {ngayCapNhat}
-              </p>
-            </div>
-          </div>
+      <section className="border-b border-slate-200 bg-slate-50 py-6">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+            <Link href="/" className="transition hover:text-cyan-700">
+              Trang chủ
+            </Link>
+            <span>/</span>
+            <span className="font-semibold text-slate-900">Giới thiệu</span>
+          </nav>
         </div>
       </section>
 
-      <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-center gap-3 bg-[#898FA3] py-5">
-            <BarChart3 className="h-6 w-6 text-white" />
-            <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
-              Quan hệ cổ đông
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div>
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            PV Power DHC
+          </span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Tổng quan doanh nghiệp
+          </h2>
+
+          {overview?.overview_intro && (
+            <div
+              className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:text-slate-800"
+              dangerouslySetInnerHTML={{ __html: overview.overview_intro }}
+            />
+          )}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 pb-14 pt-6 lg:px-8">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-slate-900">
+            Tầm nhìn &amp; Sứ mệnh
+          </h2>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <h3 className="text-center text-xl font-bold text-slate-900">Tầm nhìn</h3>
+            <p className="mt-4 leading-7 text-slate-600">{overview?.vision}</p>
+          </article>
+          <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <h3 className="text-center text-xl font-bold text-slate-900">Sứ mệnh</h3>
+            <p className="mt-4 leading-7 text-slate-600">{overview?.mission}</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="bg-slate-50 py-14">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-8 text-center">
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">
+              CÁC CỔ ĐÔNG
             </h2>
           </div>
-          <div className="grid sm:grid-cols-3">
-            {shareholderRelations.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`group flex flex-col items-center justify-center gap-5 px-6 py-14 text-center transition hover:brightness-110 ${item.tone}`}
-              >
-                <img
-                  src="/images/ptsc/shareholder-pvpower-dhc.png"
-                  alt="PTSC"
-                  className="h-[3.75rem] w-auto object-contain"
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h3 className="text-center text-2xl font-bold text-slate-900">Danh sách các cổ đông</h3>
+              <ul className="mt-5 space-y-3">
+                {shareholders.map((s) => (
+                  <li key={s.id} className="flex gap-3 leading-7 text-slate-600">
+                    <span className="mt-1 font-bold text-cyan-700">✓</span>
+                    <span>{s.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h3 className="text-center text-2xl font-bold text-slate-900">Tổng mức đầu tư</h3>
+              {overview?.investment_note && (
+                <div
+                  className="prose prose-slate mt-4 max-w-none leading-7 text-slate-600 prose-p:my-4 prose-strong:text-slate-800"
+                  dangerouslySetInnerHTML={{ __html: overview.investment_note }}
                 />
-                <item.icon className="h-14 w-14 text-white/90" strokeWidth={1.25} />
-                <span className="text-base font-semibold uppercase tracking-wide text-white">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
+              )}
+            </article>
           </div>
         </div>
       </section>
 
-      <section id="thu-vien" className="bg-slate-50 py-16">
-  <div className="mx-auto max-w-7xl px-6 lg:px-8">
-    <div className="grid gap-8 lg:grid-cols-2">
-      <div>
-        <h2 className="text-center text-2xl font-semibold text-[#075B9F]">
-          Thư viện ảnh
-        </h2>
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {latestPhotoAlbums.map((tab) => (
-                  <Link
-                    key={tab.label}
-                    href="/dich-vu#thu-vien-anh"
-                    className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md"
-                  >
-                    <img
-                      src={tab.image}
-                      alt={tab.label}
-                      className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                    <p className="flex h-11 items-center justify-center p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words line-clamp-2 group-hover:text-cyan-700">
-                      {tab.label}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-6 text-center">
-                <Link
-                  href="/dich-vu#thu-vien-anh"
-                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-                >
-                  Xem tất cả
-                </Link>
-              </div>
-            </div>
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold text-slate-900">Ban lãnh đạo</h2>
+            <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+              Hội đồng Quản trị, Ban Giám đốc và Ban Kiểm soát Công ty cổ
+              phần Thủy điện Đakđrinh (PV Power DHC).
+            </p>
+          </div>
+          <Link
+            href="/gioi-thieu/ban-lanh-dao"
+            className="shrink-0 rounded-xl bg-cyan-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-500"
+          >
+            Xem Ban lãnh đạo
+          </Link>
+        </div>
+      </section>
 
-            <div>
-              <h2 className="text-center text-2xl font-semibold text-[#075B9F]">Video tư liệu</h2>
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {latestVideos.map((video) => (
-                  <Link
-                    key={video.title}
-                    href="/dich-vu#thu-vien-video"
-                    className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md"
-                  >
-                    <div className="relative h-36 w-full overflow-hidden bg-slate-800">
-                      {video.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={video.image}
-                          alt={video.title}
-                          className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
-                        />
-                      ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" />
-                      )}
-                      <div className="absolute inset-0 bg-slate-950/20" />
-                      <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
-                        <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
-                      </span>
-                    </div>
-                    <p className="flex h-11 items-center justify-center p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words line-clamp-2 group-hover:text-cyan-700">
-                      {video.title}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-6 text-center">
-                <Link
-                  href="/dich-vu#thu-vien-video"
-                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-                >
-                  Xem tất cả
-                </Link>
-              </div>
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="mb-8">
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Thông số về dự án
+          </h2>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {projectSpecs.map((spec) => (
+            <div
+              key={spec.id}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <div className="text-sm font-semibold text-slate-500">{spec.label}</div>
+              <div className="mt-2 text-lg font-bold text-cyan-700">{spec.value}</div>
             </div>
+          ))}
+
+          {/* Hai ô này lấy ngày hiện tại tự động (không cần admin cập nhật tay) */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-semibold text-slate-500">Sản lượng điện</div>
+            <div className="mt-2 text-lg font-bold text-cyan-700">
+              ~7 tỷ kWh <span className="text-sm font-normal text-slate-500">(tính đến: {todayVn})</span>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-semibold text-slate-500">Vận hành từ năm 2014</div>
+            <div className="mt-2 text-lg font-bold text-cyan-700">
+              12 năm <span className="text-sm font-normal text-slate-500">(tính đến nay: {todayVn})</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="mb-8 text-center">
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Các mốc tiến độ chính của dự án
+          </h2>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {timeline.map((t) => (
+            <article
+              key={t.id}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <div className="text-xl font-bold text-cyan-700">{t.date}</div>
+              <p className="mt-3 text-sm leading-7 text-slate-600">{t.summary}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="space-y-10">
+          <div>
+            <h3 className="mb-4 text-xl font-bold text-slate-900">Danh hiệu thi đua</h3>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <table className="w-full min-w-[640px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-slate-500">
+                    <th className="px-5 py-3 font-semibold">Năm</th>
+                    <th className="px-5 py-3 font-semibold">Danh hiệu thi đua</th>
+                    <th className="px-5 py-3 font-semibold">Quyết định công nhận</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {emulationTitles.map((a) => (
+                    <tr key={a.id} className="border-b border-slate-100 last:border-0">
+                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-700">{a.title}</td>
+                      <td className="px-5 py-3 leading-6 text-slate-500">{a.decision}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-4 text-xl font-bold text-slate-900">Hình thức khen thưởng</h3>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <table className="w-full min-w-[640px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-slate-500">
+                    <th className="px-5 py-3 font-semibold">Năm</th>
+                    <th className="px-5 py-3 font-semibold">Hình thức khen thưởng</th>
+                    <th className="px-5 py-3 font-semibold">Quyết định khen thưởng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {commendations.map((a) => (
+                    <tr key={a.id} className="border-b border-slate-100 last:border-0">
+                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-700">{a.title}</td>
+                      <td className="px-5 py-3 leading-6 text-slate-500">{a.decision}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-slate-50 py-14">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-8 text-center">
+            <h2 className="mt-2 text-2xl uppercase tracking-tight text-[#075B9F] md:text-3xl">
+              PV Power DHC
+            </h2>
+          </div>
+          {overview?.closing_content && (
+            <div
+              className="prose prose-slate grid max-w-none gap-6 leading-8 text-slate-600 lg:grid-cols-2 prose-p:my-0"
+              dangerouslySetInnerHTML={{ __html: overview.closing_content }}
+            />
+          )}
+        </div>
+      </section>
+
+      <section className="bg-slate-900 py-12">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 text-white lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div>
+            <h2 className="text-2xl font-bold">Khám phá PV Power DHC</h2>
+            <p className="mt-2 text-slate-300">
+              Tìm hiểu thêm về dự án, hoạt động vận hành và thông tin doanh nghiệp.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/dich-vu"
+              className="rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold transition hover:bg-cyan-500"
+            >
+              Dịch vụ
+            </Link>
+            <Link
+              href="/du-an"
+              className="rounded-xl border border-white/30 px-5 py-3 text-sm font-semibold transition hover:bg-white/10"
+            >
+              Dự án
+            </Link>
+            <Link
+              href="/lien-he"
+              className="rounded-xl border border-white/30 px-5 py-3 text-sm font-semibold transition hover:bg-white/10"
+            >
+              Liên hệ
+            </Link>
           </div>
         </div>
       </section>

@@ -1,437 +1,294 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
-import { HeroSlider } from "@/components/HeroSlider";
-import { MarqueeBar } from "@/components/MarqueeBar";
-import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
-import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
-import { formatNewsDateTime } from "@/lib/format-date";
 
-// Đồng bộ nội dung và cấu trúc với trang tiếng Việt (src/app/page.tsx).
+export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
-// Ghi đè metadata tiếng Việt mặc định ở layout gốc (src/app/layout.tsx) —
-// nếu không, tab trình duyệt / kết quả tìm kiếm cho trang chủ tiếng Anh vẫn
-// hiện tiêu đề/mô tả tiếng Việt.
+// Đồng bộ nội dung với trang tiếng Việt (src/app/gioi-thieu/page.tsx) — cùng
+// đọc từ các collection "company-*", chỉ khác lấy các field "_en".
+
+// Ghi đè metadata tiếng Việt mặc định ở layout gốc — nếu không, tab trình
+// duyệt / kết quả tìm kiếm cho trang này vẫn hiện tiêu đề tiếng Việt.
 export const metadata: Metadata = {
-  title: "Dakdrinh Hydropower Joint Stock Company",
-  description: "Official information page of Dakdrinh Hydropower Joint Stock Company.",
+  title: "About Us",
+  description:
+    "Dakdrinh Hydropower Joint Stock Company (PV Power DHC) — investor and operator of the 125 MW Dakdrinh Hydropower Plant in Son Tay District (Quang Ngai) and Kon Plong District (Kon Tum).",
 };
 
-// Ảnh dự phòng — chỉ dùng khi admin lỡ xoá hết ảnh trong "Banner trang chủ"
-// (Admin -> Trang chủ), để trang không bao giờ hiện banner trống trơn.
-const FALLBACK_HERO_SLIDES = [
-  {
-    title: "General Contractor for Offshore Oil & Gas and Renewable Energy Projects",
-    image: "/images/ptsc/banner-panorama.jpg",
-  },
-];
+export default function AboutUsPage() {
+  const overview = getCollection("company-overview")[0];
+  const shareholders = getCollection("shareholders-list");
+  const projectSpecs = getCollection("company-specs");
+  const timeline = getCollection("company-timeline");
+  const allAwards = getCollection("company-awards");
+  const emulationTitles = allAwards.filter((a) => a.award_type === "Danh hiệu thi đua");
+  const commendations = allAwards.filter((a) => a.award_type === "Hình thức khen thưởng");
 
-// Shareholder / investor logo strip has moved to the footer — see
-// src/components/ptsc-shell.tsx. The old spot below the banner is now
-// <MarqueeBar /> (running text, editable at /admin -> "Dòng chữ chạy").
+  const overviewIntroEn = overview?.overview_intro_en || overview?.overview_intro;
+  const investmentNoteEn = overview?.investment_note_en || overview?.investment_note;
+  const closingContentEn = overview?.closing_content_en || overview?.closing_content;
 
-// "News & Events" block pulls straight from the "news" collection (Admin ->
-// Nội dung -> Tin tức), same data as the Vietnamese homepage — no more
-// hardcoded 3 articles. Falls back to the Vietnamese fields when a bài
-// hasn't been translated yet (same pattern as src/app/en-US/news/[id]).
-function parseVnDate(value: string | undefined): number {
-  if (!value) return -Infinity;
-  const m = value.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (!m) return -Infinity;
-  const [, d, mo, y] = m;
-  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
-  return Number.isNaN(t) ? -Infinity : t;
-}
-
-// Output for Day/Week/Month/Quarter/Year is auto-accumulated from the
-// "production-daily" collection (one record per day, entered in /admin) —
-// see computeProductionTotals() / getProductionPeriodLabels() in
-// src/lib/production.ts. Same logic as the Vietnamese page.
-
-const shareholderRelations = [
-  {
-    label: "Shareholder Information / Documents",
-    icon: FileText,
-    href: "/en-US/shareholders",
-    tone: "bg-[#069DD8]",
-  },
-  {
-    label: "General Meeting of Shareholders",
-    icon: Users2,
-    href: "/en-US/shareholders",
-    tone: "bg-[#0063AF]",
-  },
-  {
-    label: "Financial Statements / Annual Report",
-    icon: BarChart3,
-    href: "/en-US/shareholders",
-    tone: "bg-[#151F41]",
-  },
-];
-
-// Ảnh mặc định + hàm parse ngày album — dùng chung logic với trang tiếng
-// Việt (src/app/page.tsx) để khối "Photo Gallery" / "Video Library" luôn
-// lấy đúng dữ liệu mới nhất từ /admin thay vì hardcode.
-const GALLERY_FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";
-
-function parseAlbumDate(value: string | undefined): number {
-  if (!value) return -Infinity;
-  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
-  if (!m) return -Infinity;
-  const [, d, mo, y] = m;
-  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
-  return Number.isNaN(t) ? -Infinity : t;
-}
-
-// Same data source as the Vietnamese homepage (src/app/page.tsx) — always
-// reads the latest values entered in /admin instead of hardcoded numbers.
-export const dynamic = "force-dynamic";
-
-export default function EnglishHomePage() {
-  const productionInfo = getCollection("production-info")[0];
-
-  // Homepage hero slider — same collection as the Vietnamese page
-  // (src/app/page.tsx), just with an English fallback caption.
-  const heroSlidesFromCms = getCollection("hero-slides").map((s) => ({
-    title: s.title || "Dakdrinh Hydropower Joint Stock Company",
-    image: s.image,
-  }));
-  const heroSlides = heroSlidesFromCms.length > 0 ? heroSlidesFromCms : FALLBACK_HERO_SLIDES;
-
-  // 3 most recent articles for the "News & Events" block — ranked by the
-  // "Ngày đăng" field (not creation/edit order), same rule as the VN page.
-  const latestNews = [...getCollection("news")]
-    .sort((a, b) => parseVnDate(b.date) - parseVnDate(a.date))
-    .slice(0, 2);
-
-  // "Featured Notices" column — mirrors the VN homepage (Admin -> Khác ->
-  // "Thông báo nổi bật (trang chủ)"), same collection "site-notices", just
-  // prefers the "_en" fields when the admin has filled them in.
-  const siteNotices = getCollection("site-notices").slice(0, 4);
-
-  // Khối "Photo Gallery" / "Video Library" lấy trực tiếp từ 2 collection
-  // "photo-albums" / "video-albums" (Admin -> Thư viện), ưu tiên tiêu đề
-  // tiếng Anh (title_en) nếu admin đã nhập — cùng nguồn dữ liệu với trang
-  // tiếng Việt, không còn hardcode.
-  const latestPhotoAlbums = [...getCollection("photo-albums")]
-    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
-    .slice(0, 3)
-    .map((a) => ({ label: a.title_en || a.title, image: a.image || GALLERY_FALLBACK_IMAGE }));
-
-  const latestVideos = [...getCollection("video-albums")]
-    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
-    .slice(0, 3)
-    .map((v) => ({ title: v.title_en || v.title, image: v.image || undefined }));
-
-  // Update date always shows today's date (Vietnam time zone) — same
-  // approach as the Vietnamese page, so it never needs manual editing.
-  const ngayCapNhat = new Date().toLocaleDateString("en-GB", {
-    timeZone: "Asia/Ho_Chi_Minh",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
-
+  // Auto-updating current date (server date, no manual admin input needed)
   const now = new Date();
-  const dailyEntries = getCollection("production-daily");
-  const productionTotals = computeProductionTotals(dailyEntries, now);
-  const productionPeriods = getProductionPeriodLabels(now, "en");
-
-  const productionStatus: [string, string, string][] = [
-    [formatVnNumber(productionTotals.day), "Output", productionPeriods.ngay],
-    [formatVnNumber(productionTotals.month), "Output", productionPeriods.thang],
-    [formatVnNumber(productionTotals.quarter), "Output", productionPeriods.quy],
-    [formatVnNumber(productionTotals.year), "Output", productionPeriods.nam],
-  ];
-
-  const waterLevels = [
-    { label: "Current reservoir water level", value: productionInfo?.muc_nuoc_ho ?? "", unit: "m" },
-    { label: "Inflow to reservoir", value: productionInfo?.luu_luong_ve_ho ?? "", unit: "m³/s" },
-    {
-      label: "Average daily generation flow",
-      value: productionInfo?.luu_luong_phat_dien ?? "",
-      unit: "m³/s",
-    },
-  ];
+  const todayEn = now.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
 
   return (
-    <PtscShell>
-      <HeroSlider slides={heroSlides} />
-
-      {/* ===== Running text (replaces the old investor logo block) ===== */}
-      <MarqueeBar isEnglish={true} />
-
-      <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
-        <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
-            News and Events
-          </h2>
-
-          <Link
-            href="/en-US/news"
-            className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
-          >
-            View more →
-          </Link>
-        </div>
-        <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
-          {latestNews.map((item) => (
-            <a
-              key={item.id}
-              href={`/en-US/news/${item.id}`}
-              className="group flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
-              {item.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={item.image} alt="" className="h-44 w-full object-cover" />
-              )}
-              <div className="flex flex-1 flex-col p-5">
-                <h3 className="break-words text-base font-semibold leading-6 text-slate-900">
-                  {item.title_en || item.title}
-                </h3>
-
-                <div className="mt-4 flex items-center justify-between text-sm text-slate-500">
-                  <span>{formatNewsDateTime(item.date, item.gio, "en")}</span>
-                  <span className="text-cyan-700 transition group-hover:translate-x-1">→</span>
-                </div>
-              </div>
-            </a>
-          ))}
-
-          {/* Featured Notices — third column, always rendered (even when
-              empty) so the 3-column layout doesn't shift. Content is
-              managed from /admin -> Other -> "Thông báo nổi bật (trang
-              chủ)", same source as the VN homepage. Homepage only shows the
-              4 most recent notices — "View all" links to /en-US/notice
-              for the full list. */}
-          <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">
-                Featured Notices
-              </h3>
-              <Link
-                href="/en-US/notice"
-                className="group flex items-center gap-1 text-xs font-semibold text-cyan-700 transition hover:text-cyan-800"
-              >
-                View all
-                <span className="transition group-hover:translate-x-1">→</span>
-              </Link>
-            </div>
-            <div className="mt-3 flex flex-1 flex-col gap-3">
-              {siteNotices.length === 0 ? (
-                <p className="mt-2 text-center text-sm text-slate-400">No notices yet.</p>
-              ) : (
-                siteNotices.map((notice) => {
-                  const tone =
-                    notice.loai === "Khẩn cấp"
-                      ? "border-red-200 bg-red-50 text-red-700"
-                      : notice.loai === "Quan trọng"
-                        ? "border-amber-200 bg-amber-50 text-amber-700"
-                        : notice.loai === "Sự kiện"
-                          ? "border-sky-200 bg-sky-50 text-sky-700"
-                          : "border-slate-200 bg-slate-50 text-slate-700";
-                  const noticeTypeEn =
-                    notice.loai === "Khẩn cấp"
-                      ? "Urgent"
-                      : notice.loai === "Quan trọng"
-                        ? "Important"
-                        : notice.loai === "Sự kiện"
-                          ? "Event"
-                          : notice.loai
-                            ? "Notice"
-                            : "";
-                  const content = (
-                    <div
-                      className={`rounded-xl border px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone}`}
-                    >
-                      {noticeTypeEn && (
-                        <span className="text-[10px] font-bold uppercase tracking-wide">
-                          {noticeTypeEn}
-                        </span>
-                      )}
-                      <p className="mt-1 break-words text-sm font-semibold leading-5 text-slate-900">
-                        {notice.tieu_de_en || notice.tieu_de}
-                      </p>
-                    </div>
-                  );
-                  // Prefer "Đường dẫn khi bấm vào" if the admin filled it in;
-                  // otherwise fall back to the uploaded attachment (PDF...).
-                  const href = notice.lien_ket || notice.file || "";
-                  return href ? (
-                    <a
-                      key={notice.id}
-                      href={href}
-                      target={notice.lien_ket ? undefined : "_blank"}
-                      rel={notice.lien_ket ? undefined : "noopener noreferrer"}
-                      className="block"
-                    >
-                      {content}
-                    </a>
-                  ) : (
-                    <div key={notice.id}>{content}</div>
-                  );
-                })
-              )}
-            </div>
-          </div>
+    <PtscShell
+      title="About Us"
+      description="Dakdrinh Hydropower Joint Stock Company (PV Power DHC) — investor and operator of the 125 MW Dakdrinh Hydropower Plant in Son Tay District (Quang Ngai) and Kon Plong District (Kon Tum)."
+    >
+      <section className="border-b border-slate-200 bg-slate-50 py-6">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <nav className="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+            <Link href="/en-US" className="transition hover:text-cyan-700">
+              Home
+            </Link>
+            <span>/</span>
+            <span className="font-semibold text-slate-900">About Us</span>
+          </nav>
         </div>
       </section>
 
-      <section id="production" className="mx-auto max-w-7xl px-6 pt-6 pb-16 lg:px-8">
-        <AutoRefresh intervalMs={60_000} />
-        <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
-            Production Status
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div>
+          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
+            PV Power DHC
+          </span>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Corporate Overview
           </h2>
-          <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            {/* Left: 4 output cards (Day/Month/Quarter/Year) */}
-            <div className="grid gap-5 sm:grid-cols-2 lg:col-span-2">
-              {productionStatus.map(([value, label, period], index) => (
-                <div
-                  key={`${period}-${index}`}
-                  className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-                >
-                  <div className="text-3xl font-bold text-cyan-700">{value}</div>
-                  <div className="mx-auto mt-4 h-px w-8 bg-slate-300" />
-                  <div className="mt-4 text-sm leading-6 text-slate-600">
-                    {label}
-                    <br />
-                    {period}
-                  </div>
-                  <div className="mt-1 text-sm font-bold text-cyan-700">(MWh)</div>
-                </div>
-              ))}
-            </div>
 
-            {/* Right: Current Water Level */}
-            <div className="relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-              <h3 className="text-center text-3xl font-bold uppercase text-cyan-700">
-                Current Water Level
-              </h3>
-              <div className="mt-6 space-y-5">
-                {waterLevels.map((row) => (
-                  <div key={row.label} className="flex items-end gap-2 text-sm text-slate-600">
-                    <span className="shrink-0">{row.label}</span>
-                    <span className="mb-1 flex-1 border-b border-dotted border-slate-300" />
-                    <span className="shrink-0 font-bold text-cyan-700">
-                      {row.value} {row.unit}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-auto pt-8 text-center text-sm font-semibold text-slate-600">
-                Updated on: {ngayCapNhat}
-              </p>
-            </div>
-          </div>
+          {overviewIntroEn && (
+            <div
+              className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:text-slate-800"
+              dangerouslySetInnerHTML={{ __html: overviewIntroEn }}
+            />
+          )}
         </div>
       </section>
 
-      <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-        <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
-          <div className="flex items-center justify-center gap-3 bg-[#898FA3] py-5">
-            <BarChart3 className="h-6 w-6 text-white" />
-            <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
-              Investor Relations
+      <section className="mx-auto max-w-7xl px-6 pb-14 pt-6 lg:px-8">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-slate-900">
+            Vision &amp; Mission
+          </h2>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <h3 className="text-center text-xl font-bold text-slate-900">Vision</h3>
+            <p className="mt-4 leading-7 text-slate-600">{overview?.vision_en || overview?.vision}</p>
+          </article>
+          <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+            <h3 className="text-center text-xl font-bold text-slate-900">Mission</h3>
+            <p className="mt-4 leading-7 text-slate-600">{overview?.mission_en || overview?.mission}</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="bg-slate-50 py-14">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-8 text-center">
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">
+              SHAREHOLDERS
             </h2>
           </div>
-          <div className="grid sm:grid-cols-3">
-            {shareholderRelations.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`group flex flex-col items-center justify-center gap-5 px-6 py-14 text-center transition hover:brightness-110 ${item.tone}`}
-              >
-                <img
-                  src="/images/ptsc/shareholder-pvpower-dhc.png"
-                  alt="PTSC"
-                  className="h-[3.75rem] w-auto object-contain"
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h3 className="text-center text-2xl font-bold text-slate-900">List of Shareholders</h3>
+              <ul className="mt-5 space-y-3">
+                {shareholders.map((s) => (
+                  <li key={s.id} className="flex gap-3 leading-7 text-slate-600">
+                    <span className="mt-1 font-bold text-cyan-700">✓</span>
+                    <span>{s.name_en || s.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
+              <h3 className="text-center text-2xl font-bold text-slate-900">Total Investment</h3>
+              {investmentNoteEn && (
+                <div
+                  className="prose prose-slate mt-4 max-w-none leading-7 text-slate-600 prose-p:my-4 prose-strong:text-slate-800"
+                  dangerouslySetInnerHTML={{ __html: investmentNoteEn }}
                 />
-                <item.icon className="h-14 w-14 text-white/90" strokeWidth={1.25} />
-                <span className="text-base font-semibold uppercase tracking-wide text-white">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
+              )}
+            </article>
           </div>
         </div>
       </section>
 
-      <section id="thu-vien" className="bg-slate-50 py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-2">
-            <div>
-              <h2 className="text-center text-2xl font-semibold text-[#075B9F]">Photo Gallery</h2>
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {latestPhotoAlbums.map((tab) => (
-                  <Link
-                    key={tab.label}
-                    href="/en-US/services#photos"
-                    className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md"
-                  >
-                    <img
-                      src={tab.image}
-                      alt={tab.label}
-                      className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                    <p className="flex h-11 items-center justify-center p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words line-clamp-2 group-hover:text-cyan-700">
-                      {tab.label}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-6 text-center">
-                <Link
-                  href="/en-US/services#photos"
-                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-                >
-                  View all
-                </Link>
-              </div>
-            </div>
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold text-slate-900">Leadership</h2>
+            <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+              The Board of Directors, Board of Management, and Supervisory
+              Board of Dakdrinh Hydropower Joint Stock Company (PV Power
+              DHC).
+            </p>
+          </div>
+          <Link
+            href="/en-US/about-us/leadership"
+            className="shrink-0 rounded-xl bg-cyan-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-500"
+          >
+            View Leadership
+          </Link>
+        </div>
+      </section>
 
-            <div>
-              <h2 className="text-center text-2xl font-semibold text-[#075B9F]">Video Library</h2>
-              <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {latestVideos.map((video) => (
-                  <Link
-                    key={video.title}
-                    href="/en-US/services#videos"
-                    className="group overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-cyan-300 hover:shadow-md"
-                  >
-                    <div className="relative h-36 w-full overflow-hidden bg-slate-800">
-                      {video.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={video.image}
-                          alt={video.title}
-                          className="h-full w-full object-cover opacity-90 transition duration-500 group-hover:scale-105 group-hover:opacity-100"
-                        />
-                      ) : (
-                        <div className="h-full w-full bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" />
-                      )}
-                      <div className="absolute inset-0 bg-slate-950/20" />
-                      <span className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-slate-900 transition group-hover:bg-white">
-                        <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
-                      </span>
-                    </div>
-                    <p className="flex h-11 items-center justify-center p-3 text-center text-xs font-semibold uppercase leading-5 text-slate-700 break-words line-clamp-2 group-hover:text-cyan-700">
-                      {video.title}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-              <div className="mt-6 text-center">
-                <Link
-                  href="/en-US/services#videos"
-                  className="inline-block rounded-full bg-amber-500 px-10 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-600"
-                >
-                  View all
-                </Link>
-              </div>
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="mb-8">
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Project Specifications
+          </h2>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {projectSpecs.map((spec) => (
+            <div
+              key={spec.id}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <div className="text-sm font-semibold text-slate-500">{spec.label_en || spec.label}</div>
+              <div className="mt-2 text-lg font-bold text-cyan-700">{spec.value_en || spec.value}</div>
             </div>
+          ))}
+
+          {/* These two cards use the current date automatically (no manual admin update needed) */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-semibold text-slate-500">Electricity Output</div>
+            <div className="mt-2 text-lg font-bold text-cyan-700">
+              ~7 billion kWh <span className="text-sm font-normal text-slate-500">(as of: {todayEn})</span>
+            </div>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-semibold text-slate-500">In Operation Since 2014</div>
+            <div className="mt-2 text-lg font-bold text-cyan-700">
+              12 years <span className="text-sm font-normal text-slate-500">(as of: {todayEn})</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="mb-8 text-center">
+          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+            Key Project Milestones
+          </h2>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {timeline.map((t) => (
+            <article
+              key={t.id}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+              <div className="text-xl font-bold text-cyan-700">{t.date}</div>
+              <p className="mt-3 text-sm leading-7 text-slate-600">{t.summary_en || t.summary}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+        <div className="space-y-10">
+          <div>
+            <h3 className="mb-4 text-xl font-bold text-slate-900">Emulation Titles</h3>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <table className="w-full min-w-[640px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-slate-500">
+                    <th className="px-5 py-3 font-semibold">Year</th>
+                    <th className="px-5 py-3 font-semibold">Emulation Title</th>
+                    <th className="px-5 py-3 font-semibold">Recognition Decision</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {emulationTitles.map((a) => (
+                    <tr key={a.id} className="border-b border-slate-100 last:border-0">
+                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-700">{a.title_en || a.title}</td>
+                      <td className="px-5 py-3 leading-6 text-slate-500">{a.decision_en || a.decision}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="mb-4 text-xl font-bold text-slate-900">Forms of Commendation</h3>
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <table className="w-full min-w-[640px] text-left text-sm">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-slate-500">
+                    <th className="px-5 py-3 font-semibold">Year</th>
+                    <th className="px-5 py-3 font-semibold">Form of Commendation</th>
+                    <th className="px-5 py-3 font-semibold">Commendation Decision</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {commendations.map((a) => (
+                    <tr key={a.id} className="border-b border-slate-100 last:border-0">
+                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-700">{a.title_en || a.title}</td>
+                      <td className="px-5 py-3 leading-6 text-slate-500">{a.decision_en || a.decision}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-slate-50 py-14">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-8 text-center">
+            <h2 className="mt-2 text-2xl uppercase tracking-tight text-[#075B9F] md:text-3xl">
+              PV Power DHC
+            </h2>
+          </div>
+          {closingContentEn && (
+            <div
+              className="prose prose-slate grid max-w-none gap-6 leading-8 text-slate-600 lg:grid-cols-2 prose-p:my-0"
+              dangerouslySetInnerHTML={{ __html: closingContentEn }}
+            />
+          )}
+        </div>
+      </section>
+
+      <section className="bg-slate-900 py-12">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 text-white lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div>
+            <h2 className="text-2xl font-bold">Explore PV Power DHC</h2>
+            <p className="mt-2 text-slate-300">
+              Learn more about our projects, operations, and corporate information.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/en-US/services"
+              className="rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold transition hover:bg-cyan-500"
+            >
+              Services
+            </Link>
+            <Link
+              href="/en-US/projects"
+              className="rounded-xl border border-white/30 px-5 py-3 text-sm font-semibold transition hover:bg-white/10"
+            >
+              Projects
+            </Link>
+            <Link
+              href="/en-US/contact"
+              className="rounded-xl border border-white/30 px-5 py-3 text-sm font-semibold transition hover:bg-white/10"
+            >
+              Contact
+            </Link>
           </div>
         </div>
       </section>
