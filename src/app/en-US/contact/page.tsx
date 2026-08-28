@@ -215,7 +215,7 @@ export default function ContactPageEn() {
                 <Mail className="mt-0.5 h-5 w-5 shrink-0 text-[#FF6B00]" />
                 <p>
                   <span className="font-bold text-slate-900">Email: </span>
-                  info@dakdrinhhydropower.vn
+                  vanthudhc@gmail.com
                 </p>
               </div>
             </div>
