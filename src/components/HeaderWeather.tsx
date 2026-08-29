@@ -159,16 +159,24 @@ export function HeaderWeather({ isEnglish = false }: { isEnglish?: boolean }) {
   const currentName = isEnglish ? PROVINCES[selected].en : PROVINCES[selected].vi;
 
   return (
-    <div ref={containerRef} className="relative hidden shrink-0 lg:block">
+    <div ref={containerRef} className="relative shrink-0">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-sm px-2 py-1.5 text-slate-100 transition hover:text-cyan-300"
+        className="flex items-center gap-1.5 rounded-sm px-1.5 py-1.5 text-slate-100 transition hover:text-cyan-300 sm:gap-2 sm:px-2"
         aria-expanded={open}
         aria-label={isEnglish ? "Weather by province" : "Thời tiết theo tỉnh thành"}
       >
         <CurrentIcon className="h-5 w-5 shrink-0 text-cyan-300" strokeWidth={1.75} />
-        <span className="flex flex-col items-start leading-tight">
+
+        {/* Điện thoại / màn hẹp: chỉ hiện nhiệt độ gọn, ẩn tên tỉnh để không
+            vỡ layout cạnh nút menu (hamburger). */}
+        <span className="text-xs font-semibold normal-case sm:hidden">
+          {current ? `${current.temp}°` : "--°"}
+        </span>
+
+        {/* Từ màn sm trở lên: hiện đầy đủ tên tỉnh + nhiệt độ như cũ. */}
+        <span className="hidden flex-col items-start leading-tight sm:flex">
           <span className="text-xs font-semibold normal-case">{currentName}</span>
           <span className="text-[11px] font-medium normal-case text-slate-300">
             {current
@@ -180,7 +188,7 @@ export function HeaderWeather({ isEnglish = false }: { isEnglish?: boolean }) {
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-full z-40 mt-2 w-72 overflow-hidden rounded-md bg-white text-slate-800 shadow-2xl">
+        <div className="absolute right-0 top-full z-40 mt-2 w-[85vw] max-w-72 overflow-hidden rounded-md bg-white text-slate-800 shadow-2xl sm:w-72">
           <div className="flex items-center gap-2 border-b border-slate-200 px-3 py-2.5">
             <Search className="h-4 w-4 shrink-0 text-slate-400" />
             <input
