@@ -164,19 +164,13 @@ export default function EnglishHomePage() {
       {/* ===== Running text (replaces the old investor logo block) ===== */}
       <MarqueeBar isEnglish={true} />
 
-      {/* Bọc "News" + "Production" trong 1 khối "relative" cao vừa đủ để
-          widget thời tiết bên trong có chỗ "sticky" (dính) khi cuộn — ban
-          đầu nó nằm ngay dưới dòng chữ chạy như nội dung bình thường, cuộn
-          tới đâu widget mới bắt đầu dính theo dưới header tới đó, hết khối
-          này thì nhả ra cuộn tiếp cùng trang. */}
-      <div className="relative">
-        <div className="pointer-events-none absolute inset-0 z-20">
-          <div className="sticky top-[88px] w-fit pl-3 pt-4 sm:top-[104px] sm:pl-4 lg:top-[124px]">
-            <div className="pointer-events-auto">
-              <WeatherWidget isEnglish />
-            </div>
-          </div>
-        </div>
+      {/* Weather widget — no longer "sticky" while scrolling. It now sits in
+          normal document flow right below the running text, like an ad
+          banner: shown here at first, then scrolls away with the page like
+          any other content instead of following the user down. */}
+      <div className="mx-auto max-w-7xl px-6 pt-4 lg:px-8">
+        <WeatherWidget isEnglish />
+      </div>
 
         <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
@@ -343,7 +337,6 @@ export default function EnglishHomePage() {
           </div>
         </div>
         </section>
-      </div>
 
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
