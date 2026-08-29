@@ -4,7 +4,6 @@ import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
-import { WeatherWidget } from "@/components/WeatherWidget";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
@@ -164,20 +163,9 @@ export default function EnglishHomePage() {
       {/* ===== Running text (replaces the old investor logo block) ===== */}
       <MarqueeBar isEnglish={true} />
 
-      {/* Weather widget — no longer "sticky", and no longer its own block
-          above the "News" section. It now sits BESIDE the "News and Events"
-          block (left column on wide screens, stacked on top on mobile)
-          instead of taking a whole row by itself at the top. */}
+      {/* Weather widget has moved to the top nav bar (HeaderWeather, inside
+          PtscShell) — it now lives there permanently instead of here. */}
         <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
-        <div className="lg:flex lg:items-start lg:gap-8">
-          {/* Left column: weather widget — shown once, statically, here;
-              scrolls away with the page like normal content. */}
-          <div className="mb-6 flex justify-center lg:mb-0 lg:w-64 lg:shrink-0 lg:justify-start">
-            <WeatherWidget isEnglish />
-          </div>
-
-          {/* Right column: heading + News/Featured Notices grid as before. */}
-          <div className="flex-1">
         <div className="flex flex-col items-center text-center">
           <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
             News and Events
@@ -289,8 +277,6 @@ export default function EnglishHomePage() {
                 })
               )}
             </div>
-          </div>
-        </div>
           </div>
         </div>
       </section>

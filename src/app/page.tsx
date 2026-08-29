@@ -3,7 +3,6 @@ import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
-import { WeatherWidget } from "@/components/WeatherWidget";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
@@ -162,21 +161,9 @@ export default function Home() {
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
       <MarqueeBar isEnglish={false} />
 
-      {/* Widget thời tiết — không còn "sticky/dính" theo cuộn nữa, và cũng
-          không nằm riêng thành 1 khối phía trên section "Tin tức" nữa. Giờ
-          nó nằm NGAY BÊN CẠNH khối "Tin tức và sự kiện" (cột trái trên màn
-          hình rộng, xếp lên trên trên mobile) để không chiếm hẳn 1 hàng
-          riêng ở đầu trang. */}
+      {/* Widget thời tiết đã chuyển lên thanh menu (HeaderWeather, trong
+          PtscShell) — hiện cố định ở đó, không còn nằm trong section này. */}
 <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
-  <div className="lg:flex lg:items-start lg:gap-8">
-    {/* Cột trái: widget thời tiết — chỉ hiện tĩnh 1 lần ở đây, cuộn trang
-        là trôi theo như nội dung bình thường, không đi theo người dùng. */}
-    <div className="mb-6 flex justify-center lg:mb-0 lg:w-64 lg:shrink-0 lg:justify-start">
-      <WeatherWidget />
-    </div>
-
-    {/* Cột phải: tiêu đề + lưới Tin tức/Thông báo nổi bật như cũ. */}
-    <div className="flex-1">
       <div className="flex flex-col items-center text-center">
         <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
           Tin tức và sự kiện
@@ -280,8 +267,6 @@ export default function Home() {
           })
         )}
       </div>
-    </div>
-  </div>
     </div>
   </div>
 </section>

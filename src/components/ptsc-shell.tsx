@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { VisitorStats } from "./VisitorStats";
+import { HeaderWeather } from "./HeaderWeather";
 
 // Logo cổ đông / nhà đầu tư — trước đây nằm ngay dưới banner trang chủ, nay
 // chuyển xuống chân trang (dùng chung cho mọi trang vì Footer nằm trong
@@ -317,6 +318,10 @@ export function PtscShell({
                 </div>
               ))}
             </nav>
+
+            {/* Widget thời tiết gọn — cố định trong thanh menu, không tự ẩn,
+                bấm vào để tra thời tiết tỉnh thành khác. */}
+            <HeaderWeather isEnglish={isEnglish} />
 
             {/* Mobile toggle */}
             <button
