@@ -165,7 +165,7 @@ export default function EnglishHomePage() {
 
       <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
+          <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
             News and Events
           </h2>
 
@@ -208,7 +208,7 @@ export default function EnglishHomePage() {
               for the full list. */}
           <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold uppercase tracking-wide text-slate-500">
+              <h3 className="text-sm font-bold tracking-wide text-slate-500">
                 Featured Notices
               </h3>
               <Link
@@ -282,7 +282,7 @@ export default function EnglishHomePage() {
       <section id="production" className="mx-auto max-w-7xl px-6 pt-6 pb-16 lg:px-8">
         <AutoRefresh intervalMs={60_000} />
         <div className="flex flex-col items-center text-center">
-          <h2 className="text-2xl font-bold uppercase tracking-tight text-[#075B9F] md:text-3xl">
+          <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
             Production Status
           </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -307,7 +307,7 @@ export default function EnglishHomePage() {
 
             {/* Right: Current Water Level */}
             <div className="relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-              <h3 className="text-center text-3xl font-bold uppercase text-cyan-700">
+              <h3 className="text-center text-3xl font-bold text-cyan-700">
                 Current Water Level
               </h3>
               <div className="mt-6 space-y-5">
@@ -333,7 +333,7 @@ export default function EnglishHomePage() {
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
           <div className="flex items-center justify-center gap-3 bg-[#898FA3] py-5">
             <BarChart3 className="h-6 w-6 text-white" />
-            <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-white">
+            <h2 className="text-xl font-semibold tracking-[0.15em] text-white">
               Investor Relations
             </h2>
           </div>

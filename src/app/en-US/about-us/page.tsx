@@ -8,6 +8,27 @@ export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất
 // Đồng bộ nội dung với trang tiếng Việt (src/app/gioi-thieu/page.tsx) — cùng
 // đọc từ các collection "company-*", chỉ khác lấy các field "_en".
 
+// Ngày vận hành chính thức của tổ máy 1 (29/05/2014) — dùng để tự tính số
+// năm vận hành và mốc "as of" cho 2 ô thông số bổ sung, luôn chạy theo ngày
+// thực tế mỗi lần trang được render (không hardcode).
+const OPERATION_START_DATE = new Date(2014, 4, 29);
+
+function formatTodayEn(d: Date): string {
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function yearsOperating(from: Date, to: Date): number {
+  let years = to.getFullYear() - from.getFullYear();
+  const beforeAnniversary =
+    to.getMonth() < from.getMonth() ||
+    (to.getMonth() === from.getMonth() && to.getDate() < from.getDate());
+  if (beforeAnniversary) years -= 1;
+  return years;
+}
+
 // Ghi đè metadata tiếng Việt mặc định ở layout gốc — nếu không, tab trình
 // duyệt / kết quả tìm kiếm cho trang này vẫn hiện tiêu đề tiếng Việt.
 export const metadata: Metadata = {
@@ -18,9 +39,6 @@ export const metadata: Metadata = {
 
 export default function AboutUsPage() {
   const overview = getCollection("company-overview")[0];
-  const allStats = getCollection("company-stats");
-  const stats = allStats.filter((s) => s.section === "Tổng quan doanh nghiệp");
-  const operatingResults = allStats.filter((s) => s.section === "Lũy kế phát điện");
   const shareholders = getCollection("shareholders-list");
   const projectSpecs = getCollection("company-specs");
   const timeline = getCollection("company-timeline");
@@ -31,6 +49,10 @@ export default function AboutUsPage() {
   const overviewIntroEn = overview?.overview_intro_en || overview?.overview_intro;
   const investmentNoteEn = overview?.investment_note_en || overview?.investment_note;
   const closingContentEn = overview?.closing_content_en || overview?.closing_content;
+
+  const today = new Date();
+  const todayLabel = formatTodayEn(today);
+  const yearsRunning = yearsOperating(OPERATION_START_DATE, today);
 
   return (
     <PtscShell
@@ -50,54 +72,34 @@ export default function AboutUsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
-          <div>
-            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-              PV Power DHC
-            </span>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Corporate Overview
-            </h2>
+        <div>
+          <h2 className="mt-3 text-center text-3xl font-bold tracking-tight text-[#075B9F] sm:text-4xl">
+            Corporate Overview
+          </h2>
 
-            {overviewIntroEn && (
-              <div
-                className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:text-slate-800"
-                dangerouslySetInnerHTML={{ __html: overviewIntroEn }}
-              />
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            {stats.map((s) => (
-              <div
-                key={s.id}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <div className="text-3xl font-bold text-cyan-700">{s.value}</div>
-                <div className="mt-2 text-sm leading-6 text-slate-500">{s.label_en || s.label}</div>
-              </div>
-            ))}
-          </div>
+          {overviewIntroEn && (
+            <div
+              className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:text-slate-800"
+              dangerouslySetInnerHTML={{ __html: overviewIntroEn }}
+            />
+          )}
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-        <div className="mb-8">
-          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-            2015 – 2020 Strategy, 2030 Vision
-          </span>
-          <h2 className="mt-2 text-3xl font-bold text-slate-900">
+        <div className="mb-6 text-center">
+          <h2 className="text-3xl font-bold text-[#075B9F]">
             Vision &amp; Mission
           </h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-            <h3 className="text-xl font-bold text-slate-900">Vision</h3>
+            <h3 className="text-center text-xl font-bold text-slate-900">Vision</h3>
             <p className="mt-4 leading-7 text-slate-600">{overview?.vision_en || overview?.vision}</p>
           </article>
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-            <h3 className="text-xl font-bold text-slate-900">Mission</h3>
+            <h3 className="text-center text-xl font-bold text-slate-900">Mission</h3>
             <p className="mt-4 leading-7 text-slate-600">{overview?.mission_en || overview?.mission}</p>
           </article>
         </div>
@@ -105,18 +107,15 @@ export default function AboutUsPage() {
 
       <section className="bg-slate-50 py-14">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-8">
-            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-              Ownership Structure
-            </span>
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">
-              Company Shareholders
+          <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-[#075B9F]">
+              Shareholders
             </h2>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
             <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-              <h3 className="text-2xl font-bold text-slate-900">List of Shareholders</h3>
+              <h3 className="text-center text-2xl font-bold text-slate-900">List of Shareholders</h3>
               <ul className="mt-5 space-y-3">
                 {shareholders.map((s) => (
                   <li key={s.id} className="flex gap-3 leading-7 text-slate-600">
@@ -128,7 +127,7 @@ export default function AboutUsPage() {
             </article>
 
             <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-              <h3 className="text-2xl font-bold text-slate-900">Total Investment</h3>
+              <h3 className="text-center text-2xl font-bold text-slate-900">Total Investment</h3>
               {investmentNoteEn && (
                 <div
                   className="prose prose-slate mt-4 max-w-none leading-7 text-slate-600 prose-p:my-4 prose-strong:text-slate-800"
@@ -143,10 +142,7 @@ export default function AboutUsPage() {
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
           <div>
-            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-              Key Personnel
-            </span>
-            <h2 className="mt-2 text-2xl font-bold text-slate-900">Leadership</h2>
+            <h2 className="mt-2 text-center text-2xl font-bold text-[#075B9F]">Leadership</h2>
             <p className="mt-3 max-w-2xl leading-7 text-slate-600">
               The Board of Directors, Board of Management, and Supervisory
               Board of Dakdrinh Hydropower Joint Stock Company (PV Power
@@ -163,12 +159,9 @@ export default function AboutUsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-        <div className="mb-8">
-          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-            Project
-          </span>
-          <h2 className="mt-2 text-3xl font-bold text-slate-900">
-            Dakdrinh Hydropower Project Specifications
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-[#075B9F]">
+            Project Specifications
           </h2>
         </div>
 
@@ -182,41 +175,28 @@ export default function AboutUsPage() {
               <div className="mt-2 text-lg font-bold text-cyan-700">{spec.value_en || spec.value}</div>
             </div>
           ))}
-        </div>
-      </section>
 
-      <section className="bg-slate-50 py-14">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-8">
-            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-              Operating Results
-            </span>
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">
-              Cumulative Generation (29/05/2014 – end of May 2026)
-            </h2>
+          {/* 2 ô bổ sung — tự tính theo ngày thực tế mỗi lần trang render,
+              không hardcode ngày tháng. */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-semibold text-slate-500">Electricity Output</div>
+            <div className="mt-2 text-lg font-bold text-cyan-700">
+              ~7 billion kWh <span className="text-sm font-semibold text-slate-500">(as of: {todayLabel})</span>
+            </div>
           </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {operatingResults.map((r) => (
-              <div
-                key={r.id}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-              >
-                <div className="text-2xl font-bold text-cyan-700">{r.value}</div>
-                <div className="mt-2 text-sm leading-6 text-slate-500">{r.label_en || r.label}</div>
-              </div>
-            ))}
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="text-sm font-semibold text-slate-500">In Operation Since 2014</div>
+            <div className="mt-2 text-lg font-bold text-cyan-700">
+              {yearsRunning} years <span className="text-sm font-semibold text-slate-500">(as of: {todayLabel})</span>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-        <div className="mb-8">
-          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-            Development Journey
-          </span>
-          <h2 className="mt-2 text-3xl font-bold text-slate-900">
-            History of Formation and Development
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-[#075B9F]">
+            Key Project Milestones
           </h2>
         </div>
 
@@ -234,12 +214,9 @@ export default function AboutUsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-        <div className="mb-8">
-          <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-            Recognition
-          </span>
-          <h2 className="mt-2 text-3xl font-bold text-slate-900">
-            Awards and Commendations Received
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold text-[#075B9F]">
+            Forms of Commendation
           </h2>
         </div>
 
@@ -296,14 +273,6 @@ export default function AboutUsPage() {
 
       <section className="bg-slate-50 py-14">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mb-8">
-            <span className="text-sm font-bold uppercase tracking-[0.18em] text-cyan-700">
-              Brand Affirmation
-            </span>
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">
-              PV Power DHC Continues to Grow
-            </h2>
-          </div>
           {closingContentEn && (
             <div
               className="prose prose-slate grid max-w-none gap-6 leading-8 text-slate-600 lg:grid-cols-2 prose-p:my-0"

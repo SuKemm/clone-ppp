@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
+import { PageHeader } from "@/components/PageHeader";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
@@ -63,6 +64,13 @@ export default async function NewsDetailPage({ params }: Params) {
 
   return (
     <PtscShell title={item.title} description={item.excerpt || ""}>
+      <PageHeader
+        title={item.title}
+        crumbs={[
+          { label: item.category, href: "/tin-tuc" },
+          { label: item.title },
+        ]}
+      />
       <section className="mx-auto max-w-7xl px-6 py-10 sm:py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="min-w-0 max-w-3xl">
@@ -76,9 +84,6 @@ export default async function NewsDetailPage({ params }: Params) {
             <p className="mt-6 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
               {item.category}
             </p>
-            <h1 className="mt-3 break-words text-xl font-bold leading-tight text-slate-900 sm:text-2xl lg:text-3xl">
-              {item.title}
-            </h1>
             <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
               <svg
                 aria-hidden="true"

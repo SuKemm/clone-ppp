@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
+import { PageHeader } from "@/components/PageHeader";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
@@ -62,6 +63,14 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
 
   return (
     <PtscShell title={item.title_en || item.title} description={item.excerpt_en || item.excerpt || ""}>
+      <PageHeader
+        title={item.title_en || item.title}
+        crumbs={[
+          { label: item.category, href: "/en-US/shareholders" },
+          { label: item.title_en || item.title },
+        ]}
+        homeHref="/en-US"
+      />
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
           <div className="max-w-3xl">
@@ -72,10 +81,7 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
               <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" isEnglish />
             </div>
 
-            <h1 className="mt-8 break-words text-xl font-bold text-slate-900 sm:text-2xl lg:text-3xl">
-              {item.title_en || item.title}
-            </h1>
-            <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-cyan-700">
+            <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-cyan-700">
               {item.category}
             </p>
             <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
