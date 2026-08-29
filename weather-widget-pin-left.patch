@@ -1,0 +1,35 @@
+diff --git a/src/app/en-US/page.tsx b/src/app/en-US/page.tsx
+index f2dfddb..71e1d40 100644
+--- a/src/app/en-US/page.tsx
++++ b/src/app/en-US/page.tsx
+@@ -167,8 +167,11 @@ export default function EnglishHomePage() {
+       {/* Weather widget — no longer "sticky" while scrolling. It now sits in
+           normal document flow right below the running text, like an ad
+           banner: shown here at first, then scrolls away with the page like
+-          any other content instead of following the user down. */}
+-      <div className="mx-auto max-w-7xl px-6 pt-4 lg:px-8">
++          any other content instead of following the user down. Pinned to
++          the true left edge of the page (not inside the centered
++          "mx-auto max-w-7xl" grid the other sections use) so it stays on
++          the left instead of drifting right on wide screens. */}
++      <div className="pl-3 pt-4 sm:pl-4 lg:pl-6">
+         <WeatherWidget isEnglish />
+       </div>
+ 
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index 0e81d65..07866c8 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -166,8 +166,10 @@ export default function Home() {
+           nằm y nguyên vị trí trong luồng nội dung, ngay dưới dòng chữ chạy,
+           giống 1 banner quảng cáo: chỉ hiện ở đây lúc đầu, cuộn xuống là
+           trôi/mất theo trang như nội dung bình thường, không đi theo
+-          người dùng nữa. */}
+-      <div className="mx-auto max-w-7xl px-6 pt-4 lg:px-8">
++          người dùng nữa. Ghim sát mép trái của trang (không nằm trong khung
++          "mx-auto max-w-7xl" căn giữa như các section khác) để nó luôn ở
++          bên trái màn hình thay vì bị đẩy sang phải trên màn hình rộng. */}
++      <div className="pl-3 pt-4 sm:pl-4 lg:pl-6">
+         <WeatherWidget />
+       </div>
+ 
