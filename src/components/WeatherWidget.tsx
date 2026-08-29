@@ -3,16 +3,10 @@
 // Widget thời tiết hiển thị thời tiết khu vực Sơn Tây, Quảng Ngãi (nơi đặt
 // nhà máy thủy điện Đakđrinh).
 //
-// TRƯỚC ĐÂY: widget này nằm "absolute" NGAY BÊN TRONG banner trang chủ
-// (section overflow-hidden ở HeroSlider). Vì banner cuộn theo trang còn
-// header lại "sticky top-0" (đứng yên, z-30) nên chỉ cần lướt xuống một chút
-// là nửa trên của widget bị header đè/che mất, trông rất luộm thuộm — đúng
-// như ảnh chụp màn hình người dùng gửi.
-//
-// BÂY GIỜ: đổi sang "fixed" (nổi cố định trên màn hình, không nằm trong
-// banner nữa) với "top" đủ lớn để luôn nằm NGAY DƯỚI header, dù cuộn trang
-// đến đâu — tức là nó "đi theo" người dùng khi lướt trang thay vì bị che.
-// Có thêm nút đóng để người dùng tắt đi cho gọn nếu thấy vướng.
+// Vị trí hiển thị KHÔNG tự quyết định trong component này nữa — nơi gọi
+// <WeatherWidget /> (homepage VI/EN) chịu trách nhiệm đặt nó vào đúng chỗ
+// (ngay dưới dòng chữ chạy, rồi "sticky" dính theo khi cuộn trang). Ở đây
+// chỉ còn phần giao diện thẻ (card) thuần tuý, không kèm class định vị.
 
 import { useEffect, useState } from "react";
 import {
@@ -28,13 +22,6 @@ import {
   Wind,
   X,
 } from "lucide-react";
-
-// Vị trí "fixed" — canh ngay dưới header (header cao dần theo breakpoint vì
-// logo/khẩu hiệu lớn dần trên màn hình rộng), cách 2 bên trái/trên 1 khoảng
-// nhỏ để không dính sát mép, và z-20 để luôn nổi trên nội dung trang nhưng
-// vẫn thấp hơn header (z-30) lẫn menu dropdown của header.
-const WIDGET_POSITION_CLASSES =
-  "fixed left-3 top-[88px] z-20 sm:left-4 sm:top-[104px] lg:top-[124px]";
 
 // Toạ độ gần đúng khu vực xã Sơn Tây, huyện Sơn Tây, tỉnh Quảng Ngãi — nơi
 // đặt Nhà máy thủy điện Đakđrinh.
@@ -127,7 +114,7 @@ export function WeatherWidget({ isEnglish = false }: { isEnglish?: boolean }) {
 
   if (!current) {
     return (
-      <div className={`${WIDGET_POSITION_CLASSES} w-56 animate-pulse rounded-xl bg-white/80 p-4 shadow-lg backdrop-blur-sm`}>
+      <div className="w-56 animate-pulse rounded-xl bg-white/80 p-4 shadow-lg backdrop-blur-sm">
         <div className="h-3 w-32 rounded bg-slate-300" />
         <div className="mt-3 h-8 w-20 rounded bg-slate-300" />
       </div>
@@ -137,7 +124,7 @@ export function WeatherWidget({ isEnglish = false }: { isEnglish?: boolean }) {
   const { label, Icon } = weatherInfo(current.weatherCode, isEnglish);
 
   return (
-    <div className={`${WIDGET_POSITION_CLASSES} w-60 rounded-xl bg-white/90 p-4 text-slate-800 shadow-lg backdrop-blur-sm`}>
+    <div className="relative w-60 rounded-xl bg-white/90 p-4 text-slate-800 shadow-lg backdrop-blur-sm">
       <button
         type="button"
         onClick={() => setDismissed(true)}

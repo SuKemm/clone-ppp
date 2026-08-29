@@ -3,6 +3,7 @@ import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
+import { WeatherWidget } from "@/components/WeatherWidget";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
@@ -160,6 +161,20 @@ export default function Home() {
 
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
       <MarqueeBar isEnglish={false} />
+
+      {/* Bọc "News" + "Sản lượng" trong 1 khối "relative" cao vừa đủ để
+          widget thời tiết bên trong có chỗ "sticky" (dính) khi cuộn — ban
+          đầu nó nằm ngay dưới dòng chữ chạy như nội dung bình thường, cuộn
+          tới đâu widget mới bắt đầu dính theo dưới header tới đó, hết khối
+          này thì nhả ra cuộn tiếp cùng trang. */}
+      <div className="relative">
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div className="sticky top-[88px] w-fit pl-3 pt-4 sm:top-[104px] sm:pl-4 lg:top-[124px]">
+            <div className="pointer-events-auto">
+              <WeatherWidget />
+            </div>
+          </div>
+        </div>
 
      {/* News + Thông báo nổi bật — 2 tin mới nhất bên trái, cột thứ 3 là 4
          thông báo nổi bật xếp gọn dọc theo (trước đây thông báo nằm riêng
@@ -327,6 +342,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </div>
 
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">

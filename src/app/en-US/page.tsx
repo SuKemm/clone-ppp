@@ -4,6 +4,7 @@ import { FileText, Users2, BarChart3, Play } from "lucide-react";
 import { PtscShell } from "@/components/ptsc-shell";
 import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
+import { WeatherWidget } from "@/components/WeatherWidget";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
@@ -158,12 +159,26 @@ export default function EnglishHomePage() {
 
   return (
     <PtscShell>
-      <HeroSlider slides={heroSlides} isEnglish />
+      <HeroSlider slides={heroSlides} />
 
       {/* ===== Running text (replaces the old investor logo block) ===== */}
       <MarqueeBar isEnglish={true} />
 
-      <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
+      {/* Bọc "News" + "Production" trong 1 khối "relative" cao vừa đủ để
+          widget thời tiết bên trong có chỗ "sticky" (dính) khi cuộn — ban
+          đầu nó nằm ngay dưới dòng chữ chạy như nội dung bình thường, cuộn
+          tới đâu widget mới bắt đầu dính theo dưới header tới đó, hết khối
+          này thì nhả ra cuộn tiếp cùng trang. */}
+      <div className="relative">
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div className="sticky top-[88px] w-fit pl-3 pt-4 sm:top-[104px] sm:pl-4 lg:top-[124px]">
+            <div className="pointer-events-auto">
+              <WeatherWidget isEnglish />
+            </div>
+          </div>
+        </div>
+
+        <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
             News and Events
@@ -327,7 +342,8 @@ export default function EnglishHomePage() {
             </div>
           </div>
         </div>
-      </section>
+        </section>
+      </div>
 
       <section id="quan-he-co-dong" className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">

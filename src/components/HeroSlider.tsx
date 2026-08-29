@@ -7,13 +7,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { WeatherWidget } from "@/components/WeatherWidget";
 
 type Slide = { title: string; image: string };
 
 const AUTO_PLAY_MS = 10_000; // 10 giây/lần, theo đúng yêu cầu
 
-export function HeroSlider({ slides, isEnglish = false }: { slides: Slide[]; isEnglish?: boolean }) {
+export function HeroSlider({ slides }: { slides: Slide[] }) {
   const [index, setIndex] = useState(0);
 
   const goTo = useCallback(
@@ -58,8 +57,6 @@ export function HeroSlider({ slides, isEnglish = false }: { slides: Slide[]; isE
           (nhất là trên mạng di động chậm), tránh trang trông như "trống/đen"
           trước khi ảnh nền load xong. */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-slate-950/10" />
-
-      <WeatherWidget isEnglish={isEnglish} />
 
       {slides.length > 1 && (
         <>
