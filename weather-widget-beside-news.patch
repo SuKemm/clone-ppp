@@ -1,0 +1,114 @@
+diff --git a/src/app/en-US/page.tsx b/src/app/en-US/page.tsx
+index f2dfddb..3ca237c 100644
+--- a/src/app/en-US/page.tsx
++++ b/src/app/en-US/page.tsx
+@@ -164,15 +164,20 @@ export default function EnglishHomePage() {
+       {/* ===== Running text (replaces the old investor logo block) ===== */}
+       <MarqueeBar isEnglish={true} />
+ 
+-      {/* Weather widget — no longer "sticky" while scrolling. It now sits in
+-          normal document flow right below the running text, like an ad
+-          banner: shown here at first, then scrolls away with the page like
+-          any other content instead of following the user down. */}
+-      <div className="mx-auto max-w-7xl px-6 pt-4 lg:px-8">
+-        <WeatherWidget isEnglish />
+-      </div>
+-
++      {/* Weather widget — no longer "sticky", and no longer its own block
++          above the "News" section. It now sits BESIDE the "News and Events"
++          block (left column on wide screens, stacked on top on mobile)
++          instead of taking a whole row by itself at the top. */}
+         <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
++        <div className="lg:flex lg:items-start lg:gap-8">
++          {/* Left column: weather widget — shown once, statically, here;
++              scrolls away with the page like normal content. */}
++          <div className="mb-6 flex justify-center lg:mb-0 lg:w-64 lg:shrink-0 lg:justify-start">
++            <WeatherWidget isEnglish />
++          </div>
++
++          {/* Right column: heading + News/Featured Notices grid as before. */}
++          <div className="flex-1">
+         <div className="flex flex-col items-center text-center">
+           <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
+             News and Events
+@@ -286,6 +291,8 @@ export default function EnglishHomePage() {
+             </div>
+           </div>
+         </div>
++          </div>
++        </div>
+       </section>
+ 
+       <section id="production" className="mx-auto max-w-7xl px-6 pt-6 pb-16 lg:px-8">
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index 0e81d65..2fba874 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -162,33 +162,33 @@ export default function Home() {
+       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
+       <MarqueeBar isEnglish={false} />
+ 
+-      {/* Widget thời tiết — không còn "sticky/dính" theo cuộn nữa. Giờ nó
+-          nằm y nguyên vị trí trong luồng nội dung, ngay dưới dòng chữ chạy,
+-          giống 1 banner quảng cáo: chỉ hiện ở đây lúc đầu, cuộn xuống là
+-          trôi/mất theo trang như nội dung bình thường, không đi theo
+-          người dùng nữa. */}
+-      <div className="mx-auto max-w-7xl px-6 pt-4 lg:px-8">
+-        <WeatherWidget />
+-      </div>
+-
+-     {/* News + Thông báo nổi bật — 2 tin mới nhất bên trái, cột thứ 3 là 4
+-         thông báo nổi bật xếp gọn dọc theo (trước đây thông báo nằm riêng
+-         thành 1 hàng 4 ô ngay dưới dòng chữ chạy, nay gộp vào đây cho đỡ
+-         chiếm nhiều đất ở đầu trang). Quản lý nội dung thông báo vẫn ở
+-         /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
++      {/* Widget thời tiết — không còn "sticky/dính" theo cuộn nữa, và cũng
++          không nằm riêng thành 1 khối phía trên section "Tin tức" nữa. Giờ
++          nó nằm NGAY BÊN CẠNH khối "Tin tức và sự kiện" (cột trái trên màn
++          hình rộng, xếp lên trên trên mobile) để không chiếm hẳn 1 hàng
++          riêng ở đầu trang. */}
+ <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
+-  <div className="flex flex-col items-center text-center">
+-    <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
+-      Tin tức và sự kiện
+-    </h2>
++  <div className="lg:flex lg:items-start lg:gap-8">
++    {/* Cột trái: widget thời tiết — chỉ hiện tĩnh 1 lần ở đây, cuộn trang
++        là trôi theo như nội dung bình thường, không đi theo người dùng. */}
++    <div className="mb-6 flex justify-center lg:mb-0 lg:w-64 lg:shrink-0 lg:justify-start">
++      <WeatherWidget />
++    </div>
+ 
+-    <Link
+-      href="/tin-tuc"
+-      className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
+-    >
+-      Xem thêm →
+-    </Link>
+-  </div>
++    {/* Cột phải: tiêu đề + lưới Tin tức/Thông báo nổi bật như cũ. */}
++    <div className="flex-1">
++      <div className="flex flex-col items-center text-center">
++        <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
++          Tin tức và sự kiện
++        </h2>
++
++        <Link
++          href="/tin-tuc"
++          className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
++        >
++          Xem thêm →
++        </Link>
++      </div>
+ 
+   <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
+     {latestNews.map((item) => (
+@@ -282,6 +282,8 @@ export default function Home() {
+       </div>
+     </div>
+   </div>
++    </div>
++  </div>
+ </section>
+ 
+ 
