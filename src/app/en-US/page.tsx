@@ -158,7 +158,7 @@ export default function EnglishHomePage() {
 
   return (
     <PtscShell>
-      <HeroSlider slides={heroSlides} />
+      <HeroSlider slides={heroSlides} isEnglish />
 
       {/* ===== Running text (replaces the old investor logo block) ===== */}
       <MarqueeBar isEnglish={true} />
