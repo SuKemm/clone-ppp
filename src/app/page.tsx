@@ -162,33 +162,33 @@ export default function Home() {
       {/* ===== Dòng chữ chạy (thay cho khối logo cổ đông cũ) ===== */}
       <MarqueeBar isEnglish={false} />
 
-      {/* Widget thời tiết — không còn "sticky/dính" theo cuộn nữa. Giờ nó
-          nằm y nguyên vị trí trong luồng nội dung, ngay dưới dòng chữ chạy,
-          giống 1 banner quảng cáo: chỉ hiện ở đây lúc đầu, cuộn xuống là
-          trôi/mất theo trang như nội dung bình thường, không đi theo
-          người dùng nữa. */}
-      <div className="mx-auto max-w-7xl px-6 pt-4 lg:px-8">
-        <WeatherWidget />
-      </div>
-
-     {/* News + Thông báo nổi bật — 2 tin mới nhất bên trái, cột thứ 3 là 4
-         thông báo nổi bật xếp gọn dọc theo (trước đây thông báo nằm riêng
-         thành 1 hàng 4 ô ngay dưới dòng chữ chạy, nay gộp vào đây cho đỡ
-         chiếm nhiều đất ở đầu trang). Quản lý nội dung thông báo vẫn ở
-         /admin -> Khác -> "Thông báo nổi bật (trang chủ)". */}
+      {/* Widget thời tiết — không còn "sticky/dính" theo cuộn nữa, và cũng
+          không nằm riêng thành 1 khối phía trên section "Tin tức" nữa. Giờ
+          nó nằm NGAY BÊN CẠNH khối "Tin tức và sự kiện" (cột trái trên màn
+          hình rộng, xếp lên trên trên mobile) để không chiếm hẳn 1 hàng
+          riêng ở đầu trang. */}
 <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
-  <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
-      Tin tức và sự kiện
-    </h2>
+  <div className="lg:flex lg:items-start lg:gap-8">
+    {/* Cột trái: widget thời tiết — chỉ hiện tĩnh 1 lần ở đây, cuộn trang
+        là trôi theo như nội dung bình thường, không đi theo người dùng. */}
+    <div className="mb-6 flex justify-center lg:mb-0 lg:w-64 lg:shrink-0 lg:justify-start">
+      <WeatherWidget />
+    </div>
 
-    <Link
-      href="/tin-tuc"
-      className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
-    >
-      Xem thêm →
-    </Link>
-  </div>
+    {/* Cột phải: tiêu đề + lưới Tin tức/Thông báo nổi bật như cũ. */}
+    <div className="flex-1">
+      <div className="flex flex-col items-center text-center">
+        <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
+          Tin tức và sự kiện
+        </h2>
+
+        <Link
+          href="/tin-tuc"
+          className="mt-3 text-sm font-semibold text-cyan-700 transition hover:text-cyan-800"
+        >
+          Xem thêm →
+        </Link>
+      </div>
 
   <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-3">
     {latestNews.map((item) => (
@@ -280,6 +280,8 @@ export default function Home() {
           })
         )}
       </div>
+    </div>
+  </div>
     </div>
   </div>
 </section>
