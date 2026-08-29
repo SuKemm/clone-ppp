@@ -1,11 +1,18 @@
 "use client";
 
-// Widget thời tiết đặt ở góc trên-trái banner trang chủ, hiển thị thời tiết
-// khu vực Sơn Tây, Quảng Ngãi (nơi đặt nhà máy thủy điện Đakđrinh).
+// Widget thời tiết hiển thị thời tiết khu vực Sơn Tây, Quảng Ngãi (nơi đặt
+// nhà máy thủy điện Đakđrinh).
 //
-// Nguồn dữ liệu: Open-Meteo (https://open-meteo.com) — miễn phí, KHÔNG cần
-// API key, tổng hợp dữ liệu từ các cơ quan khí tượng quốc gia (NOAA, DWD,
-// ECMWF...), được rất nhiều website/app thời tiết uy tín sử dụng.
+// TRƯỚC ĐÂY: widget này nằm "absolute" NGAY BÊN TRONG banner trang chủ
+// (section overflow-hidden ở HeroSlider). Vì banner cuộn theo trang còn
+// header lại "sticky top-0" (đứng yên, z-30) nên chỉ cần lướt xuống một chút
+// là nửa trên của widget bị header đè/che mất, trông rất luộm thuộm — đúng
+// như ảnh chụp màn hình người dùng gửi.
+//
+// BÂY GIỜ: đổi sang "fixed" (nổi cố định trên màn hình, không nằm trong
+// banner nữa) với "top" đủ lớn để luôn nằm NGAY DƯỚI header, dù cuộn trang
+// đến đâu — tức là nó "đi theo" người dùng khi lướt trang thay vì bị che.
+// Có thêm nút đóng để người dùng tắt đi cho gọn nếu thấy vướng.
 
 import { useEffect, useState } from "react";
 import {
@@ -19,7 +26,15 @@ import {
   Snowflake,
   Droplets,
   Wind,
+  X,
 } from "lucide-react";
+
+// Vị trí "fixed" — canh ngay dưới header (header cao dần theo breakpoint vì
+// logo/khẩu hiệu lớn dần trên màn hình rộng), cách 2 bên trái/trên 1 khoảng
+// nhỏ để không dính sát mép, và z-20 để luôn nổi trên nội dung trang nhưng
+// vẫn thấp hơn header (z-30) lẫn menu dropdown của header.
+const WIDGET_POSITION_CLASSES =
+  "fixed left-3 top-[88px] z-20 sm:left-4 sm:top-[104px] lg:top-[124px]";
 
 // Toạ độ gần đúng khu vực xã Sơn Tây, huyện Sơn Tây, tỉnh Quảng Ngãi — nơi
 // đặt Nhà máy thủy điện Đakđrinh.
@@ -68,6 +83,7 @@ export function WeatherWidget({ isEnglish = false }: { isEnglish?: boolean }) {
   const [current, setCurrent] = useState<CurrentWeather | null>(null);
   const [daily, setDaily] = useState<DailyForecast[]>([]);
   const [error, setError] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -105,12 +121,13 @@ export function WeatherWidget({ isEnglish = false }: { isEnglish?: boolean }) {
     };
   }, []);
 
-  // Lỗi mạng/API sập: ẩn hẳn widget, không để lỗi phá layout banner chính.
-  if (error) return null;
+  // Lỗi mạng/API sập: ẩn hẳn widget, không để lỗi phá layout trang.
+  // Người dùng tự bấm đóng: tôn trọng lựa chọn đó, không hiện lại.
+  if (error || dismissed) return null;
 
   if (!current) {
     return (
-      <div className="absolute left-4 top-4 z-10 w-56 animate-pulse rounded-xl bg-white/80 p-4 shadow-lg backdrop-blur-sm sm:left-6 sm:top-6">
+      <div className={`${WIDGET_POSITION_CLASSES} w-56 animate-pulse rounded-xl bg-white/80 p-4 shadow-lg backdrop-blur-sm`}>
         <div className="h-3 w-32 rounded bg-slate-300" />
         <div className="mt-3 h-8 w-20 rounded bg-slate-300" />
       </div>
@@ -120,8 +137,17 @@ export function WeatherWidget({ isEnglish = false }: { isEnglish?: boolean }) {
   const { label, Icon } = weatherInfo(current.weatherCode, isEnglish);
 
   return (
-    <div className="absolute left-4 top-4 z-10 w-60 rounded-xl bg-white/90 p-4 text-slate-800 shadow-lg backdrop-blur-sm sm:left-6 sm:top-6">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+    <div className={`${WIDGET_POSITION_CLASSES} w-60 rounded-xl bg-white/90 p-4 text-slate-800 shadow-lg backdrop-blur-sm`}>
+      <button
+        type="button"
+        onClick={() => setDismissed(true)}
+        aria-label={isEnglish ? "Close weather widget" : "Đóng widget thời tiết"}
+        className="absolute right-2 top-2 rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+
+      <p className="pr-4 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
         {isEnglish ? "Weather in Son Tay, Quang Ngai" : "Thời tiết Sơn Tây, Quảng Ngãi"}
       </p>
 

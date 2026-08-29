@@ -5,6 +5,7 @@ import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
 import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { formatNewsDateTime } from "@/lib/format-date";
+import { resolveNewsCategoryEn } from "@/lib/i18n/news-category";
 
 // Trang DANH SÁCH tin tức, bản tiếng Anh — trước đây file này bị dán nhầm
 // y nguyên nội dung của bản tiếng Việt (src/app/tin-tuc/page.tsx): toàn bộ
@@ -73,7 +74,9 @@ export default async function NewsPageEn({
     ...item,
     title: item.title_en || item.title,
     excerpt: item.excerpt_en || item.excerpt || "",
-    category: item.category_en || item.category,
+    // Luôn ưu tiên category_en; nếu admin chưa điền thì tra bảng dịch dự
+    // phòng thay vì hiện thẳng tiếng Việt trên trang EN.
+    category: resolveNewsCategoryEn(item.category, item.category_en),
   })) as typeof rawNews;
 
   // Category tabs — taken straight from the article data, in first-seen order.

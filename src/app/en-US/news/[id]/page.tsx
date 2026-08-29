@@ -8,6 +8,7 @@ import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
 import { getAllViews } from "@/lib/news-views-store";
 import { formatNewsDateTime } from "@/lib/format-date";
+import { resolveNewsCategoryEn } from "@/lib/i18n/news-category";
 
 // Trang CHI TIẾT 1 bài tin tức, bản tiếng Anh — đồng bộ với bản tiếng Việt
 // (src/app/tin-tuc/[id]/page.tsx), cùng đọc từ collection "news" nhưng ưu
@@ -50,7 +51,7 @@ export default async function NewsDetailPageEn({ params }: Params) {
   if (!item) notFound();
 
   const title = item.title_en || item.title;
-  const category = item.category_en || item.category;
+  const category = resolveNewsCategoryEn(item.category, item.category_en);
   const excerpt = item.excerpt_en || item.excerpt || "";
   // Nội dung đầy đủ nhập ở /admin qua TinyMCE — ưu tiên bản tiếng Anh, nếu
   // admin chưa dịch thì tạm hiện bản tiếng Việt để trang không bị trống.
