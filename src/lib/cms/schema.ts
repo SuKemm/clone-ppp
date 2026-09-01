@@ -416,9 +416,11 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "title_en", label: "Tên dự án (EN)", type: "text" },
       { key: "category", label: "Phân loại", type: "text" },
       { key: "category_en", label: "Phân loại (EN)", type: "text" },
-      { key: "description", label: "Mô tả", type: "textarea" },
-      { key: "description_en", label: "Mô tả (EN)", type: "textarea" },
+      { key: "description", label: "Mô tả ngắn (hiện ở trang danh sách)", type: "textarea" },
+      { key: "description_en", label: "Mô tả ngắn (EN)", type: "textarea" },
       { key: "image", label: "Ảnh minh hoạ", type: "image" },
+      { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết dự án)", type: "richtext" },
+      { key: "content_en", label: "Nội dung đầy đủ (EN)", type: "richtext" },
     ],
     seed: [
       {
