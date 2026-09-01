@@ -1,4 +1,5 @@
 import type { CmsItem } from "@/lib/cms/store";
+import { removeVietnameseDiacritics } from "@/lib/text";
 
 // ============================================================================
 // BAN LÃNH ĐẠO
@@ -115,14 +116,16 @@ export function PersonCard({
   locale?: "vi" | "en";
   leader?: boolean;
 }) {
+  // Nếu admin chưa nhập title_en/name_en, tự bỏ dấu chữ tiếng Việt gốc thay
+  // vì hiển thị nguyên chữ có dấu trên bản tiếng Anh (xem lib/text.ts).
   const title =
     locale === "en"
-      ? person.title_en || person.title
+      ? person.title_en || removeVietnameseDiacritics(person.title)
       : person.title;
 
   const name =
     locale === "en"
-      ? person.name_en || person.name
+      ? person.name_en || removeVietnameseDiacritics(person.name)
       : person.name;
 
   return (
