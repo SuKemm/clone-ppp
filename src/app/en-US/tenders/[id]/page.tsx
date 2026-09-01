@@ -8,6 +8,7 @@ import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
 import { getAllViews } from "@/lib/tender-views-store";
 import { formatNewsDateTime } from "@/lib/format-date";
+import { resolveTenderCategoryEn } from "@/lib/i18n/category";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
@@ -45,6 +46,7 @@ export default async function TenderDetailPageEn({ params }: Params) {
   if (!item) notFound();
 
   const title = item.title_en || item.title;
+  const category = resolveTenderCategoryEn(item.category);
   const excerpt = item.excerpt_en || item.excerpt || "";
   const contentHtml = item.content_en || item.content || "";
 
@@ -74,10 +76,10 @@ export default async function TenderDetailPageEn({ params }: Params) {
   return (
     <PtscShell title={title} description={excerpt}>
       <PageHeader
-        title={title}
+        title={category}
         crumbs={[
-          { label: item.category, href: "/en-US/tenders" },
-          { label: title },
+          { label: "Tenders", href: "/en-US/tenders" },
+          { label: category },
         ]}
         homeHref="/en-US"
       />
@@ -97,8 +99,12 @@ export default async function TenderDetailPageEn({ params }: Params) {
               />
             </div>
 
-            <p className="mt-6 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
-              {item.category}
+            <h2 className="mt-6 break-words text-xl font-bold leading-snug text-slate-900 sm:text-2xl">
+              {title}
+            </h2>
+
+            <p className="mt-4 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
+              {category}
             </p>
             <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
               <svg

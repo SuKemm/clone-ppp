@@ -24,10 +24,10 @@ type NavItem = {
   children?: { href: string; label: string }[];
 };
 
-// NOTE: to keep the total at 5 top-level items (per yêu cầu "thêm mục Liên hệ,
-// tổng 5 mục"), "Phòng truyền thống" from the reference screenshot was dropped
-// and "Liên hệ" takes its place as the 5th item. Adjust the hrefs below to
-// match your real routes/anchors if the guessed mapping isn't right.
+// NOTE: ban đầu chốt 5 mục top-level (bỏ "Phòng truyền thống", thay bằng
+// "Liên hệ"). Đã thêm thêm mục "Trang nội bộ" (giống ảnh mẫu huana.com.vn)
+// nên giờ có 6 mục — nếu muốn giữ đúng 5, có thể gộp "Trang nội bộ" vào
+// dropdown "Thư viện" thay vì để riêng.
 const navItemsVi: NavItem[] = [
   {
     href: "/gioi-thieu",
@@ -64,6 +64,17 @@ const navItemsVi: NavItem[] = [
       { href: "/dich-vu#thu-vien-anh", label: "Thư viện ảnh" },
       { href: "/dich-vu#thu-vien-video", label: "Thư viện video" },
       { href: "/so-tay-van-hoa", label: "Sổ tay văn hóa" },
+    ],
+  },
+  {
+    href: "/trang-noi-bo",
+    label: "Trang nội bộ",
+    children: [
+      { href: "/trang-noi-bo/speedmaint", label: "Speedmaint" },
+      { href: "/trang-noi-bo/email-noi-bo", label: "Email nội bộ" },
+      { href: "/trang-noi-bo/tram-quan-trac", label: "Trạm quan trắc" },
+      { href: "/trang-noi-bo/ho-thuy-dien", label: "Hồ thuỷ điện" },
+      { href: "/trang-noi-bo/hoc-va-thi-online", label: "Học và thi Online" },
     ],
   },
   { href: "/lien-he", label: "Liên hệ" },
@@ -107,6 +118,17 @@ const navItemsEn: NavItem[] = [
       { href: "/en-US/culture-handbook", label: "Culture Handbook" },
     ],
   },
+  {
+    href: "/en-US/internal-pages",
+    label: "Internal Pages",
+    children: [
+      { href: "/en-US/internal-pages/speedmaint", label: "Speedmaint" },
+      { href: "/en-US/internal-pages/internal-email", label: "Internal Email" },
+      { href: "/en-US/internal-pages/monitoring-station", label: "Monitoring Station" },
+      { href: "/en-US/internal-pages/reservoir", label: "Reservoir" },
+      { href: "/en-US/internal-pages/e-learning", label: "E-Learning & Online Tests" },
+    ],
+  },
   { href: "/en-US/contact", label: "Contact" },
 ];
 
@@ -124,9 +146,14 @@ const VI_TO_EN_SEGMENT: Record<string, string> = {
   "lien-he": "contact",
   "dau-thau": "tenders",
   "tuyen-dung": "careers",
+  "trang-noi-bo": "internal-pages",
 };
 const VI_TO_EN_SUBSEGMENT: Record<string, string> = {
   "ban-lanh-dao": "leadership",
+  "email-noi-bo": "internal-email",
+  "tram-quan-trac": "monitoring-station",
+  "ho-thuy-dien": "reservoir",
+  "hoc-va-thi-online": "e-learning",
 };
 const EN_TO_VI_SEGMENT: Record<string, string> = Object.fromEntries(
   Object.entries(VI_TO_EN_SEGMENT).map(([vi, en]) => [en, vi])
@@ -252,7 +279,11 @@ export function PtscShell({
 
         {/* Main nav */}
         <div className="border-b border-white/5 bg-[#0a1330]">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-3 lg:px-8">
+          <div
+            className={`mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-8 ${
+              isEnglish ? "gap-2 lg:gap-4" : "gap-3 lg:gap-6"
+            }`}
+          >
             <Link href={homeHref} className="flex min-w-0 items-center gap-2 sm:gap-4">
               <img
                 src="/images/ptsc/logo-ptsc.png"
@@ -263,10 +294,10 @@ export function PtscShell({
 <span className="flex min-w-0 flex-col justify-center leading-tight">
   {isEnglish ? (
     <span className="w-max text-left sm:text-center">
-      <span className="block text-[11px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-xs sm:text-base lg:text-lg">
+      <span className="block text-[10px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-[11px] sm:text-xs lg:text-sm">
         Dakdrinh Hydropower
       </span>
-      <span className="block text-[11px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-xs sm:text-base lg:text-lg">
+      <span className="block text-[10px] font-extrabold uppercase tracking-wide text-[#089F50] xs:text-[11px] sm:text-xs lg:text-sm">
         Joint Stock Company
       </span>
     </span>
@@ -284,31 +315,37 @@ export function PtscShell({
             </Link>
 
             {/* Desktop nav */}
-            <nav className="hidden items-center gap-7 text-[13px] font-semibold tracking-wide text-slate-100 md:flex">
+            <nav
+              className={`hidden items-center font-semibold tracking-normal text-slate-100 md:flex ${
+                isEnglish
+                  ? "gap-2 text-[9.5px] lg:gap-3 lg:text-[10.5px]"
+                  : "gap-4 text-[11px] lg:gap-5 lg:text-[12px]"
+              }`}
+            >
               {navItems.map((item, index) => (
                 <div
                   key={item.href}
-                  className="relative"
+                  className="relative shrink-0"
                   onMouseEnter={() => item.children && setOpenIndex(index)}
                   onMouseLeave={() => item.children && setOpenIndex(null)}
                 >
                   <Link
                     href={item.href}
-                    className="flex items-center gap-1 py-4 uppercase transition hover:text-cyan-300"
+                    className="flex items-center gap-1 whitespace-nowrap py-4 uppercase transition hover:text-cyan-300"
                   >
                     {item.label}
                     {item.children ? (
-                      <ChevronDown className="h-3.5 w-3.5" />
+                      <ChevronDown className="h-3 w-3 shrink-0" />
                     ) : null}
                   </Link>
 
                   {item.children && openIndex === index ? (
-                    <div className="absolute left-0 top-full w-64 rounded-b-sm bg-white py-2 text-slate-700 shadow-xl">
+                    <div className="absolute left-0 top-full w-60 rounded-b-sm bg-white py-2 text-slate-700 shadow-xl">
                       {item.children.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}
-                          className="block px-6 py-3 text-sm font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
+                          className="block px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
                         >
                           {child.label}
                         </Link>

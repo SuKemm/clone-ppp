@@ -18,7 +18,7 @@ export function PageHeader({
   return (
     <div className="border-b border-slate-200 bg-slate-50">
       <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
-        <h1 className="break-words text-2xl font-extrabold text-slate-900 sm:text-3xl">
+        <h1 className="break-words text-xl font-bold text-slate-900 sm:text-2xl">
           {title}
         </h1>
 

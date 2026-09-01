@@ -66,10 +66,10 @@ export default async function ShareholderRelationDetailPage({ params }: Params) 
   return (
     <PtscShell title={item.title} description={item.excerpt || ""}>
       <PageHeader
-        title={item.title}
+        title={item.category}
         crumbs={[
-          { label: item.category, href: "/co-dong" },
-          { label: item.title },
+          { label: "Quan hệ cổ đông", href: "/co-dong" },
+          { label: item.category },
         ]}
       />
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
@@ -82,7 +82,11 @@ export default async function ShareholderRelationDetailPage({ params }: Params) 
               <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" />
             </div>
 
-            <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-cyan-700">
+            <h2 className="mt-6 break-words text-xl font-bold leading-snug text-slate-900 sm:text-2xl">
+              {item.title}
+            </h2>
+
+            <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-cyan-700">
               {item.category}
             </p>
             <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">

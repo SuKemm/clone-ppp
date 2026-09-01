@@ -8,6 +8,7 @@ import { ArticleViewCount } from "@/components/ArticleViewCount";
 import { MostViewedSidebar } from "@/components/MostViewedSidebar";
 import { getAllViews } from "@/lib/news-views-store";
 import { formatNewsDateTime } from "@/lib/format-date";
+import { resolveShareholderCategoryEn } from "@/lib/i18n/category";
 
 export const dynamic = "force-dynamic"; // luôn đọc dữ liệu mới nhất từ admin, không cache trang static
 
@@ -43,6 +44,7 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
 
   if (!item) notFound();
 
+  const category = resolveShareholderCategoryEn(item.category);
   const contentHtml = item.content_en || item.content || "";
 
   // Khối "Xem nhiều nhất" — sắp xếp toàn bộ mục Quan hệ cổ đông (trừ mục
@@ -64,10 +66,10 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
   return (
     <PtscShell title={item.title_en || item.title} description={item.excerpt_en || item.excerpt || ""}>
       <PageHeader
-        title={item.title_en || item.title}
+        title={category}
         crumbs={[
-          { label: item.category, href: "/en-US/shareholders" },
-          { label: item.title_en || item.title },
+          { label: "Investor Relations", href: "/en-US/shareholders" },
+          { label: category },
         ]}
         homeHref="/en-US"
       />
@@ -81,8 +83,12 @@ export default async function ShareholderRelationDetailPageEn({ params }: Params
               <ArticleViewCount id={item.id} mode="increment" className="text-sm text-slate-500" isEnglish />
             </div>
 
-            <p className="mt-6 text-sm font-semibold uppercase tracking-wide text-cyan-700">
-              {item.category}
+            <h2 className="mt-6 break-words text-xl font-bold leading-snug text-slate-900 sm:text-2xl">
+              {item.title_en || item.title}
+            </h2>
+
+            <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-cyan-700">
+              {category}
             </p>
             <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
               <svg

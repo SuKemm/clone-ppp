@@ -83,10 +83,10 @@ export default async function NewsDetailPageEn({ params }: Params) {
   return (
     <PtscShell title={title} description={excerpt}>
       <PageHeader
-        title={title}
+        title={category}
         crumbs={[
-          { label: category, href: "/en-US/news" },
-          { label: title },
+          { label: "News and Events", href: "/en-US/news" },
+          { label: category },
         ]}
         homeHref="/en-US"
       />
@@ -105,7 +105,11 @@ export default async function NewsDetailPageEn({ params }: Params) {
               />
             </div>
 
-            <p className="mt-6 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
+            <h2 className="mt-6 break-words text-xl font-bold leading-snug text-slate-900 sm:text-2xl">
+              {title}
+            </h2>
+
+            <p className="mt-4 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
               {category}
             </p>
             <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">

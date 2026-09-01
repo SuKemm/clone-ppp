@@ -65,10 +65,10 @@ export default async function NewsDetailPage({ params }: Params) {
   return (
     <PtscShell title={item.title} description={item.excerpt || ""}>
       <PageHeader
-        title={item.title}
+        title={item.category}
         crumbs={[
-          { label: item.category, href: "/tin-tuc" },
-          { label: item.title },
+          { label: "Tin tức – Sự kiện", href: "/tin-tuc" },
+          { label: item.category },
         ]}
       />
       <section className="mx-auto max-w-7xl px-6 py-10 sm:py-16 lg:px-8">
@@ -81,7 +81,11 @@ export default async function NewsDetailPage({ params }: Params) {
               <ArticleViewCount id={item.id} mode="increment" className="shrink-0 text-sm text-slate-500" />
             </div>
 
-            <p className="mt-6 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
+            <h2 className="mt-6 break-words text-xl font-bold leading-snug text-slate-900 sm:text-2xl">
+              {item.title}
+            </h2>
+
+            <p className="mt-4 break-words text-sm font-semibold uppercase tracking-[0.25em] text-cyan-700">
               {item.category}
             </p>
             <p className="mt-3 flex flex-wrap items-center gap-1.5 text-sm text-slate-500">
