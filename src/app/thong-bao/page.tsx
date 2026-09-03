@@ -22,23 +22,11 @@ export default function ThongBaoPage() {
         ) : (
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             {siteNotices.map((notice) => {
-              const tone =
-                notice.loai === "Khẩn cấp"
-                  ? "border-red-200 bg-red-50 text-red-700"
-                  : notice.loai === "Quan trọng"
-                    ? "border-amber-200 bg-amber-50 text-amber-700"
-                    : notice.loai === "Sự kiện"
-                      ? "border-sky-200 bg-sky-50 text-sky-700"
-                      : "border-slate-200 bg-slate-50 text-slate-700";
               const content = (
-                <div
-                  className={`h-full rounded-xl border px-4 py-3.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone}`}
-                >
-                  {notice.loai && (
-                    <span className="text-[10px] font-bold uppercase tracking-wide">
-                      {notice.loai}
-                    </span>
-                  )}
+                <div className="h-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 transition hover:-translate-y-0.5 hover:shadow-sm">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-cyan-700">
+                    Thông báo
+                  </span>
                   <p className="mt-1.5 break-words text-sm font-semibold leading-5 text-slate-900">
                     {notice.tieu_de}
                   </p>

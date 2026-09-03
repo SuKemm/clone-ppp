@@ -210,8 +210,8 @@ export default function EnglishHomePage() {
               for the full list. */}
           <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold tracking-wide text-slate-500">
-                Featured Notices
+              <h3 className="text-sm font-bold tracking-wide text-cyan-700">
+                Notices
               </h3>
               <Link
                 href="/en-US/notice"
@@ -226,18 +226,8 @@ export default function EnglishHomePage() {
                 <p className="mt-2 text-center text-sm text-slate-400">No notices yet.</p>
               ) : (
                 siteNotices.map((notice) => {
-                  const tone =
-                    notice.loai === "Khẩn cấp"
-                      ? "border-red-200 bg-red-50 text-red-700"
-                      : notice.loai === "Quan trọng"
-                        ? "border-amber-200 bg-amber-50 text-amber-700"
-                        : notice.loai === "Sự kiện"
-                          ? "border-sky-200 bg-sky-50 text-sky-700"
-                          : "border-slate-200 bg-slate-50 text-slate-700";
                   const content = (
-                    <div
-                      className={`rounded-xl border px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone}`}
-                    >
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm">
                       <span className="text-[10px] font-bold uppercase tracking-wide text-cyan-700">
                         Notice
                       </span>

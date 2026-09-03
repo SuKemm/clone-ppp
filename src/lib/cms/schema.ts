@@ -648,13 +648,6 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "tieu_de_en", label: "Tiêu đề (EN)", type: "text", width: "half" },
       { key: "mo_ta", label: "Nội dung ngắn", type: "textarea", width: "half" },
       { key: "mo_ta_en", label: "Nội dung ngắn (EN)", type: "textarea", width: "half" },
-      {
-        key: "loai",
-        label: "Loại thông báo (màu sắc hiển thị)",
-        type: "select",
-        options: ["Thông thường", "Quan trọng", "Khẩn cấp", "Sự kiện"],
-        width: "half",
-      },
       { key: "lien_ket", label: "Đường dẫn khi bấm vào (tuỳ chọn)", type: "text", width: "half" },
       // File đính kèm (PDF...) — nếu admin không điền "Đường dẫn khi bấm
       // vào" ở trên thì bấm vào thông báo trên trang chủ sẽ mở file này.
