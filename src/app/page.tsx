@@ -165,7 +165,7 @@ export default function Home() {
           PtscShell) — hiện cố định ở đó, không còn nằm trong section này. */}
 <section id="news" className="mx-auto max-w-7xl px-6 pt-16 pb-6 lg:px-8">
       <div className="flex flex-col items-center text-center">
-        <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
+        <h2 className="text-2xl font-semibold uppercase tracking-tight text-[#075B9F] md:text-3xl">
           Tin tức và sự kiện
         </h2>
 
@@ -238,11 +238,9 @@ export default function Home() {
               <div
                 className={`rounded-xl border px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm ${tone}`}
               >
-                {notice.loai && (
-                  <span className="text-[10px] font-bold uppercase tracking-wide">
-                    {notice.loai}
-                  </span>
-                )}
+                <span className="text-[10px] font-bold uppercase tracking-wide text-cyan-700">
+                  Thông báo
+                </span>
                 <p className="mt-1 break-words text-sm font-semibold leading-5 text-slate-900">
                   {notice.tieu_de}
                 </p>
@@ -278,7 +276,7 @@ export default function Home() {
       định kỳ để khối này luôn "sống", tự cập nhật theo thời gian thực. */}
   <AutoRefresh intervalMs={60_000} />
   <div className="flex flex-col items-center text-center">
-    <h2 className="text-2xl font-bold tracking-tight text-[#075B9F] md:text-3xl">
+    <h2 className="text-2xl font-semibold uppercase tracking-tight text-[#075B9F] md:text-3xl">
       Thông tin sản xuất
     </h2>
           <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -329,7 +327,7 @@ export default function Home() {
         <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 shadow-sm">
           <div className="flex items-center justify-center gap-3 bg-[#898FA3] py-5">
             <BarChart3 className="h-6 w-6 text-white" />
-            <h2 className="text-xl font-semibold tracking-[0.15em] text-white">
+            <h2 className="text-xl font-semibold uppercase tracking-[0.15em] text-[#075B9F]">
               Quan hệ cổ đông
             </h2>
           </div>
@@ -359,7 +357,7 @@ export default function Home() {
   <div className="mx-auto max-w-7xl px-6 lg:px-8">
     <div className="grid gap-8 lg:grid-cols-2">
       <div>
-        <h2 className="text-center text-2xl font-semibold text-[#075B9F]">
+        <h2 className="text-center text-2xl font-semibold uppercase text-[#075B9F]">
           Thư viện ảnh
         </h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
@@ -391,7 +389,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h2 className="text-center text-2xl font-semibold text-[#075B9F]">Video tư liệu</h2>
+              <h2 className="text-center text-2xl font-semibold uppercase text-[#075B9F]">Video tư liệu</h2>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 {latestVideos.map((video) => (
                   <Link
