@@ -211,7 +211,7 @@ export default function EnglishHomePage() {
           <div className="flex h-full flex-col rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold tracking-wide text-cyan-700">
-                Notices
+                NOTICES
               </h3>
               <Link
                 href="/en-US/notice"
@@ -229,7 +229,7 @@ export default function EnglishHomePage() {
                   const content = (
                     <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 transition hover:-translate-y-0.5 hover:shadow-sm">
                       <span className="text-[10px] font-bold uppercase tracking-wide text-cyan-700">
-                        Notice
+                        NOTICES
                       </span>
                       <p className="mt-1 break-words text-sm font-semibold leading-5 text-slate-900">
                         {notice.tieu_de_en || notice.tieu_de}

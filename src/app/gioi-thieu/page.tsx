@@ -57,13 +57,13 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div>
-          <h2 className="mt-3 text-center text-3xl font-bold tracking-tight text-[#075B9F] sm:text-4xl">
+          <h2 className="mt-3 text-center text-3xl font-semibold uppercase tracking-tight text-[#075B9F] sm:text-4xl">
             Tổng quan doanh nghiệp
           </h2>
 
           {overview?.overview_intro && (
             <div
-              className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:text-slate-800"
+              className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:font-semibold prose-strong:text-slate-800"
               dangerouslySetInnerHTML={{ __html: overview.overview_intro }}
             />
           )}
@@ -72,18 +72,18 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-6 text-center">
-          <h2 className="text-3xl font-bold text-[#075B9F]">
+          <h2 className="text-3xl font-semibold uppercase text-[#075B9F]">
             Tầm nhìn &amp; Sứ mệnh
           </h2>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-            <h3 className="text-center text-xl font-bold text-slate-900">Tầm nhìn</h3>
+            <h3 className="text-center text-xl font-semibold uppercase text-slate-900">Tầm nhìn</h3>
             <p className="mt-4 leading-7 text-slate-600">{overview?.vision}</p>
           </article>
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-            <h3 className="text-center text-xl font-bold text-slate-900">Sứ mệnh</h3>
+            <h3 className="text-center text-xl font-semibold uppercase text-slate-900">Sứ mệnh</h3>
             <p className="mt-4 leading-7 text-slate-600">{overview?.mission}</p>
           </article>
         </div>
@@ -92,18 +92,18 @@ export default function AboutPage() {
       <section className="bg-slate-50 py-14">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold text-[#075B9F]">
+            <h2 className="text-3xl font-semibold uppercase text-[#075B9F]">
               Các cổ đông
             </h2>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
             <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-              <h3 className="text-center text-2xl font-bold text-slate-900">Danh sách các cổ đông</h3>
+              <h3 className="text-center text-2xl font-semibold uppercase text-slate-900">Danh sách các cổ đông</h3>
               <ul className="mt-5 space-y-3">
                 {shareholders.map((s) => (
                   <li key={s.id} className="flex gap-3 leading-7 text-slate-600">
-                    <span className="mt-1 font-bold text-cyan-700">✓</span>
+                    <span className="mt-1 font-semibold text-cyan-700">✓</span>
                     <span>{s.name}</span>
                   </li>
                 ))}
@@ -111,10 +111,10 @@ export default function AboutPage() {
             </article>
 
             <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
-              <h3 className="text-center text-2xl font-bold text-slate-900">Tổng mức đầu tư</h3>
+              <h3 className="text-center text-2xl font-semibold uppercase text-slate-900">Tổng mức đầu tư</h3>
               {overview?.investment_note && (
                 <div
-                  className="prose prose-slate mt-4 max-w-none leading-7 text-slate-600 prose-p:my-4 prose-strong:text-slate-800"
+                  className="prose prose-slate mt-4 max-w-none leading-7 text-slate-600 prose-p:my-4 prose-strong:font-semibold prose-strong:text-slate-800"
                   dangerouslySetInnerHTML={{ __html: overview.investment_note }}
                 />
               )}
@@ -126,7 +126,7 @@ export default function AboutPage() {
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
           <div>
-            <h2 className="text-center text-2xl font-bold text-[#075B9F]">Ban lãnh đạo</h2>
+            <h2 className="text-center text-2xl font-semibold uppercase text-[#075B9F]">Ban lãnh đạo</h2>
             <p className="mt-3 max-w-2xl leading-7 text-slate-600">
               Hội đồng Quản trị, Ban Giám đốc và Ban Kiểm soát Công ty cổ
               phần Thủy điện Đakđrinh (PV Power DHC).
@@ -143,7 +143,7 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-[#075B9F]">
+          <h2 className="text-3xl font-semibold uppercase text-[#075B9F]">
             Thông số về dự án
           </h2>
         </div>
@@ -155,7 +155,7 @@ export default function AboutPage() {
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
             >
               <div className="text-sm font-semibold text-slate-500">{spec.label}</div>
-              <div className="mt-2 text-lg font-bold text-cyan-700">{spec.value}</div>
+              <div className="mt-2 text-lg font-semibold text-cyan-700">{spec.value}</div>
             </div>
           ))}
 
@@ -163,13 +163,13 @@ export default function AboutPage() {
               không hardcode ngày tháng. */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="text-sm font-semibold text-slate-500">Sản lượng điện</div>
-            <div className="mt-2 text-lg font-bold text-cyan-700">
+            <div className="mt-2 text-lg font-semibold text-cyan-700">
               ~7 tỷ kWh <span className="text-sm font-semibold text-slate-500">(tính đến: {todayLabel})</span>
             </div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="text-sm font-semibold text-slate-500">Vận hành từ năm 2014</div>
-            <div className="mt-2 text-lg font-bold text-cyan-700">
+            <div className="mt-2 text-lg font-semibold text-cyan-700">
               {yearsRunning} năm <span className="text-sm font-semibold text-slate-500">(tính đến nay: {todayLabel})</span>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-[#075B9F]">
+          <h2 className="text-3xl font-semibold uppercase text-[#075B9F]">
             Các mốc tiến độ chính của dự án
           </h2>
         </div>
@@ -189,7 +189,7 @@ export default function AboutPage() {
               key={t.id}
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
             >
-              <div className="text-xl font-bold text-cyan-700">{t.date}</div>
+              <div className="text-xl font-semibold text-cyan-700">{t.date}</div>
               <p className="mt-3 text-sm leading-7 text-slate-600">{t.summary}</p>
             </article>
           ))}
@@ -198,14 +198,14 @@ export default function AboutPage() {
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
         <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-[#075B9F]">
+          <h2 className="text-3xl font-semibold uppercase text-[#075B9F]">
             Hình thức khen thưởng
           </h2>
         </div>
 
         <div className="space-y-10">
           <div>
-            <h3 className="mb-4 text-xl font-bold text-slate-900">Danh hiệu thi đua</h3>
+            <h3 className="mb-4 text-xl font-semibold uppercase text-slate-900">Danh hiệu thi đua</h3>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
@@ -229,7 +229,7 @@ export default function AboutPage() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-xl font-bold text-slate-900">Hình thức khen thưởng</h3>
+            <h3 className="mb-4 text-xl font-semibold uppercase text-slate-900">Hình thức khen thưởng</h3>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
               <table className="w-full min-w-[640px] text-left text-sm">
                 <thead>
@@ -258,7 +258,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {overview?.closing_content && (
             <div
-              className="prose prose-slate grid max-w-none gap-6 leading-8 text-slate-600 lg:grid-cols-2 prose-p:my-0"
+              className="prose prose-slate grid max-w-none gap-6 leading-8 text-slate-600 lg:grid-cols-2 prose-p:my-0 prose-strong:font-semibold"
               dangerouslySetInnerHTML={{ __html: overview.closing_content }}
             />
           )}
@@ -268,7 +268,7 @@ export default function AboutPage() {
       <section className="bg-slate-900 py-12">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-6 text-white lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div>
-            <h2 className="text-2xl font-bold">Khám phá PV Power DHC</h2>
+            <h2 className="text-2xl font-semibold">Khám phá PV Power DHC</h2>
             <p className="mt-2 text-slate-300">
               Tìm hiểu thêm về dự án, hoạt động vận hành và thông tin doanh nghiệp.
             </p>
