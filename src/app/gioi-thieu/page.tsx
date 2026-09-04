@@ -295,7 +295,7 @@ export default function AboutPage() {
               href="/dich-vu"
               className="rounded-xl bg-cyan-600 px-5 py-3 text-sm font-semibold transition hover:bg-cyan-500"
             >
-              Dịch vụ
+              Thư viện ảnh
             </Link>
             <Link
               href="/du-an"
