@@ -4,10 +4,10 @@ import { PtscShell } from "@/components/ptsc-shell";
 // English counterpart of src/app/trang-noi-bo/page.tsx — keep both lists in
 // sync when adding a new internal page.
 const internalPages = [
-  { href: "/en-US/internal-pages/speedmaint", label: "Speedmaint" },
+  { href: "https://amisapp.misa.vn/login/", label: "MISA AMIS", external: true },
   { href: "/en-US/internal-pages/internal-email", label: "Internal Email" },
-  { href: "/en-US/internal-pages/monitoring-station", label: "Monitoring Station" },
-  { href: "/en-US/internal-pages/reservoir", label: "Reservoir" },
+  { href: "https://achipvn.com/domua/", label: "ACHIP Procurement", external: true },
+  { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "DWRM", external: true },
   { href: "/en-US/internal-pages/e-learning", label: "E-Learning & Online Tests" },
 ];
 
@@ -31,17 +31,31 @@ export default function InternalPagesIndexEn() {
         </h1>
 
         <ul className="mt-8 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
-          {internalPages.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-[#089F50]"
-              >
-                {item.label}
-                <span aria-hidden="true">›</span>
-              </Link>
-            </li>
-          ))}
+          {internalPages.map((item) =>
+            item.external ? (
+              <li key={item.href}>
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-[#089F50]"
+                >
+                  {item.label}
+                  <span aria-hidden="true">›</span>
+                </a>
+              </li>
+            ) : (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className="flex items-center justify-between px-6 py-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:text-[#089F50]"
+                >
+                  {item.label}
+                  <span aria-hidden="true">›</span>
+                </Link>
+              </li>
+            )
+          )}
         </ul>
       </section>
     </PtscShell>

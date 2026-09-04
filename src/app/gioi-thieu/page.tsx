@@ -63,7 +63,7 @@ export default function AboutPage() {
 
           {overview?.overview_intro && (
             <div
-              className="prose prose-slate mt-6 max-w-none text-[16px] leading-8 text-slate-600 prose-p:my-5 prose-strong:font-semibold prose-strong:text-slate-800"
+              className="prose prose-slate mt-6 max-w-none text-base leading-8 text-slate-900 prose-p:my-5 prose-strong:font-normal prose-strong:text-slate-900"
               dangerouslySetInnerHTML={{ __html: overview.overview_intro }}
             />
           )}
@@ -80,11 +80,11 @@ export default function AboutPage() {
         <div className="grid gap-6 md:grid-cols-2">
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
             <h3 className="text-center text-xl font-semibold uppercase text-slate-900">Tầm nhìn</h3>
-            <p className="mt-4 leading-7 text-slate-600">{overview?.vision}</p>
+            <p className="mt-4 text-base leading-7 text-slate-900">{overview?.vision}</p>
           </article>
           <article className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm">
             <h3 className="text-center text-xl font-semibold uppercase text-slate-900">Sứ mệnh</h3>
-            <p className="mt-4 leading-7 text-slate-600">{overview?.mission}</p>
+            <p className="mt-4 text-base leading-7 text-slate-900">{overview?.mission}</p>
           </article>
         </div>
       </section>
@@ -102,8 +102,8 @@ export default function AboutPage() {
               <h3 className="text-center text-2xl font-semibold uppercase text-slate-900">Danh sách các cổ đông</h3>
               <ul className="mt-5 space-y-3">
                 {shareholders.map((s) => (
-                  <li key={s.id} className="flex gap-3 leading-7 text-slate-600">
-                    <span className="mt-1 font-semibold text-cyan-700">✓</span>
+                  <li key={s.id} className="flex gap-3 text-base leading-7 text-slate-900">
+                    <span className="mt-1 text-slate-900">✓</span>
                     <span>{s.name}</span>
                   </li>
                 ))}
@@ -114,7 +114,7 @@ export default function AboutPage() {
               <h3 className="text-center text-2xl font-semibold uppercase text-slate-900">Tổng mức đầu tư</h3>
               {overview?.investment_note && (
                 <div
-                  className="prose prose-slate mt-4 max-w-none leading-7 text-slate-600 prose-p:my-4 prose-strong:font-semibold prose-strong:text-slate-800"
+                  className="prose prose-slate mt-4 max-w-none text-base leading-7 text-slate-900 prose-p:my-4 prose-strong:font-normal prose-strong:text-slate-900"
                   dangerouslySetInnerHTML={{ __html: overview.investment_note }}
                 />
               )}
@@ -127,7 +127,7 @@ export default function AboutPage() {
         <div className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm lg:flex-row lg:items-center">
           <div>
             <h2 className="text-center text-2xl font-semibold uppercase text-[#075B9F]">Ban lãnh đạo</h2>
-            <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-900">
               Hội đồng Quản trị, Ban Giám đốc và Ban Kiểm soát Công ty cổ
               phần Thủy điện Đakđrinh (PV Power DHC).
             </p>
@@ -139,6 +139,23 @@ export default function AboutPage() {
             Xem Ban lãnh đạo
           </Link>
         </div>
+
+        {/* Sơ đồ tổ chức — ảnh do admin tải lên (Admin -> Giới thiệu DHC ->
+            Giới thiệu — Nội dung chính -> "Ảnh sơ đồ tổ chức"). Chỉ hiện
+            khối này khi admin đã upload ảnh. */}
+        {overview?.org_chart_image && (
+          <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+            <h3 className="text-center text-xl font-semibold uppercase text-slate-900">
+              Sơ đồ tổ chức
+            </h3>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={overview.org_chart_image}
+              alt="Sơ đồ tổ chức Công ty cổ phần Thủy điện Đakđrinh"
+              className="mx-auto mt-6 max-w-full"
+            />
+          </div>
+        )}
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
@@ -154,23 +171,23 @@ export default function AboutPage() {
               key={spec.id}
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
             >
-              <div className="text-sm font-semibold text-slate-500">{spec.label}</div>
-              <div className="mt-2 text-lg font-semibold text-cyan-700">{spec.value}</div>
+              <div className="text-base text-slate-900">{spec.label}</div>
+              <div className="mt-2 text-base text-slate-900">{spec.value}</div>
             </div>
           ))}
 
           {/* 2 ô bổ sung — tự tính theo ngày thực tế mỗi lần trang render,
               không hardcode ngày tháng. */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="text-sm font-semibold text-slate-500">Sản lượng điện</div>
-            <div className="mt-2 text-lg font-semibold text-cyan-700">
-              ~7 tỷ kWh <span className="text-sm font-semibold text-slate-500">(tính đến: {todayLabel})</span>
+            <div className="text-base text-slate-900">Sản lượng điện</div>
+            <div className="mt-2 text-base text-slate-900">
+              ~7 tỷ kWh <span className="text-base text-slate-900">(tính đến: {todayLabel})</span>
             </div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="text-sm font-semibold text-slate-500">Vận hành từ năm 2014</div>
-            <div className="mt-2 text-lg font-semibold text-cyan-700">
-              {yearsRunning} năm <span className="text-sm font-semibold text-slate-500">(tính đến nay: {todayLabel})</span>
+            <div className="text-base text-slate-900">Vận hành từ năm 2014</div>
+            <div className="mt-2 text-base text-slate-900">
+              {yearsRunning} năm <span className="text-base text-slate-900">(tính đến nay: {todayLabel})</span>
             </div>
           </div>
         </div>
@@ -189,8 +206,8 @@ export default function AboutPage() {
               key={t.id}
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
             >
-              <div className="text-xl font-semibold text-cyan-700">{t.date}</div>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{t.summary}</p>
+              <div className="text-base text-slate-900">{t.date}</div>
+              <p className="mt-3 text-base leading-7 text-slate-900">{t.summary}</p>
             </article>
           ))}
         </div>
@@ -207,7 +224,7 @@ export default function AboutPage() {
           <div>
             <h3 className="mb-4 text-xl font-semibold uppercase text-slate-900">Danh hiệu thi đua</h3>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <table className="w-full min-w-[640px] text-left text-sm">
+              <table className="w-full min-w-[640px] text-left text-base">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50 text-slate-500">
                     <th className="px-5 py-3 font-semibold">Năm</th>
@@ -218,9 +235,9 @@ export default function AboutPage() {
                 <tbody>
                   {emulationTitles.map((a) => (
                     <tr key={a.id} className="border-b border-slate-100 last:border-0">
-                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
-                      <td className="px-5 py-3 text-slate-700">{a.title}</td>
-                      <td className="px-5 py-3 leading-6 text-slate-500">{a.decision}</td>
+                      <td className="px-5 py-3 font-semibold text-slate-900">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-900">{a.title}</td>
+                      <td className="px-5 py-3 leading-6 text-slate-900">{a.decision}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -231,7 +248,7 @@ export default function AboutPage() {
           <div>
             <h3 className="mb-4 text-xl font-semibold uppercase text-slate-900">Hình thức khen thưởng</h3>
             <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <table className="w-full min-w-[640px] text-left text-sm">
+              <table className="w-full min-w-[640px] text-left text-base">
                 <thead>
                   <tr className="border-b border-slate-200 bg-slate-50 text-slate-500">
                     <th className="px-5 py-3 font-semibold">Năm</th>
@@ -242,9 +259,9 @@ export default function AboutPage() {
                 <tbody>
                   {commendations.map((a) => (
                     <tr key={a.id} className="border-b border-slate-100 last:border-0">
-                      <td className="px-5 py-3 font-semibold text-cyan-700">{a.year}</td>
-                      <td className="px-5 py-3 text-slate-700">{a.title}</td>
-                      <td className="px-5 py-3 leading-6 text-slate-500">{a.decision}</td>
+                      <td className="px-5 py-3 font-semibold text-slate-900">{a.year}</td>
+                      <td className="px-5 py-3 text-slate-900">{a.title}</td>
+                      <td className="px-5 py-3 leading-6 text-slate-900">{a.decision}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -258,7 +275,7 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {overview?.closing_content && (
             <div
-              className="prose prose-slate grid max-w-none gap-6 leading-8 text-slate-600 lg:grid-cols-2 prose-p:my-0 prose-strong:font-semibold"
+              className="prose prose-slate grid max-w-none gap-6 text-base leading-8 text-slate-900 lg:grid-cols-2 prose-p:my-0 prose-strong:font-normal prose-strong:text-slate-900"
               dangerouslySetInnerHTML={{ __html: overview.closing_content }}
             />
           )}

@@ -21,7 +21,7 @@ const investorLogos = [
 type NavItem = {
   href: string;
   label: string;
-  children?: { href: string; label: string }[];
+  children?: { href: string; label: string; external?: boolean }[];
 };
 
 // NOTE: ban đầu chốt 5 mục top-level (bỏ "Phòng truyền thống", thay bằng
@@ -70,10 +70,10 @@ const navItemsVi: NavItem[] = [
     href: "/trang-noi-bo",
     label: "Trang nội bộ",
     children: [
-      { href: "/trang-noi-bo/speedmaint", label: "Speedmaint" },
+      { href: "https://amisapp.misa.vn/login/", label: "MISA AMIS", external: true },
       { href: "/trang-noi-bo/email-noi-bo", label: "Email nội bộ" },
-      { href: "/trang-noi-bo/tram-quan-trac", label: "Trạm quan trắc" },
-      { href: "/trang-noi-bo/ho-thuy-dien", label: "Hồ thuỷ điện" },
+      { href: "https://achipvn.com/domua/", label: "ACHIP Đồ mua", external: true },
+      { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "CỤC TÀI NGUYÊN NƯỚC", external: true },
       { href: "/trang-noi-bo/hoc-va-thi-online", label: "Học và thi Online" },
     ],
   },
@@ -122,10 +122,10 @@ const navItemsEn: NavItem[] = [
     href: "/en-US/internal-pages",
     label: "Internal Pages",
     children: [
-      { href: "/en-US/internal-pages/speedmaint", label: "Speedmaint" },
+      { href: "https://amisapp.misa.vn/login/", label: "MISA AMIS", external: true },
       { href: "/en-US/internal-pages/internal-email", label: "Internal Email" },
-      { href: "/en-US/internal-pages/monitoring-station", label: "Monitoring Station" },
-      { href: "/en-US/internal-pages/reservoir", label: "Reservoir" },
+      { href: "https://achipvn.com/domua/", label: "ACHIP Procurement", external: true },
+      { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "DWRM", external: true },
       { href: "/en-US/internal-pages/e-learning", label: "E-Learning & Online Tests" },
     ],
   },
@@ -341,15 +341,27 @@ export function PtscShell({
 
                   {item.children && openIndex === index ? (
                     <div className="absolute left-0 top-full w-60 rounded-b-sm bg-white py-2 text-slate-700 shadow-xl">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="block px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                      {item.children.map((child) =>
+                        child.external ? (
+                          <a
+                            key={child.href}
+                            href={child.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
+                          >
+                            {child.label}
+                          </a>
+                        ) : (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className="block px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
+                          >
+                            {child.label}
+                          </Link>
+                        )
+                      )}
                     </div>
                   ) : null}
                 </div>
@@ -392,16 +404,29 @@ export function PtscShell({
                   </Link>
                   {item.children ? (
                     <div className="ml-3 flex flex-col gap-1 border-l border-white/10 pl-3">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.href}
-                          href={child.href}
-                          className="py-1.5 text-xs font-normal normal-case text-slate-300"
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                      {item.children.map((child) =>
+                        child.external ? (
+                          <a
+                            key={child.href}
+                            href={child.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="py-1.5 text-xs font-normal normal-case text-slate-300"
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            {child.label}
+                          </a>
+                        ) : (
+                          <Link
+                            key={child.href}
+                            href={child.href}
+                            className="py-1.5 text-xs font-normal normal-case text-slate-300"
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            {child.label}
+                          </Link>
+                        )
+                      )}
                     </div>
                   ) : null}
                 </div>

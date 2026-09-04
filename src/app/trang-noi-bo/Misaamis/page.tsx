@@ -1,12 +1,12 @@
 import { InternalPageTemplate } from "@/components/InternalPageTemplate";
 
-export default function SpeedmaintPageEn() {
+export default function MisaamisPage() {
   return (
     <InternalPageTemplate
       title="MISA AMIS"
-      description="Internal work and management system MISA AMIS."
+      description="Hệ thống quản lý, điều hành công việc nội bộ MISA AMIS."
       externalUrl="https://amisapp.misa.vn/login/"
-      externalLabel="Open MISA AMIS"
+      externalLabel="Mở MISA AMIS"
     />
   );
 }

@@ -735,6 +735,7 @@ export const COLLECTIONS: CollectionDef[] = [
       { key: "investment_note_en", label: "Cơ cấu sở hữu — Tổng mức đầu tư (EN)", type: "richtext" },
       { key: "closing_content", label: "Đoạn kết (Khẳng định thương hiệu)", type: "richtext" },
       { key: "closing_content_en", label: "Đoạn kết (Khẳng định thương hiệu) (EN)", type: "richtext" },
+      { key: "org_chart_image", label: "Ảnh sơ đồ tổ chức (hiện dưới mục Ban lãnh đạo)", type: "image" },
     ],
     seed: [
       {
