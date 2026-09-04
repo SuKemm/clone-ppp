@@ -19,7 +19,7 @@ export default function EnNoticePage() {
     <PtscShell>
       <section className="mx-auto max-w-5xl px-6 py-12 lg:px-8">
         <h1 className="text-3xl font-bold uppercase tracking-wide text-slate-900">
-          Featured Notices
+        Notices
         </h1>
 
         {siteNotices.length === 0 ? (
