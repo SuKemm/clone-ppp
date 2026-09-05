@@ -186,10 +186,10 @@ export default function Home() {
       >
         {item.image && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.image} alt="" className="h-44 w-full object-cover" />
+          <img src={item.image} alt="" className="aspect-[4/3] w-full object-cover" />
         )}
         <div className="flex flex-1 flex-col p-5">
-          <h3 className="break-words text-base font-semibold leading-6 text-slate-900">
+          <h3 className="break-words text-base font-normal leading-6 text-slate-900">
             {item.title}
           </h3>
 
