@@ -4,12 +4,10 @@ import { PtscShell } from "@/components/ptsc-shell";
 // Danh sách các trang con trong mục "Trang nội bộ". Thêm mục mới ở đây và
 // tạo thêm thư mục src/app/trang-noi-bo/<slug>/page.tsx tương ứng.
 const internalPages = [
-  { href: "https://amisapp.misa.vn/login/", label: "MISA AMIS", external: true },
   { href: "/trang-noi-bo/email-noi-bo", label: "Email nội bộ" },
   { href: "https://achipvn.com/domua/", label: "ACHIP Đồ mua", external: true },
   { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "CỤC TÀI NGUYÊN NƯỚC", external: true },
   { href: "/trang-noi-bo/hoc-va-thi-online", label: "Học và thi Online" },
-  { href: "https://vpdt.vnptioffice.vn/qlvbdh/main", label: "Hệ Thống Văn Bản", external: true },
 ];
 
 export default function InternalPagesIndex() {
