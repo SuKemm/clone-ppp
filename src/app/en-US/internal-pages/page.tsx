@@ -9,6 +9,7 @@ const internalPages = [
   { href: "https://achipvn.com/domua/", label: "ACHIP Procurement", external: true },
   { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "DWRM", external: true },
   { href: "/en-US/internal-pages/e-learning", label: "E-Learning & Online Tests" },
+  { href: "https://vpdt.vnptioffice.vn/qlvbdh/main", label: "Document Management System", external: true },
 ];
 
 export default function InternalPagesIndexEn() {
