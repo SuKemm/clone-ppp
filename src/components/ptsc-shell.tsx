@@ -308,7 +308,7 @@ export function PtscShell({
 </div>
 
         {/* Main nav */}
-        <div className="border-b border-white/5 bg-[#0a1330]">
+        <div className="relative border-b border-white/5 bg-[#0a1330]">
           <div
             className={`mx-auto flex max-w-7xl items-center justify-between px-6 py-3 lg:px-8 ${
               isEnglish ? "gap-2 lg:gap-4" : "gap-3 lg:gap-6"
@@ -423,103 +423,116 @@ export function PtscShell({
             </button>
           </div>
 
-          {/* Mobile nav — overlay toàn màn hình (nền trắng, nút đóng "X" ở
-              trên cùng), thay cho kiểu menu xổ xuống ngắn/chật trước đây, để
-              giống bố cục menu mobile của trang tham chiếu (pvpower.vn). */}
+          {/* Mobile nav — dạng dropdown xổ xuống ngay dưới thanh menu (không
+              che logo/thanh điều hướng phía trên), nền màu navy đồng bộ
+              thương hiệu, cao tối đa 60% màn hình rồi tự cuộn — thay cho
+              kiểu phủ trắng toàn màn hình trước đây. Có lớp nền mờ phía sau,
+              bấm ra ngoài để đóng, giống hành vi menu mobile của trang tham
+              chiếu (pvpower.vn). */}
           {mobileOpen ? (
-            <div className="fixed inset-0 z-[60] flex flex-col bg-white text-slate-900 md:hidden">
-              <div className="flex items-center justify-end border-b border-slate-100 px-6 py-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMobileOpen(false);
-                    setMobileExpandedIndex(null);
-                  }}
-                  aria-label={isEnglish ? "Close menu" : "Đóng menu"}
-                  className="flex h-10 w-10 items-center justify-center text-slate-500 transition hover:text-slate-900"
-                >
-                  <CloseIcon className="h-7 w-7" />
-                </button>
-              </div>
+            <>
+              <div
+                className="fixed inset-0 z-[59] bg-black/40 md:hidden"
+                onClick={() => {
+                  setMobileOpen(false);
+                  setMobileExpandedIndex(null);
+                }}
+                aria-hidden="true"
+              />
+              <div className="absolute inset-x-0 top-full z-[60] flex max-h-[60vh] flex-col overflow-hidden rounded-b-2xl bg-[#0a1330] text-white shadow-2xl md:hidden">
+                <div className="flex items-center justify-end border-b border-white/10 px-6 py-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setMobileExpandedIndex(null);
+                    }}
+                    aria-label={isEnglish ? "Close menu" : "Đóng menu"}
+                    className="flex h-10 w-10 items-center justify-center text-slate-300 transition hover:text-white"
+                  >
+                    <CloseIcon className="h-6 w-6" />
+                  </button>
+                </div>
 
-              <nav className="flex-1 overflow-y-auto px-6 py-2">
-                {navItems.map((item, index) => {
-                  const isExpanded = mobileExpandedIndex === index;
-                  return (
-                    <div key={item.href} className="border-b border-slate-100">
-                      <div className="flex items-center justify-between">
-                        <Link
-                          href={item.href}
-                          className="block flex-1 py-5 text-lg font-bold uppercase tracking-wide text-slate-900"
-                          onClick={() => {
-                            setMobileOpen(false);
-                            setMobileExpandedIndex(null);
-                          }}
-                        >
-                          {item.label}
-                        </Link>
-                        {item.children ? (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setMobileExpandedIndex((current) => (current === index ? null : index))
-                            }
-                            aria-label={
-                              isEnglish
-                                ? isExpanded
-                                  ? "Collapse submenu"
-                                  : "Expand submenu"
-                                : isExpanded
-                                  ? "Thu gọn mục con"
-                                  : "Mở rộng mục con"
-                            }
-                            aria-expanded={isExpanded}
-                            className="flex h-11 w-11 shrink-0 items-center justify-center text-slate-400"
+                <nav className="flex-1 overflow-y-auto px-6 py-2">
+                  {navItems.map((item, index) => {
+                    const isExpanded = mobileExpandedIndex === index;
+                    return (
+                      <div key={item.href} className="border-b border-white/10">
+                        <div className="flex items-center justify-between">
+                          <Link
+                            href={item.href}
+                            className="block flex-1 py-4 text-base font-bold uppercase tracking-wide text-white"
+                            onClick={() => {
+                              setMobileOpen(false);
+                              setMobileExpandedIndex(null);
+                            }}
                           >
-                            <ChevronDown
-                              className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                            />
-                          </button>
+                            {item.label}
+                          </Link>
+                          {item.children ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setMobileExpandedIndex((current) => (current === index ? null : index))
+                              }
+                              aria-label={
+                                isEnglish
+                                  ? isExpanded
+                                    ? "Collapse submenu"
+                                    : "Expand submenu"
+                                  : isExpanded
+                                    ? "Thu gọn mục con"
+                                    : "Mở rộng mục con"
+                              }
+                              aria-expanded={isExpanded}
+                              className="flex h-11 w-11 shrink-0 items-center justify-center text-slate-400"
+                            >
+                              <ChevronDown
+                                className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                              />
+                            </button>
+                          ) : null}
+                        </div>
+                        {item.children && isExpanded ? (
+                          <div className="flex flex-col gap-1 pb-4 pl-1">
+                            {item.children.map((child) =>
+                              child.external ? (
+                                <a
+                                  key={child.href}
+                                  href={child.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="py-2 text-sm normal-case text-slate-300"
+                                  onClick={() => {
+                                    setMobileOpen(false);
+                                    setMobileExpandedIndex(null);
+                                  }}
+                                >
+                                  {child.label}
+                                </a>
+                              ) : (
+                                <Link
+                                  key={child.href}
+                                  href={child.href}
+                                  className="py-2 text-sm normal-case text-slate-300"
+                                  onClick={() => {
+                                    setMobileOpen(false);
+                                    setMobileExpandedIndex(null);
+                                  }}
+                                >
+                                  {child.label}
+                                </Link>
+                              )
+                            )}
+                          </div>
                         ) : null}
                       </div>
-                      {item.children && isExpanded ? (
-                        <div className="flex flex-col gap-1 pb-4 pl-1">
-                          {item.children.map((child) =>
-                            child.external ? (
-                              <a
-                                key={child.href}
-                                href={child.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="py-2.5 text-base normal-case text-slate-600"
-                                onClick={() => {
-                                  setMobileOpen(false);
-                                  setMobileExpandedIndex(null);
-                                }}
-                              >
-                                {child.label}
-                              </a>
-                            ) : (
-                              <Link
-                                key={child.href}
-                                href={child.href}
-                                className="py-2.5 text-base normal-case text-slate-600"
-                                onClick={() => {
-                                  setMobileOpen(false);
-                                  setMobileExpandedIndex(null);
-                                }}
-                              >
-                                {child.label}
-                              </Link>
-                            )
-                          )}
-                        </div>
-                      ) : null}
-                    </div>
-                  );
-                })}
-              </nav>
-            </div>
+                    );
+                  })}
+                </nav>
+              </div>
+            </>
           ) : null}
         </div>
       </header>
