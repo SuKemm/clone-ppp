@@ -495,23 +495,40 @@ export function PtscShell({
       </section>
 
       <footer id="contact" className="relative overflow-hidden border-t border-slate-200 bg-[#0a1330] text-slate-300">
-        {/* Decorative radiating lines, echoing the reference footer */}
+        {/* Decorative background: high-voltage pylons + wires spanning the
+            full footer width, echoing the reference footer's power-line
+            watermark (thay cho hình mặt trời tỏa tia cũ) */}
         <svg
-          className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 opacity-[0.07] sm:h-96 sm:w-96"
-          viewBox="0 0 200 200"
+          className="pointer-events-none absolute inset-x-0 top-0 h-40 w-full opacity-[0.18] sm:h-56"
+          viewBox="0 0 1600 260"
+          preserveAspectRatio="xMidYMin slice"
           fill="none"
           aria-hidden="true"
         >
-          {Array.from({ length: 24 }).map((_, i) => (
-            <line
-              key={i}
-              x1="100"
-              y1="100"
-              x2={100 + 100 * Math.cos((i * Math.PI) / 12)}
-              y2={100 + 100 * Math.sin((i * Math.PI) / 12)}
-              stroke="white"
-              strokeWidth="1"
-            />
+          {/* Dây điện cao thế chạy ngang toàn bộ chiều rộng chân trang */}
+          <line x1="0" y1="40" x2="1600" y2="46" stroke="#22D3EE" strokeWidth="1.5" />
+          <line x1="0" y1="70" x2="1600" y2="76" stroke="#22D3EE" strokeWidth="1.5" />
+          <line x1="0" y1="100" x2="1600" y2="106" stroke="#22D3EE" strokeWidth="1.5" />
+
+          {/* Cột điện cao thế lặp lại dọc chân trang */}
+          {[100, 450, 800, 1150, 1500].map((cx) => (
+            <g key={cx} transform={`translate(${cx}, 0)`} stroke="#22D3EE" strokeWidth="2">
+              {/* Chân cột hình chữ A */}
+              <line x1="-35" y1="230" x2="-6" y2="30" />
+              <line x1="35" y1="230" x2="6" y2="30" />
+              <line x1="0" y1="30" x2="0" y2="0" />
+              {/* Giằng ngang thân cột */}
+              <line x1="-24" y1="90" x2="24" y2="90" />
+              <line x1="-17" y1="140" x2="17" y2="140" />
+              <line x1="-10" y1="190" x2="10" y2="190" />
+              {/* Xà ngang đỡ dây điện */}
+              <line x1="-55" y1="40" x2="55" y2="40" />
+              <line x1="-40" y1="70" x2="40" y2="70" />
+              <line x1="-55" y1="40" x2="-55" y2="28" />
+              <line x1="55" y1="40" x2="55" y2="28" />
+              <line x1="-40" y1="70" x2="-40" y2="58" />
+              <line x1="40" y1="70" x2="40" y2="58" />
+            </g>
           ))}
         </svg>
 
