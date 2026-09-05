@@ -76,3 +76,26 @@ export function deleteItem(collection: CollectionId, id: string): boolean {
   if (changed) writeAll(collection, next);
   return changed;
 }
+
+/**
+ * Đổi chỗ 1 item với item liền trước ("up") hoặc liền sau ("down") trong
+ * mảng — thứ tự trong file JSON chính là thứ tự hiển thị ngoài trang public
+ * (vd: banner trang chủ chạy đúng theo thứ tự admin đã xếp trong /admin).
+ * Không làm gì nếu item đã ở đầu/cuối danh sách.
+ */
+export function reorderItem(
+  collection: CollectionId,
+  id: string,
+  direction: "up" | "down"
+): CmsItem[] | null {
+  const items = ensureFile(collection);
+  const idx = items.findIndex((it) => it.id === id);
+  if (idx === -1) return null;
+
+  const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+  if (targetIdx < 0 || targetIdx >= items.length) return items; // đã ở đầu/cuối, không đổi
+
+  [items[idx], items[targetIdx]] = [items[targetIdx], items[idx]];
+  writeAll(collection, items);
+  return items;
+}

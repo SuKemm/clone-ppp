@@ -24,6 +24,7 @@ import {
   Landmark,
   ScrollText,
   ChevronDown,
+  ChevronUp,
   Building2,
   BarChart3,
   History,
@@ -581,6 +582,7 @@ function CollectionListPanel({
 }) {
   const [items, setItems] = useState<CmsItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   async function load() {
     setError(null);
@@ -604,6 +606,36 @@ function CollectionListPanel({
     if (res.ok) load();
   }
 
+  async function handleReorder(id: string, direction: "up" | "down") {
+    if (!items) return;
+    setReorderingId(id);
+    // Cập nhật ngay trên giao diện cho mượt, không đợi server phản hồi rồi
+    // mới thấy thứ tự đổi.
+    const idx = items.findIndex((it) => it.id === id);
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (idx !== -1 && targetIdx >= 0 && targetIdx < items.length) {
+      const next = [...items];
+      [next[idx], next[targetIdx]] = [next[targetIdx], next[idx]];
+      setItems(next);
+    }
+
+    try {
+      const res = await fetch(`/api/admin/content/${def.id}/reorder`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, direction }),
+      });
+      if (res.ok) {
+        const body = await res.json();
+        setItems(body.items);
+      } else {
+        load(); // đồng bộ lại đúng thứ tự trên server nếu lỡ có lỗi
+      }
+    } finally {
+      setReorderingId(null);
+    }
+  }
+
   const titleField = def.fields[0]?.key ?? "title";
   const categoryField = def.fields.find((f) => f.key === "category");
   const dateField = def.fields.find((f) => f.key === "date" || f.key === "deadline");
@@ -616,7 +648,10 @@ function CollectionListPanel({
         <div>
           <h2 className="text-xl font-semibold text-slate-900">{def.label}</h2>
           {items && (
-            <p className="text-sm text-slate-500">{items.length} mục</p>
+            <p className="text-sm text-slate-500">
+              {items.length} mục
+              {def.reorderable && " — dùng mũi tên ↑↓ để sắp xếp thứ tự hiển thị ngoài trang"}
+            </p>
           )}
         </div>
         <button
@@ -680,6 +715,26 @@ function CollectionListPanel({
             </div>
 
             <div className="flex shrink-0 gap-2">
+              {def.reorderable && (
+                <div className="flex shrink-0 gap-1">
+                  <button
+                    onClick={() => handleReorder(item.id, "up")}
+                    disabled={idx === 0 || reorderingId === item.id}
+                    aria-label="Đưa lên trên"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    <ChevronUp className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleReorder(item.id, "down")}
+                    disabled={idx === items.length - 1 || reorderingId === item.id}
+                    aria-label="Đưa xuống dưới"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 text-slate-600 transition hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-30"
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
               <button
                 onClick={() => onEdit(item)}
                 className="flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-600 transition hover:border-slate-400 hover:bg-slate-50"

@@ -57,6 +57,9 @@ export type CollectionDef = {
   label: string; // tên hiển thị trong /admin
   fields: FieldDef[];
   seed: Record<string, string>[];
+  // true: hiện nút mũi tên lên/xuống trong /admin để admin tự sắp xếp thứ tự
+  // hiển thị ngoài trang public (vd: banner trang chủ chạy đúng thứ tự đã xếp).
+  reorderable?: boolean;
 };
 
 // Với mỗi trường tiếng Việt cần có bản tiếng Anh song song (hiển thị ở các
@@ -519,6 +522,7 @@ export const COLLECTIONS: CollectionDef[] = [
     // Trang chủ (VN + EN) đọc collection này qua getCollection("hero-slides").
     id: "hero-slides",
     label: "Banner trang chủ (Slider)",
+    reorderable: true,
     fields: [
       { key: "image", label: "Ảnh banner", type: "image", required: true },
       {
