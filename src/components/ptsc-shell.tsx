@@ -220,6 +220,7 @@ export function PtscShell({
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null);
 
   // Layout gốc (src/app/layout.tsx) không biết route hiện tại nên luôn để
   // sẵn lang="vi" — component này (dùng chung mọi trang) tự cập nhật lại
@@ -375,7 +376,10 @@ export function PtscShell({
             {/* Mobile toggle */}
             <button
               type="button"
-              onClick={() => setMobileOpen((v) => !v)}
+              onClick={() => {
+                setMobileOpen((v) => !v);
+                setMobileExpandedIndex(null);
+              }}
               className="flex h-9 w-9 items-center justify-center rounded-sm text-white md:hidden"
               aria-label={isEnglish ? "Toggle menu" : "Mở/đóng menu"}
             >
@@ -393,44 +397,72 @@ export function PtscShell({
           {/* Mobile nav */}
           {mobileOpen ? (
             <nav className="flex flex-col gap-1 border-t border-white/10 bg-[#0a1330] px-6 py-3 text-sm font-semibold text-slate-100 md:hidden">
-              {navItems.map((item) => (
-                <div key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="block py-2 uppercase"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                  {item.children ? (
-                    <div className="ml-3 flex flex-col gap-1 border-l border-white/10 pl-3">
-                      {item.children.map((child) =>
-                        child.external ? (
-                          <a
-                            key={child.href}
-                            href={child.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="py-1.5 text-xs font-normal normal-case text-slate-300"
-                            onClick={() => setMobileOpen(false)}
-                          >
-                            {child.label}
-                          </a>
-                        ) : (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className="py-1.5 text-xs font-normal normal-case text-slate-300"
-                            onClick={() => setMobileOpen(false)}
-                          >
-                            {child.label}
-                          </Link>
-                        )
-                      )}
+              {navItems.map((item, index) => {
+                const isExpanded = mobileExpandedIndex === index;
+                return (
+                  <div key={item.href} className="border-b border-white/5 last:border-b-0">
+                    <div className="flex items-center justify-between">
+                      <Link
+                        href={item.href}
+                        className="block flex-1 py-2.5 uppercase"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                      {item.children ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setMobileExpandedIndex((current) => (current === index ? null : index))
+                          }
+                          aria-label={
+                            isEnglish
+                              ? isExpanded
+                                ? "Collapse submenu"
+                                : "Expand submenu"
+                              : isExpanded
+                                ? "Thu gọn mục con"
+                                : "Mở rộng mục con"
+                          }
+                          aria-expanded={isExpanded}
+                          className="flex h-9 w-9 shrink-0 items-center justify-center text-slate-300"
+                        >
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                          />
+                        </button>
+                      ) : null}
                     </div>
-                  ) : null}
-                </div>
-              ))}
+                    {item.children && isExpanded ? (
+                      <div className="ml-3 mb-2 flex flex-col gap-1 border-l border-white/10 pl-3">
+                        {item.children.map((child) =>
+                          child.external ? (
+                            <a
+                              key={child.href}
+                              href={child.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="py-1.5 text-xs font-normal normal-case text-slate-300"
+                              onClick={() => setMobileOpen(false)}
+                            >
+                              {child.label}
+                            </a>
+                          ) : (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className="py-1.5 text-xs font-normal normal-case text-slate-300"
+                              onClick={() => setMobileOpen(false)}
+                            >
+                              {child.label}
+                            </Link>
+                          )
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
             </nav>
           ) : null}
         </div>
