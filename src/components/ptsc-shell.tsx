@@ -204,6 +204,24 @@ function ChevronDown({ className = "" }: { className?: string }) {
   );
 }
 
+function CloseIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      className={className}
+      aria-hidden="true"
+    >
+      <path
+        d="M5 5L15 15M15 5L5 15"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export function PtscShell({
   children,
   title,
@@ -228,6 +246,17 @@ export function PtscShell({
   useEffect(() => {
     document.documentElement.lang = isEnglish ? "en" : "vi";
   }, [isEnglish]);
+
+  // Khoá cuộn trang nền khi menu mobile (dạng overlay toàn màn hình) đang mở,
+  // để người dùng không vô tình cuộn trang phía sau menu.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -394,76 +423,103 @@ export function PtscShell({
             </button>
           </div>
 
-          {/* Mobile nav */}
+          {/* Mobile nav — overlay toàn màn hình (nền trắng, nút đóng "X" ở
+              trên cùng), thay cho kiểu menu xổ xuống ngắn/chật trước đây, để
+              giống bố cục menu mobile của trang tham chiếu (pvpower.vn). */}
           {mobileOpen ? (
-            <nav className="flex flex-col gap-1 border-t border-white/10 bg-[#0a1330] px-6 py-3 text-sm font-semibold text-slate-100 md:hidden">
-              {navItems.map((item, index) => {
-                const isExpanded = mobileExpandedIndex === index;
-                return (
-                  <div key={item.href} className="border-b border-white/5 last:border-b-0">
-                    <div className="flex items-center justify-between">
-                      <Link
-                        href={item.href}
-                        className="block flex-1 py-2.5 uppercase"
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        {item.label}
-                      </Link>
-                      {item.children ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setMobileExpandedIndex((current) => (current === index ? null : index))
-                          }
-                          aria-label={
-                            isEnglish
-                              ? isExpanded
-                                ? "Collapse submenu"
-                                : "Expand submenu"
-                              : isExpanded
-                                ? "Thu gọn mục con"
-                                : "Mở rộng mục con"
-                          }
-                          aria-expanded={isExpanded}
-                          className="flex h-9 w-9 shrink-0 items-center justify-center text-slate-300"
+            <div className="fixed inset-0 z-[60] flex flex-col bg-white text-slate-900 md:hidden">
+              <div className="flex items-center justify-end border-b border-slate-100 px-6 py-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    setMobileExpandedIndex(null);
+                  }}
+                  aria-label={isEnglish ? "Close menu" : "Đóng menu"}
+                  className="flex h-10 w-10 items-center justify-center text-slate-500 transition hover:text-slate-900"
+                >
+                  <CloseIcon className="h-7 w-7" />
+                </button>
+              </div>
+
+              <nav className="flex-1 overflow-y-auto px-6 py-2">
+                {navItems.map((item, index) => {
+                  const isExpanded = mobileExpandedIndex === index;
+                  return (
+                    <div key={item.href} className="border-b border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <Link
+                          href={item.href}
+                          className="block flex-1 py-5 text-lg font-bold uppercase tracking-wide text-slate-900"
+                          onClick={() => {
+                            setMobileOpen(false);
+                            setMobileExpandedIndex(null);
+                          }}
                         >
-                          <ChevronDown
-                            className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                          />
-                        </button>
+                          {item.label}
+                        </Link>
+                        {item.children ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setMobileExpandedIndex((current) => (current === index ? null : index))
+                            }
+                            aria-label={
+                              isEnglish
+                                ? isExpanded
+                                  ? "Collapse submenu"
+                                  : "Expand submenu"
+                                : isExpanded
+                                  ? "Thu gọn mục con"
+                                  : "Mở rộng mục con"
+                            }
+                            aria-expanded={isExpanded}
+                            className="flex h-11 w-11 shrink-0 items-center justify-center text-slate-400"
+                          >
+                            <ChevronDown
+                              className={`h-5 w-5 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                            />
+                          </button>
+                        ) : null}
+                      </div>
+                      {item.children && isExpanded ? (
+                        <div className="flex flex-col gap-1 pb-4 pl-1">
+                          {item.children.map((child) =>
+                            child.external ? (
+                              <a
+                                key={child.href}
+                                href={child.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="py-2.5 text-base normal-case text-slate-600"
+                                onClick={() => {
+                                  setMobileOpen(false);
+                                  setMobileExpandedIndex(null);
+                                }}
+                              >
+                                {child.label}
+                              </a>
+                            ) : (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                className="py-2.5 text-base normal-case text-slate-600"
+                                onClick={() => {
+                                  setMobileOpen(false);
+                                  setMobileExpandedIndex(null);
+                                }}
+                              >
+                                {child.label}
+                              </Link>
+                            )
+                          )}
+                        </div>
                       ) : null}
                     </div>
-                    {item.children && isExpanded ? (
-                      <div className="ml-3 mb-2 flex flex-col gap-1 border-l border-white/10 pl-3">
-                        {item.children.map((child) =>
-                          child.external ? (
-                            <a
-                              key={child.href}
-                              href={child.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="py-1.5 text-xs font-normal normal-case text-slate-300"
-                              onClick={() => setMobileOpen(false)}
-                            >
-                              {child.label}
-                            </a>
-                          ) : (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              className="py-1.5 text-xs font-normal normal-case text-slate-300"
-                              onClick={() => setMobileOpen(false)}
-                            >
-                              {child.label}
-                            </Link>
-                          )
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
-                );
-              })}
-            </nav>
+                  );
+                })}
+              </nav>
+            </div>
           ) : null}
         </div>
       </header>
@@ -495,42 +551,18 @@ export function PtscShell({
       </section>
 
       <footer id="contact" className="relative overflow-hidden border-t border-slate-200 bg-[#0a1330] text-slate-300">
-        {/* Decorative background: high-voltage pylons + wires spanning the
-            full footer width, echoing the reference footer's power-line
-            watermark (thay cho hình mặt trời tỏa tia cũ) */}
-        <svg
-          className="pointer-events-none absolute inset-x-0 top-0 h-40 w-full opacity-[0.18] sm:h-56"
-          viewBox="0 0 1600 260"
-          preserveAspectRatio="xMidYMin slice"
-          fill="none"
-          aria-hidden="true"
-        >
-          {/* Dây điện cao thế chạy ngang toàn bộ chiều rộng chân trang */}
-          <line x1="0" y1="40" x2="1600" y2="46" stroke="#22D3EE" strokeWidth="1.5" />
-          <line x1="0" y1="70" x2="1600" y2="76" stroke="#22D3EE" strokeWidth="1.5" />
-          <line x1="0" y1="100" x2="1600" y2="106" stroke="#22D3EE" strokeWidth="1.5" />
-
-          {/* Cột điện cao thế lặp lại dọc chân trang */}
-          {[100, 450, 800, 1150, 1500].map((cx) => (
-            <g key={cx} transform={`translate(${cx}, 0)`} stroke="#22D3EE" strokeWidth="2">
-              {/* Chân cột hình chữ A */}
-              <line x1="-35" y1="230" x2="-6" y2="30" />
-              <line x1="35" y1="230" x2="6" y2="30" />
-              <line x1="0" y1="30" x2="0" y2="0" />
-              {/* Giằng ngang thân cột */}
-              <line x1="-24" y1="90" x2="24" y2="90" />
-              <line x1="-17" y1="140" x2="17" y2="140" />
-              <line x1="-10" y1="190" x2="10" y2="190" />
-              {/* Xà ngang đỡ dây điện */}
-              <line x1="-55" y1="40" x2="55" y2="40" />
-              <line x1="-40" y1="70" x2="40" y2="70" />
-              <line x1="-55" y1="40" x2="-55" y2="28" />
-              <line x1="55" y1="40" x2="55" y2="28" />
-              <line x1="-40" y1="70" x2="-40" y2="58" />
-              <line x1="40" y1="70" x2="40" y2="58" />
-            </g>
-          ))}
-        </svg>
+        {/* Decorative background: ảnh cột điện cao thế chạy ngang toàn bộ
+            chiều rộng chân trang (thay cho bản vẽ SVG trước đó), phủ thêm
+            gradient tối để chữ trong footer luôn đọc rõ. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-48 w-full overflow-hidden sm:h-64" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/ptsc/footer-power-lines.jpg"
+            alt=""
+            className="h-full w-full object-cover opacity-70"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0a1330]/25 via-[#0a1330]/55 to-[#0a1330]" />
+        </div>
 
         {/* Centered brand block */}
         <div className="relative mx-auto max-w-3xl px-6 pt-12 text-center lg:px-8">
