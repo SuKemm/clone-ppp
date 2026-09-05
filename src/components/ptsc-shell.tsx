@@ -72,7 +72,7 @@ const navItemsVi: NavItem[] = [
     children: [
       { href: "https://amisapp.misa.vn/login/", label: "MISA AMIS", external: true },
       { href: "/trang-noi-bo/email-noi-bo", label: "Email nội bộ" },
-      { href: "https://achipvn.com/domua/", label: "ACHIP Đồ mua", external: true },
+      { href: "https://achipvn.com/domua/", label: "ACHIP Đo Mưa", external: true },
       { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "CỤC TÀI NGUYÊN NƯỚC", external: true },
       { href: "/trang-noi-bo/hoc-va-thi-online", label: "Học và thi Online" },
     ],
