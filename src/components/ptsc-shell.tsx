@@ -71,6 +71,7 @@ const navItemsVi: NavItem[] = [
     label: "Trang nội bộ",
     children: [
       { href: "/trang-noi-bo/email-noi-bo", label: "Email nội bộ" },
+      { href: "/trang-noi-bo/van-phong-dien-tu", label: "Văn phòng điện tử" },
       { href: "https://achipvn.com/domua/", label: "ACHIP Đo Mưa", external: true },
       { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "CỤC TÀI NGUYÊN NƯỚC", external: true },
       { href: "/trang-noi-bo/hoc-va-thi-online", label: "Học và thi Online" },

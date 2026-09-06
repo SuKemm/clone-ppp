@@ -145,7 +145,7 @@ export default function AboutPage() {
             khối này khi admin đã upload ảnh. */}
         {overview?.org_chart_image && (
           <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-            <h3 className="text-center text-xl font-semibold uppercase text-slate-900">
+            <h3 className="text-center text-2xl font-semibold uppercase text-[#075B9F]">
               Sơ đồ tổ chức
             </h3>
             {/* eslint-disable-next-line @next/next/no-img-element */}
