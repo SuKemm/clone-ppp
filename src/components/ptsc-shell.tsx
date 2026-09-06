@@ -239,6 +239,33 @@ export function PtscShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null);
 
+  // Khẩu hiệu ở thanh trên cùng — lấy từ /admin (collection "site-slogan",
+  // xem /api/site-slogan) thay vì hardcode, để anh tự sửa được không cần
+  // đụng vào code. Giữ 2 giá trị mặc định này làm fallback trong lúc đang
+  // tải hoặc nếu API lỗi, để header không bao giờ hiện trống.
+  const [slogan, setSlogan] = useState({
+    text: "Chất lượng - An toàn - Hiệu quả - Phát triển",
+    text_en: "Quality - Safety - Efficiency - Development",
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/site-slogan")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((body) => {
+        if (cancelled || !body) return;
+        if (body.text || body.text_en) {
+          setSlogan({ text: body.text || "", text_en: body.text_en || "" });
+        }
+      })
+      .catch(() => {
+        /* Giữ nguyên giá trị mặc định nếu lỗi mạng. */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // Layout gốc (src/app/layout.tsx) không biết route hiện tại nên luôn để
   // sẵn lang="vi" — component này (dùng chung mọi trang) tự cập nhật lại
   // thuộc tính lang của thẻ <html> mỗi khi chuyển qua bản tiếng Anh.
@@ -273,9 +300,7 @@ export function PtscShell({
 
     {/* Slogan chính giữa */}
     <p className="text-center text-[11px] font-bold uppercase leading-tight tracking-[0.04em] text-[#FF6B00] xs:text-[12px] sm:text-sm">
-      {isEnglish
-        ? "Quality - Safety - Efficiency - Development"
-        : "Chất lượng - An toàn - Hiệu quả - Phát triển"}
+      {isEnglish ? slogan.text_en || slogan.text : slogan.text || slogan.text_en}
     </p>
 
     {/* VI / EN bên phải */}

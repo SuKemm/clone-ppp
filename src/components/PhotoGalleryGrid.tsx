@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export type PhotoAlbum = {
   id: string;
@@ -11,13 +11,14 @@ export type PhotoAlbum = {
 };
 
 // Cùng nhịp 10 giây/ảnh như banner chính (xem AUTO_PLAY_MS trong
-// src/components/HeroSlider.tsx), để trải nghiệm đồng nhất trên toàn site.
+// src/components/HeroSlider.tsx) — áp dụng khi ảnh đã được PHÓNG TO (lightbox),
+// không còn tự chuyển ngay trên thẻ thu nhỏ ngoài lưới nữa.
 const AUTO_PLAY_MS = 10_000;
 
 /**
- * Thẻ đại diện 1 album — nếu album có từ 2 ảnh trở lên (field "images" nhập
- * ở /admin), tự động chạy lần lượt qua các ảnh đó ngay trên thẻ (giống cách
- * banner trang chủ tự chuyển slide), không cần bấm vào mới thấy ảnh khác.
+ * Thẻ đại diện 1 album — chỉ hiện ảnh bìa (tĩnh), không tự động chạy qua các
+ * ảnh khác nữa. Chấm tròn bên dưới vẫn hiện để báo album có nhiều ảnh; bấm
+ * vào thẻ để mở lightbox xem lần lượt (lightbox mới là nơi tự chuyển 10s).
  */
 function AlbumCard({
   album,
@@ -27,32 +28,17 @@ function AlbumCard({
   onOpen: () => void;
 }) {
   const photos = album.images.length > 0 ? album.images : [album.image];
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (photos.length < 2) return;
-    const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % photos.length);
-    }, AUTO_PLAY_MS);
-    return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [photos.length]);
 
   return (
     <button type="button" onClick={onOpen} className="group block text-left">
       <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">
         <div className="relative aspect-[4/3] w-full overflow-hidden">
-          {photos.map((src, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={src}
-              src={src}
-              alt={album.title}
-              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 group-hover:scale-110 ${
-                i === index ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          ))}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photos[0]}
+            alt={album.title}
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+          />
         </div>
 
         {photos.length > 1 && (
@@ -61,7 +47,7 @@ function AlbumCard({
               <span
                 key={src}
                 className={`h-1.5 w-1.5 rounded-full transition ${
-                  i === index ? "bg-white" : "bg-white/50"
+                  i === 0 ? "bg-white" : "bg-white/50"
                 }`}
               />
             ))}
@@ -78,9 +64,9 @@ function AlbumCard({
 
 /**
  * Lưới ảnh đại diện cho từng album — bấm vào 1 album sẽ mở lightbox phóng to,
- * cho phép chuyển qua lại giữa TẤT CẢ ảnh đã nhập cho album đó trong /admin
- * (field "images"). Nếu album chưa nhập ảnh nào ở đó thì lightbox chỉ hiện
- * ảnh đại diện.
+ * tự động chuyển ảnh mỗi 10 giây (cùng nhịp banner chính), và vẫn cho phép
+ * chuyển tay bằng nút mũi tên / phím trái-phải. Nếu album chưa nhập ảnh nào
+ * ở /admin thì lightbox chỉ hiện ảnh đại diện.
  */
 export function PhotoGalleryGrid({ albums, isEnglish = false }: { albums: PhotoAlbum[]; isEnglish?: boolean }) {
   const [openAlbum, setOpenAlbum] = useState<number | null>(null);
@@ -96,12 +82,21 @@ export function PhotoGalleryGrid({ albums, isEnglish = false }: { albums: PhotoA
   function close() {
     setOpenAlbum(null);
   }
-  function next() {
+  const next = useCallback(() => {
     setPhotoIndex((i) => (i + 1) % photos.length);
-  }
-  function prev() {
+  }, [photos.length]);
+  const prev = useCallback(() => {
     setPhotoIndex((i) => (i - 1 + photos.length) % photos.length);
-  }
+  }, [photos.length]);
+
+  // Tự động chuyển ảnh trong lightbox mỗi 10 giây — cùng nhịp với banner
+  // chính. Dừng nếu album chỉ có 1 ảnh; đồng hồ 10s được tính lại mỗi khi
+  // người dùng bấm mũi tên chuyển ảnh thủ công (giống hành vi HeroSlider).
+  useEffect(() => {
+    if (current === null || photos.length <= 1) return;
+    const timer = setInterval(next, AUTO_PLAY_MS);
+    return () => clearInterval(timer);
+  }, [current, next, photos.length]);
 
   useEffect(() => {
     if (current === null) return;
@@ -112,8 +107,7 @@ export function PhotoGalleryGrid({ albums, isEnglish = false }: { albums: PhotoA
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current, photos.length]);
+  }, [current, next, prev]);
 
   return (
     <>

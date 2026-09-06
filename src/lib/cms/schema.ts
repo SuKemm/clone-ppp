@@ -34,6 +34,7 @@ export type CollectionId =
   | "photo-albums"
   | "video-albums"
   | "site-marquee"
+  | "site-slogan"
   | "site-notices"
   | "production-info"
   | "production-daily"
@@ -622,6 +623,25 @@ export const COLLECTIONS: CollectionDef[] = [
         date: "20.01.2023",
         image: "/images/ptsc/project-gallaf.jpg",
         video: "",
+      },
+    ],
+  },
+  {
+    // CHỈ GIỮ 1 BẢN GHI DUY NHẤT — dòng khẩu hiệu màu cam ở thanh trên cùng
+    // (nằm ngay trên logo/menu chính, hiện ở TẤT CẢ các trang, không riêng
+    // trang chủ). Bấm "Sửa" trên mục có sẵn để cập nhật, không bấm "+ Thêm
+    // mới" (nếu lỡ thêm nhiều bản ghi, trang public chỉ lấy bản ghi ĐẦU
+    // TIÊN trong danh sách — xem GET /api/site-slogan).
+    id: "site-slogan",
+    label: "Khẩu hiệu (thanh trên cùng, mọi trang)",
+    fields: [
+      { key: "text", label: "Khẩu hiệu", type: "text", required: true },
+      { key: "text_en", label: "Khẩu hiệu (EN)", type: "text" },
+    ],
+    seed: [
+      {
+        text: "Chất lượng - An toàn - Hiệu quả - Phát triển",
+        text_en: "Quality - Safety - Efficiency - Development",
       },
     ],
   },

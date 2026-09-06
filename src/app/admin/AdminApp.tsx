@@ -96,6 +96,7 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
   "photo-albums": Images,
   "video-albums": Video,
   "site-marquee": Megaphone,
+  "site-slogan": Megaphone,
   "site-notices": Megaphone,
   "production-info": Activity,
   "production-daily": BarChart3,
@@ -121,7 +122,7 @@ const COLLECTION_ICONS: Record<CollectionId, React.ComponentType<{ className?: s
 // Collection nào không thuộc mục nào trên menu chính (chỉ hiện ở trang chủ
 // hoặc là trang độc lập) thì gom vào nhóm "Khác" ở cuối.
 const SIDEBAR_GROUPS: { label: string; ids: CollectionId[] }[] = [
-  { label: "Trang chủ", ids: ["hero-slides", "site-marquee"] },
+  { label: "Trang chủ", ids: ["hero-slides", "site-marquee", "site-slogan"] },
   {
     label: "Giới thiệu DHC",
     ids: [
