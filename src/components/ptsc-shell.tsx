@@ -18,10 +18,20 @@ const investorLogos = [
   { name: "LICOGI", image: "/images/ptsc/shareholder-licogi.png" },
 ];
 
+type NavGrandchild = { href: string; label: string; external?: boolean };
+type NavChild = {
+  href: string;
+  label: string;
+  external?: boolean;
+  // Submenu cấp 2 (vd "Văn phòng điện tử" > "Misa" / "Hệ thống văn bản") —
+  // bấm vào mục con này đẩy thẳng qua link ngoài, không vào trang trung
+  // gian như mục cha.
+  children?: NavGrandchild[];
+};
 type NavItem = {
   href: string;
   label: string;
-  children?: { href: string; label: string; external?: boolean }[];
+  children?: NavChild[];
 };
 
 // NOTE: ban đầu chốt 5 mục top-level (bỏ "Phòng truyền thống", thay bằng
@@ -71,7 +81,14 @@ const navItemsVi: NavItem[] = [
     label: "Trang nội bộ",
     children: [
       { href: "/trang-noi-bo/email-noi-bo", label: "Email nội bộ" },
-      { href: "/trang-noi-bo/van-phong-dien-tu", label: "Văn phòng điện tử" },
+      {
+        href: "/trang-noi-bo/van-phong-dien-tu",
+        label: "Văn phòng điện tử",
+        children: [
+          { href: "https://amisapp.misa.vn/login/", label: "Misa", external: true },
+          { href: "https://vpdt.vnptioffice.vn/qlvbdh/main", label: "Hệ thống văn bản", external: true },
+        ],
+      },
       { href: "https://achipvn.com/domua/", label: "ACHIP Đo Mưa", external: true },
       { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "CỤC TÀI NGUYÊN NƯỚC", external: true },
       { href: "/trang-noi-bo/hoc-va-thi-online", label: "Học và thi Online" },
@@ -123,6 +140,14 @@ const navItemsEn: NavItem[] = [
     label: "Internal Pages",
     children: [
       { href: "/en-US/internal-pages/internal-email", label: "Internal Email" },
+      {
+        href: "/en-US/internal-pages/document-management",
+        label: "E-Office",
+        children: [
+          { href: "https://amisapp.misa.vn/login/", label: "Misa", external: true },
+          { href: "https://vpdt.vnptioffice.vn/qlvbdh/main", label: "Document System", external: true },
+        ],
+      },
       { href: "https://achipvn.com/domua/", label: "ACHIP Procurement", external: true },
       { href: "https://quanly.dwrm.gov.vn/hochua/#/login", label: "DWRM", external: true },
       { href: "/en-US/internal-pages/e-learning", label: "E-Learning & Online Tests" },
@@ -150,6 +175,7 @@ const VI_TO_EN_SEGMENT: Record<string, string> = {
 const VI_TO_EN_SUBSEGMENT: Record<string, string> = {
   "ban-lanh-dao": "leadership",
   "email-noi-bo": "internal-email",
+  "van-phong-dien-tu": "document-management",
   "tram-quan-trac": "monitoring-station",
   "ho-thuy-dien": "reservoir",
   "hoc-va-thi-online": "e-learning",
@@ -236,8 +262,13 @@ export function PtscShell({
   const homeHref = isEnglish ? "/en-US" : "/";
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  // Mục con nào (trong dropdown đang mở) đang hiện submenu cấp 2 (vd
+  // "Văn phòng điện tử" > Misa / Hệ thống văn bản) trên desktop.
+  const [openChildIndex, setOpenChildIndex] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpandedIndex, setMobileExpandedIndex] = useState<number | null>(null);
+  // Mục con nào đang xổ submenu cấp 2 trên mobile (accordion lồng nhau).
+  const [mobileExpandedChildIndex, setMobileExpandedChildIndex] = useState<number | null>(null);
 
   // Khẩu hiệu ở thanh trên cùng — lấy từ /admin (collection "site-slogan",
   // xem /api/site-slogan) thay vì hardcode, để anh tự sửa được không cần
@@ -381,7 +412,11 @@ export function PtscShell({
                   key={item.href}
                   className="relative shrink-0"
                   onMouseEnter={() => item.children && setOpenIndex(index)}
-                  onMouseLeave={() => item.children && setOpenIndex(null)}
+                  onMouseLeave={() => {
+                    if (!item.children) return;
+                    setOpenIndex(null);
+                    setOpenChildIndex(null);
+                  }}
                 >
                   <Link
                     href={item.href}
@@ -395,27 +430,53 @@ export function PtscShell({
 
                   {item.children && openIndex === index ? (
                     <div className="absolute left-0 top-full w-60 rounded-b-sm bg-white py-2 text-slate-700 shadow-xl">
-                      {item.children.map((child) =>
-                        child.external ? (
-                          <a
-                            key={child.href}
-                            href={child.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
-                          >
-                            {child.label}
-                          </a>
-                        ) : (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className="block px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
-                          >
-                            {child.label}
-                          </Link>
-                        )
-                      )}
+                      {item.children.map((child, childIndex) => (
+                        <div
+                          key={child.href}
+                          className="relative"
+                          onMouseEnter={() => child.children && setOpenChildIndex(childIndex)}
+                          onMouseLeave={() => child.children && setOpenChildIndex(null)}
+                        >
+                          {child.external ? (
+                            <a
+                              href={child.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-between gap-2 px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
+                            >
+                              {child.label}
+                            </a>
+                          ) : (
+                            <Link
+                              href={child.href}
+                              className="flex items-center justify-between gap-2 px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
+                            >
+                              {child.label}
+                              {child.children ? (
+                                <ChevronDown className="h-3 w-3 shrink-0 -rotate-90" />
+                              ) : null}
+                            </Link>
+                          )}
+
+                          {/* Submenu cấp 2 — trỏ thẳng ra link ngoài khi bấm,
+                              không qua trang trung gian như mục cha. */}
+                          {child.children && openChildIndex === childIndex ? (
+                            <div className="absolute left-full top-0 w-52 rounded-sm bg-white py-2 text-slate-700 shadow-xl">
+                              {child.children.map((grandchild) => (
+                                <a
+                                  key={grandchild.href}
+                                  href={grandchild.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block px-5 py-2.5 text-[13px] font-normal normal-case transition hover:bg-slate-50 hover:text-cyan-700"
+                                >
+                                  {grandchild.label}
+                                </a>
+                              ))}
+                            </div>
+                          ) : null}
+                        </div>
+                      ))}
                     </div>
                   ) : null}
                 </div>
@@ -498,7 +559,10 @@ export function PtscShell({
                             <button
                               type="button"
                               onClick={() =>
-                                setMobileExpandedIndex((current) => (current === index ? null : index))
+                                setMobileExpandedIndex((current) => {
+                                  setMobileExpandedChildIndex(null);
+                                  return current === index ? null : index;
+                                })
                               }
                               aria-label={
                                 isEnglish
@@ -520,8 +584,56 @@ export function PtscShell({
                         </div>
                         {item.children && isExpanded ? (
                           <div className="flex flex-col gap-1 pb-4 pl-1">
-                            {item.children.map((child) =>
-                              child.external ? (
+                            {item.children.map((child, childIndex) => {
+                              const isChildExpanded = mobileExpandedChildIndex === childIndex;
+                              // Mục con có submenu cấp 2 (vd "Văn phòng điện
+                              // tử") thì bấm để xổ ra Misa / Hệ thống văn bản
+                              // thay vì đi thẳng vào trang, các link cấp 2 đó
+                              // mới thực sự đẩy qua hệ thống ngoài.
+                              if (child.children) {
+                                return (
+                                  <div key={child.href}>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setMobileExpandedChildIndex((current) =>
+                                          current === childIndex ? null : childIndex
+                                        )
+                                      }
+                                      aria-expanded={isChildExpanded}
+                                      className="flex w-full items-center justify-between py-2 text-sm normal-case text-slate-300"
+                                    >
+                                      {child.label}
+                                      <ChevronDown
+                                        className={`h-4 w-4 shrink-0 transition-transform ${
+                                          isChildExpanded ? "rotate-180" : ""
+                                        }`}
+                                      />
+                                    </button>
+                                    {isChildExpanded ? (
+                                      <div className="flex flex-col gap-1 pb-2 pl-3">
+                                        {child.children.map((grandchild) => (
+                                          <a
+                                            key={grandchild.href}
+                                            href={grandchild.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="py-2 text-sm normal-case text-slate-400"
+                                            onClick={() => {
+                                              setMobileOpen(false);
+                                              setMobileExpandedIndex(null);
+                                              setMobileExpandedChildIndex(null);
+                                            }}
+                                          >
+                                            {grandchild.label}
+                                          </a>
+                                        ))}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                );
+                              }
+                              return child.external ? (
                                 <a
                                   key={child.href}
                                   href={child.href}
@@ -547,8 +659,8 @@ export function PtscShell({
                                 >
                                   {child.label}
                                 </Link>
-                              )
-                            )}
+                              );
+                            })}
                           </div>
                         ) : null}
                       </div>

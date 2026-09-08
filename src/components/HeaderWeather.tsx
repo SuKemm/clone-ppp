@@ -25,6 +25,7 @@ type Province = { vi: string; en: string; lat: number; lon: number };
 // (Quảng Ngãi) là mặc định vì đây là địa bàn đặt Nhà máy thủy điện Đakđrinh.
 const PROVINCES: Province[] = [
   { vi: "Quảng Ngãi", en: "Quang Ngai", lat: 15.12, lon: 108.8 },
+  { vi: "Sơn Tây, Quảng Ngãi", en: "Son Tay, Quang Ngai", lat: 14.98, lon: 108.31 },
   { vi: "Hà Nội", en: "Ha Noi", lat: 21.03, lon: 105.85 },
   { vi: "Hồ Chí Minh", en: "Ho Chi Minh City", lat: 10.78, lon: 106.7 },
   { vi: "Đà Nẵng", en: "Da Nang", lat: 16.05, lon: 108.2 },
