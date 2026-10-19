@@ -736,7 +736,7 @@ export function PtscShell({
           {/* Gradient divider, echoing the reference footer's colored line, split with the site name in the middle */}
           <div className="mx-auto mt-8 flex w-full max-w-2xl items-center gap-4">
             <div className="h-[2px] flex-1 bg-gradient-to-r from-blue-600 to-cyan-400" />
-            <span className="shrink-0 text-xs font-medium text-slate-300">dakdrink.vn</span>
+            <span className="shrink-0 text-xs font-medium text-slate-300">dakdrink.com.vn</span>
             <div className="h-[2px] flex-1 bg-gradient-to-r from-red-500 to-amber-400" />
           </div>
         </div>
