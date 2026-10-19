@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { PtscShell } from "@/components/ptsc-shell";
 import { getCollection } from "@/lib/cms/store";
+import { sortPhotoAlbums } from "@/lib/album-sort";
 import { PhotoGalleryGrid } from "@/components/PhotoGalleryGrid";
 import { VideoGalleryGrid } from "@/components/VideoGalleryGrid";
 
@@ -20,18 +21,6 @@ export const metadata: Metadata = {
 // Ảnh mặc định nếu album chưa được gán ảnh đại diện trong /admin.
 const FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";
 
-// Chuyển ngày admin nhập ("dd/mm/yyyy" hoặc "dd.mm.yyyy") thành mốc thời
-// gian để sắp xếp album mới → cũ theo năm — đồng bộ với bản VN
-// (src/app/dich-vu/page.tsx) và trang chủ.
-function parseAlbumDate(value: string | undefined): number {
-  if (!value) return -Infinity;
-  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
-  if (!m) return -Infinity;
-  const [, d, mo, y] = m;
-  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
-  return Number.isNaN(t) ? -Infinity : t;
-}
-
 // Field "images" trong /admin lưu dạng chuỗi JSON (mảng URL ảnh) — parse ra
 // mảng string, bỏ qua nếu chưa nhập hoặc dữ liệu không hợp lệ.
 function parseGalleryImages(raw: string | undefined): string[] {
@@ -45,8 +34,7 @@ function parseGalleryImages(raw: string | undefined): string[] {
 }
 
 export default function GalleryPageEn() {
-  const photoAlbums = [...getCollection("photo-albums")]
-    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+  const photoAlbums = sortPhotoAlbums(getCollection("photo-albums"))
     .map((a) => {
     const cover = a.image || FALLBACK_IMAGE;
     const extra = parseGalleryImages(a.images);

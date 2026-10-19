@@ -6,6 +6,7 @@ import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
+import { parseAlbumDate, sortPhotoAlbums } from "@/lib/album-sort";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
 import { formatNewsDateTime } from "@/lib/format-date";
 
@@ -76,14 +77,6 @@ const shareholderRelations = [
 // lấy đúng dữ liệu mới nhất từ /admin thay vì hardcode.
 const GALLERY_FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";
 
-function parseAlbumDate(value: string | undefined): number {
-  if (!value) return -Infinity;
-  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
-  if (!m) return -Infinity;
-  const [, d, mo, y] = m;
-  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
-  return Number.isNaN(t) ? -Infinity : t;
-}
 
 // Same data source as the Vietnamese homepage (src/app/page.tsx) — always
 // reads the latest values entered in /admin instead of hardcoded numbers.
@@ -115,8 +108,7 @@ export default function EnglishHomePage() {
   // "photo-albums" / "video-albums" (Admin -> Thư viện), ưu tiên tiêu đề
   // tiếng Anh (title_en) nếu admin đã nhập — cùng nguồn dữ liệu với trang
   // tiếng Việt, không còn hardcode.
-  const latestPhotoAlbums = [...getCollection("photo-albums")]
-    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+  const latestPhotoAlbums = sortPhotoAlbums(getCollection("photo-albums"))
     .slice(0, 3)
     .map((a) => ({ label: a.title_en || a.title, image: a.image || GALLERY_FALLBACK_IMAGE }));
 

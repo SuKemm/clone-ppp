@@ -5,6 +5,7 @@ import { HeroSlider } from "@/components/HeroSlider";
 import { MarqueeBar } from "@/components/MarqueeBar";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { getCollection } from "@/lib/cms/store";
+import { parseAlbumDate, sortPhotoAlbums } from "@/lib/album-sort";
 import { computeProductionTotals, formatVnNumber, getProductionPeriodLabels } from "@/lib/production";
 import { formatNewsDateTime } from "@/lib/format-date";
 
@@ -72,14 +73,6 @@ const GALLERY_FALLBACK_IMAGE = "/images/ptsc/project-gallaf.jpg";
 // Chuyển ngày admin nhập ở field "Ngày đăng" (chấp nhận cả "dd/mm/yyyy" và
 // "dd.mm.yyyy" — 2 collection Thư viện ảnh/Video đang seed theo kiểu dấu
 // chấm) thành mốc thời gian để sắp xếp mới → cũ.
-function parseAlbumDate(value: string | undefined): number {
-  if (!value) return -Infinity;
-  const m = value.trim().match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
-  if (!m) return -Infinity;
-  const [, d, mo, y] = m;
-  const t = new Date(Number(y), Number(mo) - 1, Number(d)).getTime();
-  return Number.isNaN(t) ? -Infinity : t;
-}
 
 export default function Home() {
   const productionInfo = getCollection("production-info")[0];
@@ -112,8 +105,7 @@ export default function Home() {
   // collection "photo-albums" / "video-albums" (Admin -> Thư viện), luôn
   // hiện 3 album ảnh và 3 video mới nhất theo "Ngày đăng" (cân đối 3-3) —
   // không còn hardcode như trước, admin đăng thêm là trang chủ tự cập nhật.
-  const latestPhotoAlbums = [...getCollection("photo-albums")]
-    .sort((a, b) => parseAlbumDate(b.date) - parseAlbumDate(a.date))
+  const latestPhotoAlbums = sortPhotoAlbums(getCollection("photo-albums"))
     .slice(0, 3)
     .map((a) => ({ label: a.title, image: a.image || GALLERY_FALLBACK_IMAGE }));
 
